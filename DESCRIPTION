@@ -14,4 +14,5 @@ Depends:
 Imports: 
   data.table, 
   Rcpp (>= 0.12.12)
+LinkingTo: Rcpp
 RoxygenNote: 6.0.1

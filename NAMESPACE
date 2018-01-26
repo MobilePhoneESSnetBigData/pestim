@@ -1,1 +1,3 @@
+useDynLib(pestim)
 exportPattern("^[[:alpha:]]+")
+importFrom(Rcpp, evalCpp)
