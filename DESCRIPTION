@@ -1,0 +1,17 @@
+Package: pestim
+Type: Package
+Title: Population estimations using mobile phone data
+Version: 0.1.0
+Author: David Salgado
+Maintainer: David Salgado <david.salgado.fernandez@ine.es>
+Description: Population estimations using mobile phone data
+License: GPL2
+Encoding: UTF-8
+LazyData: true
+Depends: 
+  data.table, 
+  Rcpp (>= 0.12.12)
+Imports: 
+  data.table, 
+  Rcpp (>= 0.12.12)
+RoxygenNote: 6.0.1

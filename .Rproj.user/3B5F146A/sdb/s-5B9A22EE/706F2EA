@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "#' @title factorEB\n#' @description\n#' @author David Salgado\n#' @export\n#'\nfactorEB <- function(beta0, nMNO, nReg, uMode, vMode){\n\n  ((uMode * vMode - 1) / (vMode - 2))^nMNO * exp(beta0 * nReg *( (1 - uMode) * vMode ) / (vMode - 2))\n\n}\n",
+    "created" : 1516948923727.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4068348906",
+    "id" : "706F2EA",
+    "lastKnownWriteTime" : 1516948942,
+    "last_content_update" : 1516948942086,
+    "path" : "~/pestim/R/factorEB.R",
+    "project_path" : "R/factorEB.R",
+    "properties" : {
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

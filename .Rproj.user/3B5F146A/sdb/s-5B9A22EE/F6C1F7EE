@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "#' @title rlambda\n#' @description\n#' @author David Salgado\n#' @export\n#'\nrlambda <- function(n, nMNO, nReg, fu, fv, flambda, relTol = 1e-2, nSim = 1e3, nStrata = c(1, 1e2), verbose = FALSE){\n\n  nCells <- length(nMNO)\n  if (nCells != 1) stop('Only one cell at a time.')\n  if (length(nReg) != nCells) stop('nReg and nMNO must have the same length.')\n\n  ######  Computing betaOpt\n  lambdaOpt <- modeLambda(nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose)\n\n  ###### Computing rejection rate  #####################\n  if (verbose) cat('Computing rejection rate...')\n  f <- function(x){dlambda(x, nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose)$probLambda}\n  location <- lambdaOpt\n  scale <- sqrt(flambda$shape * flambda$scale^2)\n  F0 <- pcauchy(0, location = location, scale = scale)\n  g <- function(x){\n    #dgamma(x, shape = nMNO + 1, scale = lambdaOpt / nMNO)\n    dcauchy(x, location = location, scale = scale) / (1 - F0)\n    #dg(x, nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata)\n  }\n  fun <- function(x){g(x) / f(x)}\n\n  optimC <- 1.05 / optimise(fun, interval = c(max(location - scale, 0), location + scale))$objective\n  if (verbose) cat(' ok.\\n')\n\n  if (verbose) cat('Generating and accepting/rejecting values...\\n')\n  u <- runif(2 * n)\n  x <- qcauchy(F0 + u * ( 1 - F0), location = location, scale = scale)\n  #x <- rgamma(10 * n, shape = nMNO + 1, scale = lambdaOpt / nMNO)\n  v <- runif(n)\n  if (verbose) cat('   of target distribution...')\n  fx <- f(x)\n  if (verbose) cat(' ok.\\n')\n  if (verbose) cat('   of candidate distribution...')\n  gx <- dcauchy(x, location = location, scale = scale)\n  if (verbose) cat(' ok.\\n')\n  output <- x[v <= fx / (optimC * gx)]\n  if (verbose) cat(paste0(length(output), ' points selected.\\n'))\n  while (length(output) < n) {\n    u <- runif(2 * n)\n    x <- qcauchy(F0 + u * ( 1 - F0), location = location, scale = scale)\n    #x <- rgamma(10 * n, shape = nMNO + 1, scale = lambdaOpt / nMNO)\n    v <- runif(n)\n    fx <- f(x)\n    gx <- g(x)\n    aux <- x[v <= fx / (optimC * gx)]\n    if (verbose) cat(paste0(length(output), ' points selected.\\n'))\n    output <- c(output, aux)\n  }\n  output <- output[1:n]\n  if (verbose) cat(' ok.\\n')\n  return(output)\n}\n",
+    "created" : 1516949256989.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1432776162",
+    "id" : "F6C1F7EE",
+    "lastKnownWriteTime" : 1516949268,
+    "last_content_update" : 1516949268489,
+    "path" : "~/pestim/R/rlambda.R",
+    "project_path" : "R/rlambda.R",
+    "properties" : {
+    },
+    "relative_order" : 16,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

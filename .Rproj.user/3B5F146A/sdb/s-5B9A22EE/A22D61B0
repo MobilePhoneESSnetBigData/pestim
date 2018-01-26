@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "#' @title rtriang\n#' @description\n#' @author David Salgado\n#' @export\n#'\nrtriang <- function(n, xMin, xMax, xMode){\n\n  u <- runif(n)\n  mc <- match.call()\n  mc[[1L]] <- qtriang\n  mc[['n']] <- NULL\n  mc[['u']] <- u\n  output <- eval(mc)\n  return(output)\n}\n",
+    "created" : 1516949287088.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3633689452",
+    "id" : "A22D61B0",
+    "lastKnownWriteTime" : 1516949298,
+    "last_content_update" : 1516949298140,
+    "path" : "~/pestim/R/rtriang.R",
+    "project_path" : "R/rtriang.R",
+    "properties" : {
+    },
+    "relative_order" : 18,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "#' @title Phi\n#' @description\n#' @author David Salgado\n#' @export\n#'\nPhi <- function(alpha, beta, lambda, nMNO, nReg, relTol = 1e-3){\n\n  output <- ratioBeta(alpha, beta, nMNO, 0) * kummer(lambda, beta, alpha + beta + nMNO, relTol)\n  return(output)\n\n}\n\n",
+    "created" : 1516949137156.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2846455663",
+    "id" : "BC17BA16",
+    "lastKnownWriteTime" : 1516949146,
+    "last_content_update" : 1516949146095,
+    "path" : "~/pestim/R/Phi.R",
+    "project_path" : "R/Phi.R",
+    "properties" : {
+    },
+    "relative_order" : 10,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

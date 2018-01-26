@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "#' @title postNestimates\n#' @description\n#' @author David Salgado\n#' @export\n#'\npostNestimates <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, relTol = 1e-4, nSim = 1e3, nStrata = c(1, 1e2), verbose = FALSE){\n\n  nCells <- length(nMNO)\n  if (length(nReg) != nCells) stop('nReg and nMNO must have the same length.')\n\n  if (nCells == 1) {\n\n    Nvalues <- rN(n, nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose)[['N']]\n    postMean <- round(mean(Nvalues))\n    postMedian <- round(median(Nvalues))\n    postMode <- Nvalues[which.max(names(table(Nvalues)))]\n    output <- list(postMean = postMean, postMedian = postMedian, postMode = postMode)\n    return(output)\n\n  } else {\n\n    output <- sapply(seq(along = nMNO), function(i){\n      postNestimates(nMNO[i], nReg[i], fu, fv, flambda, n, relTol, nSim, nStrata, verbose)\n    })\n    return(output)\n  }\n}\n",
+    "created" : 1516949154084.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1865306090",
+    "id" : "A78AEA1A",
+    "lastKnownWriteTime" : 1516949186,
+    "last_content_update" : 1516949186108,
+    "path" : "~/pestim/R/postNestimates.R",
+    "project_path" : "R/postNestimates.R",
+    "properties" : {
+    },
+    "relative_order" : 11,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "#' @title rN\n#' @description\n#' @author David Salgado\n#' @export\n#'\nrN <- function(n, nMNO, nReg, fu, fv, flambda, relTol = 1e-4, nSim = 1e3, nStrata = c(1, 1e2), verbose = FALSE){\n\n  nCell <- length(nMNO)\n  if (nCell != length(nReg)) stop('nMNO and nReg must have the same length.')\n  lambda <- rlambda(n, nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose)\n  DT <- data.table(lambda = lambda)\n  DT[ , lambdaID := 1:.N]\n  nMNO <- DT[, list(nMNO = rep(nMNO, each = .N), nReg = rep(nReg, each = .N), cellID = rep(seq(along = nMNO))), by = 'lambdaID']\n  DT <- merge(DT, nMNO, by = 'lambdaID', allow.cartesian = TRUE)\n  DT[, N := rpois(1, lambda), by = c('cellID', 'lambdaID')]\n  DT[, lambdaID := NULL]\n  DT[, cellID := NULL]\n  setcolorder(DT, c('nMNO', 'nReg', 'lambda', 'N'))\n  return(DT)\n}\n",
+    "created" : 1516949273549.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "418754231",
+    "id" : "87D957E9",
+    "lastKnownWriteTime" : 1516949282,
+    "last_content_update" : 1516949282424,
+    "path" : "~/pestim/R/rN.R",
+    "project_path" : "R/rN.R",
+    "properties" : {
+    },
+    "relative_order" : 17,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
