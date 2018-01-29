@@ -1,10 +1,14 @@
 #include<Rcpp.h>
 using namespace Rcpp;
 //[[Rcpp::export]]
-                  double atomKummer(double x, double a, double b, double relTol) {
-                  double sumando, suma;
-                  int n;
+NumericVector atomKummer(NumericVector x, NumericVector a, NumericVector b, double relTol) {
+  int n;
+  int l = x.size();
+  NumericVector sumando(l), suma(l);
 
-                  for(n=1, sumando=1, suma=1; sumando / suma > relTol; ++n, sumando*= x * (a+n-1) / ((b+n-1)*n), suma+=sumando);
-                  return(suma);
-                  }
+  long j;
+  for(j=0;j<l;j++)
+    for(n=1, sumando[j]=1, suma[j]=1; sumando[j] / suma[j] > relTol; ++n, sumando[j] *= x[j] * (a[j]+n-1) / ((b[j]+n-1)*n), suma[j] +=sumando[j]);
+
+  return(suma);
+}
