@@ -1,6 +1,6 @@
 #' @title kummmer
 #' @description
-#' @author David Salgado
+#' @author David Salgado, Bogdan Oancea
 #' @export
 #'
 kummer2 <- function(x, a, b, relTol = 1e-6){
