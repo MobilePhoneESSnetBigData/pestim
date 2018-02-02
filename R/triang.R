@@ -35,7 +35,7 @@
 dtriang <- function(x, xMin, xMax, xMode){
 
   if (any(xMin > xMax)) stop('xMax must be greater than xMin.')
-  if (!(xMode >= xMin | xMode <= xMax)) stop('xMode must be between xMin and xMax.')
+  if (!(all(xMode >= xMin) & all(xMode <= xMax))) stop('xMode must be between xMin and xMax.')
 
 
   n <- length(x)
@@ -55,7 +55,7 @@ dtriang <- function(x, xMin, xMax, xMode){
 ptriang <- function(q, xMin, xMax, xMode){
 
   if (any(xMin > xMax)) stop('xMax must be greater than xMin.')
-  if (!(xMode >= xMin | xMode <= xMax)) stop('xMode must be between xMin and xMax.')
+  if (!(all(xMode >= xMin) & all(xMode <= xMax))) stop('xMode must be between xMin and xMax.')
 
   n <- length(q)
   if (length(xMin) == 1) xMin <- rep(xMin, n)
@@ -75,7 +75,7 @@ ptriang <- function(q, xMin, xMax, xMode){
 qtriang <- function(q, xMin, xMax, xMode){
 
   if (any(xMin > xMax)) stop('xMax must be greater than xMin.')
-  if (!(xMode >= xMin | xMode <= xMax)) stop('xMode must be between xMin and xMax.')
+  if (!(all(xMode >= xMin) & all(xMode <= xMax))) stop('xMode must be between xMin and xMax.')
 
   n <- length(q)
   if (length(xMin) == 1) xMin <- rep(xMin, n)
@@ -93,7 +93,7 @@ qtriang <- function(q, xMin, xMax, xMode){
 rtriang <- function(n, xMin, xMax, xMode){
 
   if (any(xMin > xMax)) stop('xMax must be greater than xMin.')
-  if (!(xMode >= xMin | xMode <= xMax)) stop('xMode must be between xMin and xMax.')
+  if (!(all(xMode >= xMin) & all(xMode <= xMax))) stop('xMode must be between xMin and xMax.')
 
   u <- runif(n)
   mc <- match.call()

@@ -1,6 +1,6 @@
 #' @title The ratio of two beta functions.
 #'
-#' @description Ratio of two beta functions whose arguments differ by integer numbers
+#' @description Compute the ratio of two beta functions whose arguments differ by integer numbers
 #'
 #' @param alpha, beta non-negative numeric vectors
 #'
