@@ -1,7 +1,7 @@
 #' @title The product of ratioBeta and Kummer functions
 #'
-#' @description The product of \code{\link{ratioBeta}} and \code{\link{kummer}} functions with a
-#' specific set of arguments
+#' @description This function computes the product of \code{\link{ratioBeta}} and
+#' \code{\link{kummer}} functions with a specific set of arguments
 #'
 #' @param alpha, beta non-negative numeric vectors
 #'
