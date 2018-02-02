@@ -2,11 +2,95 @@
 % Please edit documentation in R/modeLambda.R
 \name{modeLambda}
 \alias{modeLambda}
-\title{modeLambda}
+\title{Mode of the posterior density function of the lambda parameter.}
 \usage{
-modeLambda(nMNO, nReg, fu, fv, flambda, relTol = 0.01, nSim = 10000,
+modeLambda(nMNO, nReg, fu, fv, flambda, relTol = 1e-06, nSim = 10000,
   nStrata = c(1, 100), verbose = FALSE)
 }
-\author{
-David Salgado
+\arguments{
+\item{nMNO, }{nReg non-negative integer vectors with the number of individuals
+detected in each cell according to the network operator and the register}
+
+\item{fu, }{fv named lists with the prior marginal distributions of the
+two-dimensional points for the Monte Carlo integration}
+
+\item{flambda}{named list with the prior distribution of the lambda parameter}
+
+\item{relTol}{relative tolerance in the computation of the \code{\link{kummer}} function. Default
+value is \code{1e-6}}
+
+\item{nSim}{number of two-dimensional points to generate to compute the integral. Default value
+is \code{1e4}}
+
+\item{nStrata}{integer vector of length 2 with the number of strata in each dimension. Default
+value is \code{c(1, 1e2)}}
+
+\item{verbose}{logical (default \code{FALSE}) to report progress of the computation}
+
+\item{lambda}{numeric vector}
+}
+\value{
+\code{dlambda} returns a \linkS4class{data.table} with the values of the density function
+(column \code{probLambda}) for each value of lambda together with additional variables:
+
+ \itemize{
+
+   \item The common length of \code{nMNO} and \code{nReg} identifies the number of territorial
+   cells in which the number of individuals detected by the telecommunication network and
+   official data. The column \code{cellID} identifies these territorial cells.
+
+   \item The length of \code{lambda} identifies the number of parameters upon which the integral
+   will be computed in each cell. The column \code{parID} identifies each of these input
+   parameters.
+
+   \item The inputs \code{nMNO} and \code{nReg} are also included in the output
+   \linkS4class{data.table} in columns under the same name.
+
+   \item The value on the integral times the Poisson density function ifalso included under the
+   column \code{integral}
+
+ }
+}
+\description{
+Compute the mode of the unnormalized posterior density function of the parameter
+\eqn{\lambda} in the hierarchical model to estimate population counts.
+}
+\details{
+The lengths of the input vectors \code{nMNO} and \code{nReg} must be equal and
+independent of the length of the input vector \code{lambda}. The integral is computed using with
+Monte Carlo techniques using \code{nSim} points for each of the \code{length(nMNO)}\deq{\times}
+\code{length(lambda)} combinations so
+that the final \linkS4class{data.table} has \code{length(nMNO)}\deq{\times}\code{length(lambda)}
+rows.
+
+The prior distributions are specified as named lists where the first component of each list must
+be the name of distribution ('unif', 'triang', 'degen', 'gamma') and the rest components must be
+named according to the name of the parameters of the random generator of the corresponding
+distribution according to:
+
+  \itemize{
+
+    \item unif: \code{xMin}, \code{xMax} for the minimum, maximum of the sampled interval.
+    \item degen: \code{x0} for the degenerate value of the random variable.
+    \item triang: \code{xMin}, \code{xMax}, \code{xMode} for minimum, maximum and mode (see
+    \code{\link{qtriang}}).
+    \item gamma: \code{scale} and \code{shape} with the same meaning as in \code{\link{rgamma}}.
+  }
+}
+\examples{
+# This data.table must have 5x3= 15 rows
+modeLambda(nMNO = c(20, 17, 25), nReg = c(115, 123, 119),
+        fu = list(list('unif', xMin = 0.3, xMax = 0.5),
+                  list('unif', xMin = 0.35, xMax = 0.45),
+                  list('unif', xMin = 0.25, xMax = 0.43)),
+        fv = list(list('gamma', shape = 11, scale = 12),
+                  list('gamma', shape = 12, scale = 12.3),
+                  list('gamma', shape = 13, scale = 11.5)),
+        flambda = list(list('gamma', shape = 11, scale = 12),
+                       list('gamma', shape = 12, scale = 12.3),
+                       list('gamma', shape = 13, scale = 12)))
+
+}
+\seealso{
+\code{\link{genUV}}, \code{\link{Phi}} for related functions.
 }
