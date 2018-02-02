@@ -4,7 +4,8 @@
 #' in the hierarchical model to estimate population counts given by
 #' \deqn{f(\lambda\big | N^{\textrm{MNO}}; N^{\textrm{Nreg}})\propto f(\lambda)\cdot
 #' \textrm{dpois}(N^{\textrm{MNO}}; \lambda)\cdot S(\lambda; N^{\textrm{MNO}}, N^{\textrm{Nreg}}), }
-#'  where
+#'  where \code{\link{dpois}} is the probability density function of a Poisson distribution and
+#'  \eqn{S} is defined in the bibliographic reference.
 #'
 #' @param lambda numeric vector
 #'
@@ -70,6 +71,8 @@
 #'   }
 #'
 #' @seealso \code{\link{genUV}}, \code{\link{Phi}} for related functions.
+#'
+#' @references \url{https://github.com/MobilePhoneESSnetBigData}
 #'
 #' @examples
 #' # This data.table must have 5x3= 15 rows
