@@ -1,4 +1,4 @@
-#' @title The Triangular Distribution
+#' @title The Triangular Distribution.
 #'
 #' @description Density, distribution funtion, quantile function and random generation for the
 #' triangular distribution
