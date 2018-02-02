@@ -26,7 +26,7 @@
 #'    official data. The column \code{cellID} identifies these territorial cells.
 #'
 #'    \item The length of \code{lambda} identifies the number of parameters upon which the integral
-#'    will be computed in each cell. The column \code{cellID} identifies each of these input
+#'    will be computed in each cell. The column \code{parID} identifies each of these input
 #'    parameters.
 #'
 #'    \item \code{Stratum_u} and \code{Stratum_v} jointly identify each stratum in which the region
@@ -62,7 +62,9 @@
 #'       lambda = seq(0, 1, length.out = 5),
 #'       nMNO = c(20, 17, 25), nReg = c(115, 123, 119))
 #'
-#' @include qtriang.R
+#' @include triang.R
+#'
+#' @import data.table
 #'
 #' @export
 genUV <- function(nSim, nStrata, f1, f2, lambda, nMNO, nReg){

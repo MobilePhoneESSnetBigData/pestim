@@ -18,3 +18,20 @@ Imports:
   Rcpp (>= 0.12.12)
 LinkingTo: Rcpp
 RoxygenNote: 6.0.1
+Collate: 
+    'ratioBeta.R'
+    'kummer.R'
+    'Phi.R'
+    'RcppExports.R'
+    'dBeta0EB.R'
+    'dg.R'
+    'triang.R'
+    'dlambda.R'
+    'factorBayes.R'
+    'factorEB.R'
+    'genUV.R'
+    'modeLambda.R'
+    'postNestimates.R'
+    'rN.R'
+    'rg.R'
+    'rlambda.R'

@@ -9,7 +9,8 @@
 #'
 #' @param n non-negative integer vector
 #'
-#' @param relTol relative tolerance in the computation of the \code{\link{kummer}} function
+#' @param relTol relative tolerance in the computation of the \code{\link{kummer}} function. Default
+#' value is \code{1e-6}
 #'
 #' @return \code{Phi} returns
 #' \eqn{\frac{B(alpha + m, beta + n)}{B(alpha, beta)}\cdot {}_{1}F_{1}(lambda; alpha; beta)}, where
