@@ -8,11 +8,11 @@ modeLambda(nMNO, nReg, fu, fv, flambda, relTol = 1e-06, nSim = 10000,
   nStrata = c(1, 100), verbose = FALSE)
 }
 \arguments{
-\item{nMNO, }{nReg non-negative integer vectors with the number of individuals
-detected in each cell according to the network operator and the register}
+\item{nMNO, }{nReg non-negative integer vectors with the number of individuals detected in each
+cell according to the network operator and the register}
 
-\item{fu, }{fv named lists with the prior marginal distributions of the
-two-dimensional points for the Monte Carlo integration}
+\item{fu, }{fv named lists with the prior marginal distributions of the two-dimensional points
+for the Monte Carlo integration}
 
 \item{flambda}{named list with the prior distribution of the lambda parameter}
 
@@ -26,42 +26,19 @@ is \code{1e4}}
 value is \code{c(1, 1e2)}}
 
 \item{verbose}{logical (default \code{FALSE}) to report progress of the computation}
-
-\item{lambda}{numeric vector}
 }
 \value{
-\code{dlambda} returns a \linkS4class{data.table} with the values of the density function
-(column \code{probLambda}) for each value of lambda together with additional variables:
-
- \itemize{
-
-   \item The common length of \code{nMNO} and \code{nReg} identifies the number of territorial
-   cells in which the number of individuals detected by the telecommunication network and
-   official data. The column \code{cellID} identifies these territorial cells.
-
-   \item The length of \code{lambda} identifies the number of parameters upon which the integral
-   will be computed in each cell. The column \code{parID} identifies each of these input
-   parameters.
-
-   \item The inputs \code{nMNO} and \code{nReg} are also included in the output
-   \linkS4class{data.table} in columns under the same name.
-
-   \item The value on the integral times the Poisson density function ifalso included under the
-   column \code{integral}
-
- }
+\code{modeLambda} returns a vector with the values of the mode of the density function
+(column \code{probLambda}) for each cell.
 }
 \description{
 Compute the mode of the unnormalized posterior density function of the parameter
 \eqn{\lambda} in the hierarchical model to estimate population counts.
 }
 \details{
-The lengths of the input vectors \code{nMNO} and \code{nReg} must be equal and
-independent of the length of the input vector \code{lambda}. The integral is computed using with
-Monte Carlo techniques using \code{nSim} points for each of the \code{length(nMNO)}\deq{\times}
-\code{length(lambda)} combinations so
-that the final \linkS4class{data.table} has \code{length(nMNO)}\deq{\times}\code{length(lambda)}
-rows.
+The lengths of the input vectors \code{nMNO} and \code{nReg} must be equal. Currently
+the optimization algorithm is a simple direct algorithm taking into account the form of the
+density function.
 
 The prior distributions are specified as named lists where the first component of each list must
 be the name of distribution ('unif', 'triang', 'degen', 'gamma') and the rest components must be
@@ -92,5 +69,5 @@ modeLambda(nMNO = c(20, 17, 25), nReg = c(115, 123, 119),
 
 }
 \seealso{
-\code{\link{genUV}}, \code{\link{Phi}} for related functions.
+\code{\link{dlambda}} for the function to maximize.
 }

@@ -49,12 +49,10 @@
 #'
 #'  }
 #'
-#' @details The lengths of the input vectors \code{nMNO} and \code{nReg} must be equal and
+#' @details The lengths of the input vectors \code{nMNO} and \code{nReg} must be both equal to 1 and
 #' independent of the length of the input vector \code{lambda}. The integral is computed using with
-#' Monte Carlo techniques using \code{nSim} points for each of the \code{length(nMNO)}\deq{\times}
-#' \code{length(lambda)} combinations so
-#' that the final \linkS4class{data.table} has \code{length(nMNO)}\deq{\times}\code{length(lambda)}
-#' rows.
+#' Monte Carlo techniques using \code{nSim} points for each of the values \code{lambda} specified so
+#' that the final \linkS4class{data.table} has \code{length(lambda)} rows.
 #'
 #' The prior distributions are specified as named lists where the first component of each list must
 #' be the name of distribution ('unif', 'triang', 'degen', 'gamma') and the rest components must be
@@ -70,6 +68,10 @@
 #'     \item gamma: \code{scale} and \code{shape} with the same meaning as in \code{\link{rgamma}}.
 #'   }
 #'
+#' It is important to know that currently this function accepts only parameters for a single cell at
+#' a time. In case of interest for the density function values for a set of cells, the user should
+#' program his/her own routine to apply this function to every cell.
+#'
 #' @seealso \code{\link{genUV}}, \code{\link{Phi}} for related functions.
 #'
 #' @references \url{https://github.com/MobilePhoneESSnetBigData}
@@ -80,6 +82,14 @@
 #'         nMNO = c(20, 17, 25), nReg = c(115, 123, 119),
 #'         fu = list('unif', xMin = 0.3, xMax = 0.5), fv = list('gamma', shape = 11, scale = 12),
 #'         flambda = list('gamma', shape = 11, scale = 12))
+#'
+#' # Easily, a function to draw conditioned on the parameters:
+#' f <- function(x){
+#'   dlambda(x, nMNO = 20, nReg = 115,
+#'           fu = list('unif', xMin = 0.3, xMax = 0.5), fv = list('unif', xMin = 100, xMax = 120),
+#'           flambda = list('gamma', shape = 11, scale = 12))$probLambda
+#' }
+#' curve(f, xlim = c(0, 150))
 #'
 #' @include triang.R
 #'
