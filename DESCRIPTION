@@ -31,7 +31,7 @@ Collate:
     'factorEB.R'
     'genUV.R'
     'modeLambda.R'
-    'postNestimates.R'
     'rlambda.R'
     'rN0.R'
+    'postN0.R'
     'rg.R'

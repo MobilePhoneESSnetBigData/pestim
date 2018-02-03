@@ -26,9 +26,9 @@
 #'
 #' @param verbose logical (default \code{FALSE}) to report progress of the computation
 #'
-#' @return \code{rg} generates \code{n} points according to the candidate distribution. The function
-#' returns a \linkS4class{data.table} with these points (under the column \code{N0}) together with
-#' the additional variables:
+#' @return \code{rN0} generates \code{n} points according to the posterior distribution. The
+#' function returns a \linkS4class{data.table} with these points (under the column \code{N0})
+#' together with the additional variables:
 #'
 #'  \itemize{
 #'
