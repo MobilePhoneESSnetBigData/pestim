@@ -32,6 +32,6 @@ Collate:
     'genUV.R'
     'modeLambda.R'
     'postNestimates.R'
-    'rN.R'
-    'rg.R'
     'rlambda.R'
+    'rN0.R'
+    'rg.R'
