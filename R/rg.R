@@ -43,7 +43,6 @@
 #'         flambda = list('gamma', shape = 11, scale = 12)), breaks = seq(1, 200, by = 2), main ='')
 #'
 #' @export
-#'
 rg <- function(n, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e4, nStrata = c(1, 1e2),
                verbose = FALSE){
 
