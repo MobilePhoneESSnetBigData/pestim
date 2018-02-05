@@ -14,7 +14,7 @@
 #'
 #'@return
 #'
-#'@import rmatProb.R
+#'@include rmatProb.R
 #'
 #' @export
 #'

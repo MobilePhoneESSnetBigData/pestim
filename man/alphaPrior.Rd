@@ -2,7 +2,7 @@
 % Please edit documentation in R/alphaPrior.R
 \name{alphaPrior}
 \alias{alphaPrior}
-\title{kummmer}
+\title{alphaPrior}
 \usage{
 alphaPrior(nMNOfrom, names, variation)
 }
@@ -14,7 +14,7 @@ alphaPrior(nMNOfrom, names, variation)
 \item{variation}{}
 }
 \description{
-postestimates of
+generates values for ...
 }
 \author{
 David Salgado

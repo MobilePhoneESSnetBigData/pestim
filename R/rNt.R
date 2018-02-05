@@ -68,7 +68,8 @@
 #'
 #' @examples
 #'
-#' @include rN0.R
+#' @include rN0.R 
+#' @include rNtcondN0.R
 #' 
 #' @export
 #'

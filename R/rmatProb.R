@@ -1,4 +1,4 @@
-#' @title kummmer
+#' @title rmatProb
 #' @description postestimates of
 #' @author David Salgado
 #' 

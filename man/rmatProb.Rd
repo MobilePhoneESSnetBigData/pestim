@@ -2,7 +2,7 @@
 % Please edit documentation in R/rmatProb.R
 \name{rmatProb}
 \alias{rmatProb}
-\title{kummmer}
+\title{rmatProb}
 \usage{
 rmatProb(n, nMNOmat, distNames, variation)
 }
