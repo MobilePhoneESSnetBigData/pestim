@@ -1,3 +1,9 @@
+#' @title kummmer
+#' @description postestimates of
+#' @author David Salgado
+#' @export
+#'
+
 postNt <- function(nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale = 1, n = 1e3, relTol = 1e-5, nSim = 1e3, nStrata = c(1, 1e2), verbose = FALSE){
 
   Ntmat <- rNt(n, nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale, relTol, nSim, nStrata, verbose)

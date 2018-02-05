@@ -1,3 +1,9 @@
+#' @title kummmer
+#' @description postestimates of
+#' @author David Salgado
+#' @export
+#'
+
 genAlpha <- function(nSim, flist){
 
   nCells <- length(flist)

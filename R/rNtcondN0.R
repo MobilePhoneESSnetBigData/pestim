@@ -1,3 +1,9 @@
+#' @title kummmer
+#' @description postestimates of
+#' @author David Salgado
+#' @export
+#'
+
 rNtcondN0 <- function(n, N0, nMNOmat,  distNames, variation){
 
   nCells <- length(N0)

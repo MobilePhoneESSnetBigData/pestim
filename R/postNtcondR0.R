@@ -1,3 +1,9 @@
+#' @title kummmer
+#' @description postestimates of
+#' @author David Salgado
+#' @export
+#'
+
 postNtcondN0 <- function(N0, nMNOmat,  distNames, variation, n = 1e3){
 
   Ntmat <- rNtcondN0(n, N0, nMNOmat, distNames, variation)

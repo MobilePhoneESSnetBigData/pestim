@@ -1,3 +1,9 @@
+#' @title kummmer
+#' @description postestimates of
+#' @author David Salgado
+#' @export
+#'
+
 rmatProb <- function(n, nMNOmat, distNames, variation){
 
   if (!is.matrix(nMNOmat)) stop('nMNOmat must be a square matrix.')

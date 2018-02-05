@@ -1,3 +1,9 @@
+#' @title kummmer
+#' @description postestimates of
+#' @author David Salgado
+#' @export
+#'
+
 rNt <- function(n, nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale = 1, relTol = 1e-5, nSim = 1e3, nStrata = c(1, 1e2), verbose = FALSE){
 
   if (!is.matrix(nMNOmat)) stop('nMNOmat must be a square matrix.')

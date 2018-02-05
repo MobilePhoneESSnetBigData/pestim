@@ -1,3 +1,9 @@
+#' @title kummmer
+#' @description postestimates of
+#' @author David Salgado
+#' @export
+#'
+
 rp <- function(n, flist){
 
   alphaParam <- genAlpha(n, flist)

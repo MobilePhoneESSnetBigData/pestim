@@ -1,3 +1,9 @@
+#' @title kummmer
+#' @description postestimates of
+#' @author David Salgado
+#' @export
+#'
+
 alphaPrior <- function(nMNOfrom, names, variation){
 
   nCells <- length(nMNOfrom)
