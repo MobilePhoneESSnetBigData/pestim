@@ -2,6 +2,20 @@
 #' @description estimates of the population conditional on their initial values
 #' @author David Salgado
 #'
+#'@param n number of values to generate
+#'
+#'@param N0 a numeric vector with the initial population estimates for each cell
+#'
+#'@param nMNOmat
+#'
+#'@param distNames a list of prior distribution names. It could contain the following names: 'unif', 'degen', 'triang' or 'gamma'
+#' 
+#'@param variation
+#'
+#'@return
+#'
+#'@import rmatProb.R
+#'
 #' @export
 #'
 

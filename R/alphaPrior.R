@@ -1,6 +1,13 @@
 #' @title kummmer
 #' @description postestimates of
 #' @author David Salgado
+#' 
+#' @param nMNOfrom
+#' 
+#' @param names a list of prior distribution names. It could contain the following names: 'unif', 'degen', 'triang' or 'gamma'
+#' 
+#' @param variation
+#' 
 #' @export
 #'
 

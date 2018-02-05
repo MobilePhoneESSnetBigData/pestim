@@ -11,7 +11,7 @@
 #'
 #' @param flambda named list with the prior distribution of the lambda parameter
 #'
-#' @param distNames ??
+#' @param distNames a list of prior distribution names. It could contain the following names: 'unif', 'degen', 'triang' or 'gamma'
 #'
 #' @param variation ??
 #'
