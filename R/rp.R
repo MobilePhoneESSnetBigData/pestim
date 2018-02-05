@@ -1,4 +1,4 @@
-#' @title kummmer
+#' @title rp
 #' @description postestimates of
 #' @author David Salgado
 #' @export
