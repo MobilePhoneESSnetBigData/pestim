@@ -1,5 +1,5 @@
-#' @title kummmer
-#' @description postestimates of
+#' @title alphaPrior
+#' @description generates values for ...
 #' @author David Salgado
 #' 
 #' @param nMNOfrom
