@@ -2,18 +2,6 @@
 #' @description estimates of the population conditional on their initial values
 #' @author David Salgado
 #'
-#' @param n
-#'
-#' @param N0 the initial number of population in each cell
-#'
-#' @param nMNOmat
-#'
-#' @param distNames
-#'
-#' @param variation
-#'
-#' @return \code{rNtcondN0} returns estimates of the population conditional on their initial values
-#'
 #' @export
 #'
 

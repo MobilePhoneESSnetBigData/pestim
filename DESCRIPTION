@@ -20,9 +20,9 @@ LinkingTo: Rcpp
 RoxygenNote: 6.0.1
 Collate: 
     'ratioBeta.R'
+    'RcppExports.R'
     'kummer.R'
     'Phi.R'
-    'RcppExports.R'
     'alphaPrior.R'
     'dBeta0EB.R'
     'dg.R'
@@ -36,11 +36,10 @@ Collate:
     'rlambda.R'
     'rN0.R'
     'postN0.R'
-    'rg.R'
-    'rmatProb.R'
-    'rp.R'   
     'rNt.R'
     'postNt.R'
-    'postNtcondN0.R'
     'rNtcondN0.R'
-
+    'postNtcondN0.R'
+    'rg.R'
+    'rmatProb.R'
+    'rp.R'

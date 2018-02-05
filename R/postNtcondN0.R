@@ -16,7 +16,7 @@
 #'
 #' @return
 #'
-#' @include rNtcondN0
+#' @include rNtcondN0.R
 #'
 #' @export
 #'
