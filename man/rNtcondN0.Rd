@@ -6,6 +6,20 @@
 \usage{
 rNtcondN0(n, N0, nMNOmat, distNames, variation)
 }
+\arguments{
+\item{n}{number of values to generate}
+
+\item{N0}{a numeric vector with the initial population estimates for each cell}
+
+\item{nMNOmat}{}
+
+\item{distNames}{a list of prior distribution names. It could contain the following names: 'unif', 'degen', 'triang' or 'gamma'}
+
+\item{variation}{}
+}
+\value{
+
+}
 \description{
 estimates of the population conditional on their initial values
 }

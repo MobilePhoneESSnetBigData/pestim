@@ -6,6 +6,13 @@
 \usage{
 alphaPrior(nMNOfrom, names, variation)
 }
+\arguments{
+\item{nMNOfrom}{}
+
+\item{names}{a list of prior distribution names. It could contain the following names: 'unif', 'degen', 'triang' or 'gamma'}
+
+\item{variation}{}
+}
 \description{
 postestimates of
 }

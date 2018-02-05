@@ -11,7 +11,7 @@ postNtcondN0(N0, nMNOmat, distNames, variation, n = 1000)
 
 \item{nMNOmat}{}
 
-\item{distNames}{}
+\item{distNames}{a list of prior distribution names. It could contain the following names: 'unif', 'degen', 'triang' or 'gamma'}
 
 \item{variation}{}
 

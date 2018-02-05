@@ -6,6 +6,18 @@
 \usage{
 rmatProb(n, nMNOmat, distNames, variation)
 }
+\arguments{
+\item{n}{}
+
+\item{nMNOmat}{}
+
+\item{distNames}{a list of prior distribution names. It could contain the following names: 'unif', 'degen', 'triang' or 'gamma'}
+
+\item{variation}{}
+}
+\value{
+
+}
 \description{
 postestimates of
 }
