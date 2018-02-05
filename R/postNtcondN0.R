@@ -1,6 +1,23 @@
-#' @title postNtcondN0
-#' @description postNtcondN0
+#' @title Time evolution of the posterior mean, median, and mode for the number of individuals conditional on their estimated initial values
+#' @description Compute the time evolution of the posterior mean, median, and mode for the number of individuals
+#' conditional on their estimated initial values, according to the hierarchical model.
 #' @author David Salgado
+#'
+#' @param N0 initial number of population in each cell
+#'
+#' @param nMNOmat
+#'
+#' @param distNames
+#'
+#' @param variation
+#'
+#' @param n number of points to generate in the posterior distribution for the computation. Default
+#' value is 1e3
+#'
+#' @return
+#'
+#' @include rNtcondN0
+#'
 #' @export
 #'
 
