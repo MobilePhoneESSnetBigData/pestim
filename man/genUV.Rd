@@ -2,10 +2,75 @@
 % Please edit documentation in R/genUV.R
 \name{genUV}
 \alias{genUV}
-\title{genUV}
+\title{Generation of two-dimensional random deviates.}
 \usage{
 genUV(nSim, nStrata, f1, f2, lambda, nMNO, nReg)
 }
-\author{
-David Salgado
+\arguments{
+\item{nSim}{number of two-dimensional points to generate}
+
+\item{nStrata}{integer vector of length 2 with the number of strata in each dimension}
+
+\item{f1, }{f2 named lists with the prior marginal distributions of the two-dimensional points}
+
+\item{lambda}{numeric vector}
+
+\item{nMNO, }{nReg non-negative integer vectors}
+}
+\value{
+\code{genUV} returns a \linkS4class{data.table} with the (u,v) coordinates of each point
+together with additional variables:
+
+ \itemize{
+
+   \item The common length of \code{nMNO} and \code{nReg} identifies the number of territorial
+   cells in which the number of individuals detected by the telecommunication network and
+   official data. The column \code{cellID} identifies these territorial cells.
+
+   \item The length of \code{lambda} identifies the number of parameters upon which the integral
+   will be computed in each cell. The column \code{parID} identifies each of these input
+   parameters.
+
+   \item \code{Stratum_u} and \code{Stratum_v} jointly identify each stratum in which the region
+   of integration has been divided with the stratification.
+ }
+}
+\description{
+Generate two-dimensional random deviates for a Monte Carlo computation of the
+integral \deqn{\int_{0}^{\infty}dv f_{2}(v)\int_{0}^{\infty} f_{1}(u)\ \Phi(u\cdot v, (1 - u)
+\cdot v; \lambda, N^{\textrm{MNO}}, N^{\textrm{Reg}}).}
+
+ The Monte Carlo technique makes use of stratified importance sampling.
+}
+\details{
+The lengths of the input vectors \code{nMNO} and \code{nReg} must be equal and
+independent of the length of the input vector \code{lambda}. Notice that \code{nSim} points are
+generated for each of the \code{length(nMNO)}\deq{\times}\code{length(lambda)} combinations so
+that the final \linkS4class{data.table} has \code{nSim}\deq{\times}\code{length(nMNO)}
+\deq{\times}\code{length(lambda)} rows.
+
+The prior distributions are specified as named lists where the first component of each list must
+be the name of distribution ('unif', 'triang', 'degen', 'gamma') and the rest components must be
+named according to the name of the parameters of the random generator of the corresponding
+distribution according to:
+
+  \itemize{
+
+    \item unif: \code{xMin}, \code{xMax} for the minimum, maximum of the sampled interval.
+    \item degen: \code{x0} for the degenerate value of the random variable.
+    \item triang: \code{xMin}, \code{xMax}, \code{xMode} for minimum, maximum and mode (see
+    \code{\link{qtriang}}).
+    \item gamma: \code{scale} and \code{shape} with the same meaning as in \code{\link{rgamma}}.
+  }
+}
+\examples{
+# This data.table must have 10x5x3= 150 rows and only one stratum
+genUV(nSim = 10, nStrata = c(1, 1),
+      f1 = list('unif', xMin = 0.3, xMax = 0.5), f2 = list('gamma', shape = 11, scale = 12),
+      lambda = seq(0, 1, length.out = 5),
+      nMNO = c(20, 17, 25), nReg = c(115, 123, 119))
+
+}
+\seealso{
+\code{\link{runif}}, \code{\link{qtriang}}, \code{\link{rgamma}} for related functions.
 }
