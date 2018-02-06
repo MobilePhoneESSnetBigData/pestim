@@ -6,6 +6,9 @@
 \usage{
 factorEB(beta0, nMNO, nReg, uMode, vMode)
 }
+\description{
+Used for testing purposes only
+}
 \author{
 David Salgado
 }

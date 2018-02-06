@@ -6,6 +6,9 @@
 \usage{
 factorBayes(beta0, nMNO, nReg, uMode, vMode, relTol = 0.01)
 }
+\description{
+used for testing purposes only
+}
 \author{
 David Salgado
 }

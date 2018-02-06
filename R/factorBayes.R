@@ -1,5 +1,5 @@
 #' @title factorBayes
-#' @description
+#' @description used for testing purposes only
 #' @author David Salgado
 #' @export
 #'

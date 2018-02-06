@@ -6,6 +6,9 @@
 \usage{
 dBeta0EB(beta0, nMNO, nReg, uMode, vMode, relTol = 0.01)
 }
+\description{
+use for testing purposes only
+}
 \author{
 David Salgado
 }

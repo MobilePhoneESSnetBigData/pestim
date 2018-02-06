@@ -1,5 +1,5 @@
 #' @title dBeta0EB
-#' @description
+#' @description use for testing purposes only
 #' @author David Salgado
 #' @export
 #'

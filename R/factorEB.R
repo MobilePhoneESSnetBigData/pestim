@@ -1,5 +1,5 @@
 #' @title factorEB
-#' @description
+#' @description Used for testing purposes only
 #' @author David Salgado
 #' @export
 #'
