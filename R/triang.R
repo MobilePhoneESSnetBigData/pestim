@@ -1,6 +1,6 @@
 #' @title The Triangular Distribution.
 #'
-#' @aliases dtriang, rtriang, qtriang, ptriang
+#' @aliases dtriang rtriang qtriang ptriang
 #'
 #' @description Density, distribution funtion, quantile function and random generation for the
 #' triangular distribution

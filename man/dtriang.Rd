@@ -2,9 +2,8 @@
 % Please edit documentation in R/triang.R
 \name{dtriang}
 \alias{dtriang}
-\alias{dtriang,}
-\alias{rtriang,}
-\alias{qtriang,}
+\alias{rtriang}
+\alias{qtriang}
 \alias{ptriang}
 \title{The Triangular Distribution.}
 \usage{
