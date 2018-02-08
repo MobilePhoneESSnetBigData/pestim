@@ -43,7 +43,7 @@ value is \code{c(1, 1e2)}}
 }
 \value{
 \code{postNt} computes the posterior mean, median, and mode of the posterior distribution
-for each cell at an arbitrary time $t$. The function returns a matrix with the estimates in
+for each cell at an arbitrary time \eqn{t}. The function returns a matrix with the estimates in
 columns and the cells in rows.
 }
 \description{
@@ -108,6 +108,6 @@ postNt(nMNOmat, nReg, fu, fv, flambda, distNames, variation)
 
 }
 \seealso{
-\code{\link{rN0}}
+\code{\link{rNt}}, \code{\link{postN0}}, \code{\link{postNtcondN0}}
 }
 

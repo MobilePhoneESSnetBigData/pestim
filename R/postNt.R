@@ -36,7 +36,7 @@
 #' @param verbose logical (default \code{FALSE}) to report progress of the computation
 #'
 #' @return \code{postNt} computes the posterior mean, median, and mode of the posterior distribution
-#' for each cell at an arbitrary time $t$. The function returns a matrix with the estimates in
+#' for each cell at an arbitrary time \eqn{t}. The function returns a matrix with the estimates in
 #' columns and the cells in rows.
 #'
 #' @details The prior distributions are specified as named lists where the first component of each
@@ -54,7 +54,7 @@
 #'   }
 
 #'
-#' @seealso \code{\link{rN0}}
+#' @seealso \code{\link{rNt}}, \code{\link{postN0}}, \code{\link{postNtcondN0}}
 #'
 #' @examples
 #' ## First, the inputs:
@@ -103,7 +103,8 @@
 postNt <- function(nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale = 1, n = 1e3,
                    relTol = 1e-6, nSim = 1e3, nStrata = c(1, 1e2), verbose = FALSE){
 
-  Ntmat <- rNt(n, nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale, relTol, nSim, nStrata, verbose)
+  Ntmat <- rNt(n, nMNOmat, nReg, fu, fv, flambda, distNames, variation,
+               scale, relTol, nSim, nStrata, verbose)
   postMean <- Ntmat[, round(mean(N)), by = c('cellID')]
   setnames(postMean, 'V1', 'value')
   postMean[, variable := 'postMean']

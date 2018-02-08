@@ -28,7 +28,7 @@
 #' @return \code{rg} generates \code{n} points according to the candidate distribution.
 #'
 #' @details The candidate distribution is a gamma distribution with parameters shape = \code{nMNO} +
-#' 1 and scale = \deq{\lambda^{*}} / \code{nMNO}, where \deq{\lambda^{*}} stands for the mode of the
+#' 1 and scale = \eqn{\lambda^{*}} / \code{nMNO}, where \eqn{\lambda^{*}} stands for the mode of the
 #' posterior distribution of the lambda parameter.
 #'
 #' It is important to know that currently this function accepts only parameters for a single cell at
