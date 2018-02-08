@@ -69,3 +69,4 @@ hist(rN0(500, nMNO = 20, nReg = 115, fu = list('unif', xMin = 0.3, xMax = 0.5),
 \seealso{
 \code{\link{dlambda}}, \code{\link{rg}} for related functions.
 }
+

@@ -29,3 +29,4 @@ ratioBeta(1:3, 3:1, c(2, 3), 4)
 \seealso{
 \code{\link{beta}}, \code{\link{lbeta}} for related functions.
 }
+
