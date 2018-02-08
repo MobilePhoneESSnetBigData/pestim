@@ -105,3 +105,4 @@ curve(f, xlim = c(0, 150))
 \seealso{
 \code{\link{genUV}}, \code{\link{Phi}} for related functions.
 }
+
