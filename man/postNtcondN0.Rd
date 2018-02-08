@@ -2,18 +2,21 @@
 % Please edit documentation in R/postNtcondN0.R
 \name{postNtcondN0}
 \alias{postNtcondN0}
-\title{Time evolution of the posterior mean, median, and mode for the number of individuals conditional on their estimated initial values}
+\title{Posterior mean, median, and mode for the number of individuals at an arbitrary time
+conditioned upon the initial population.}
 \usage{
 postNtcondN0(N0, nMNOmat, distNames, variation, n = 1000)
 }
 \arguments{
-\item{N0}{initial number of population in each cell}
+\item{N0}{initial population in each cell}
 
-\item{nMNOmat}{}
+\item{nMNOmat}{transition matrix with the number of individuals displaced from cell to cell
+detected by the Mobile Network Operator}
 
-\item{distNames}{a list of prior distribution names. It could contain the following names: 'unif', 'degen', 'triang' or 'gamma'}
+\item{distNames}{character vector with the names of the prior distributions for each cell}
 
-\item{variation}{}
+\item{variation}{list of lists whose components are parameters providing a measure of variation
+of each prior distribution}
 
 \item{n}{number of points to generate in the posterior distribution for the computation. Default
 value is 1e3}
@@ -22,9 +25,25 @@ value is 1e3}
 
 }
 \description{
-Compute the time evolution of the posterior mean, median, and mode for the number of individuals
-conditional on their estimated initial values, according to the hierarchical model.
+Compute the posterior mean, median, and mode for the number of individuals
+generating posterior distribution according to the hierarchical model conditioned upon the
+initial population of each cell, which must be provided
 }
-\author{
-David Salgado
+\examples{
+## First, the inputs:
+
+# The initial population
+N0 <- c(93, 123, 130)
+
+#The transition matrix of individuals detected by the MNO
+nMNOmat <- rbind(c(10, 3, 4), c(5, 21, 3), c(3, 9, 18))
+
+# Names and parameters of priors for the transition probabilities
+distNames <- rep('unif', 3)
+variation <- rep(list(list(cv = 0.20)), 3)
+
+# It takes a couple of minutes.
+postNtcondN0(N0, nMNOmat, distNames, variation)
+
 }
+

@@ -74,3 +74,4 @@ genUV(nSim = 10, nStrata = c(1, 1),
 \seealso{
 \code{\link{runif}}, \code{\link{qtriang}}, \code{\link{rgamma}} for related functions.
 }
+
