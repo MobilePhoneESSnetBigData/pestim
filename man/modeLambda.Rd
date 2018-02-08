@@ -71,3 +71,4 @@ modeLambda(nMNO = c(20, 17, 25), nReg = c(115, 123, 119),
 \seealso{
 \code{\link{dlambda}} for the function to maximize.
 }
+
