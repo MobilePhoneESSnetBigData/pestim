@@ -2,13 +2,42 @@
 % Please edit documentation in R/rp.R
 \name{rp}
 \alias{rp}
-\title{rp}
+\title{Generate random vector deviates of transition probabilities.}
 \usage{
 rp(n, flist)
 }
-\description{
-postestimates of
+\arguments{
+\item{n}{number of probability vectors to generate}
+
+\item{flist}{list with the prior distributions for each cell}
 }
-\author{
-David Salgado
+\value{
+Return a matrix with \code{n} rows and as many columns as cells taken from the length of
+\code{flist}. Each row is thus a probability vector
+}
+\description{
+Generate random vector deviates of the transition probabilities
+\deq{p_{ij}(t_{0}, t_{n})} for a given cell \deq{i} stacked into an \deq{n\times\textrm{number of
+cells}} matrix
+}
+\details{
+The prior distributions are specified as named lists where the first component of each list must
+be the name of distribution ('unif', 'triang', 'degen', 'gamma') and the rest components must be
+named according to the name of the parameters of the random generator of the corresponding
+distribution according to:
+
+  \itemize{
+
+    \item unif: \code{xMin}, \code{xMax} for the minimum, maximum of the sampled interval.
+    \item degen: \code{x0} for the degenerate value of the random variable.
+    \item triang: \code{xMin}, \code{xMax}, \code{xMode} for minimum, maximum and mode (see
+    \code{\link{qtriang}}).
+    \item gamma: \code{scale} and \code{shape} with the same meaning as in \code{\link{rgamma}}.
+  }
+}
+\examples{
+flist <- alphaPrior(c(10, 3, 4), c('unif', 'triang', 'gamma'),
+       list(list(cv = 0.1), list(cv = 0.05), list(cv = 0.15)))
+rp(10, flist)
+
 }

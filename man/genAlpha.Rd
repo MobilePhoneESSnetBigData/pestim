@@ -22,7 +22,21 @@ Generate a matrix of values of the parameters \eqn{\alpha_{ij}(t_{0}, t_{n})} of
 }
 \details{
 This function generates the \code{nSim} random values according to the prior of each
-cell specified in \code{flist}
+cell specified in \code{flist}.
+
+The prior distributions are specified as named lists where the first component of each list must
+be the name of distribution ('unif', 'triang', 'degen', 'gamma') and the rest of components must
+be named according to the name of the parameters of the random generator of the corresponding
+distribution according to:
+
+  \itemize{
+
+    \item unif: \code{xMin}, \code{xMax} for the minimum, maximum of the sampled interval.
+    \item degen: \code{x0} for the degenerate value of the random variable.
+    \item triang: \code{xMin}, \code{xMax}, \code{xMode} for minimum, maximum and mode (see
+    \code{\link{qtriang}}).
+    \item gamma: \code{scale} and \code{shape} with the same meaning as in \code{\link{rgamma}}.
+  }
 }
 \examples{
 priors <- alphaPrior(c(10, 3, 4), c('unif', 'triang', 'gamma'), list(list(cv = 0.1), list(cv = 0.05), list(cv = 0.15)))

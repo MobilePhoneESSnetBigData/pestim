@@ -38,7 +38,7 @@
 #' @seealso \code{\link{modeLambda}}, \code{\link{dlambda}} for related functions.
 #'
 #' @examples
-#' hist(rg(1e6, nMNO = 20, nReg = 115, fu = list('unif', xMin = 0.3, xMax = 0.5),
+#' hist(rg(1e5, nMNO = 20, nReg = 115, fu = list('unif', xMin = 0.3, xMax = 0.5),
 #'         fv = list('unif', xMin = 100, xMax = 120),
 #'         flambda = list('gamma', shape = 11, scale = 12)), breaks = seq(1, 200, by = 2), main ='')
 #'

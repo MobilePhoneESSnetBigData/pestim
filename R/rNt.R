@@ -56,8 +56,8 @@
 #' scale}, where the values of \code{lambda} are generated with the function \code{\link{rlambda}}.
 #'
 #' The prior distributions are specified as named lists where the first component of each list must
-#' be the name of distribution ('unif', 'triang', 'degen', 'gamma') and the rest components must be
-#' named according to the name of the parameters of the random generator of the corresponding
+#' be the name of distribution ('unif', 'triang', 'degen', 'gamma') and the rest of components must
+#'  be named according to the name of the parameters of the random generator of the corresponding
 #' distribution according to:
 #'
 #'   \itemize{
