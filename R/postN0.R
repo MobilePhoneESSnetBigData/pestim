@@ -1,7 +1,7 @@
-#' @title Posterior mean, median, and mode for the number of individuals.
+#' @title Posterior mean, median, and mode for the number of individuals at the initial time.
 #'
 #' @description Compute the posterior mean, median, and mode for the number of individuals
-#' generating posterior distribution according to the hierarchical model.
+#' generating posterior distribution according to the hierarchical model at the initial time instant
 #'
 #' @param nMNO, nReg non-negative integer vectors with the number of individuals detected in each
 #' cell according to the network operator and the register
@@ -30,10 +30,10 @@
 #' @return \code{postN0} computes the posterior mean, median, and mode of the posterior distribution
 #' for each cell. The function returns a matrix with the estimates in columns and the cells in rows.
 #'
-#' @details The prior distributions are specified as named lists where the first component of each list must
-#' be the name of distribution ('unif', 'triang', 'degen', 'gamma') and the rest components must be
-#' named according to the name of the parameters of the random generator of the corresponding
-#' distribution according to:
+#' @details The prior distributions are specified as named lists where the first component of each
+#' list must be the name of distribution ('unif', 'triang', 'degen', 'gamma') and the rest of
+#' components must be named according to the name of the parameters of the random generator of the
+#' corresponding distribution according to:
 #'
 #'   \itemize{
 #'
@@ -56,7 +56,8 @@
 #' @include rN0.R
 #'
 #' @export
-postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-8, nSim = 1e3, nStrata = c(1, 1e2), verbose = FALSE){
+postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-8, nSim = 1e3,
+                   nStrata = c(1, 1e2), verbose = FALSE){
 
   nCells <- length(nMNO)
   if (length(nReg) != nCells) stop('nReg and nMNO must have the same length.')
@@ -74,7 +75,8 @@ postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-
 
     output <- lapply(seq(along = nMNO), function(i){
 
-      postN0(nMNO[i], nReg[i], fu[[i]], fv[[i]], flambda[[i]], n, scale, relTol, nSim, nStrata, verbose)
+      postN0(nMNO[i], nReg[i], fu[[i]], fv[[i]], flambda[[i]],
+             n, scale, relTol, nSim, nStrata, verbose)
 
     })
     output <- Reduce(rbind, lapply(output, rbind))

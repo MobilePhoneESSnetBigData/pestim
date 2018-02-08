@@ -2,21 +2,28 @@
 % Please edit documentation in R/postNt.R
 \name{postNt}
 \alias{postNt}
-\title{Time evolution of the posterior mean, median, and mode for the number of individuals unconditional on their estimated initial values}
+\title{Posterior mean, median, and mode for the number of individuals at an arbitrary time.}
 \usage{
 postNt(nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale = 1,
-  n = 1000, relTol = 1e-05, nSim = 1000, nStrata = c(1, 100),
+  n = 1000, relTol = 1e-06, nSim = 1000, nStrata = c(1, 100),
   verbose = FALSE)
 }
 \arguments{
-\item{nMNOmat}{??}
+\item{nMNOmat}{transition matrix with the number of individuals displaced from cell to cell
+detected by the Mobile Network Operator}
 
-\item{nReg}{??}
+\item{nReg}{non-negative integer vector with the number of individuals detected in each
+cell according to the population register}
 
 \item{fu, }{fv named lists with the prior marginal distributions of the two-dimensional points
 for the Monte Carlo integration}
 
 \item{flambda}{named list with the prior distribution of the lambda parameter}
+
+\item{distNames}{character vector with the names of the prior distributions for each cell}
+
+\item{variation}{list of lists whose components are parameters providing a measure of variation
+of each prior distribution}
 
 \item{scale}{numeric vector with the scale to count the number of individuals. Default value is 1}
 
@@ -24,10 +31,10 @@ for the Monte Carlo integration}
 value is 1e3}
 
 \item{relTol}{relative tolerance in the computation of the \code{\link{kummer}} function. Default
-value is \code{1e-5}}
+value is \code{1e-6}}
 
 \item{nSim}{number of two-dimensional points to generate to compute the integral. Default value
-is \code{1e3}}
+is \code{1e4}}
 
 \item{nStrata}{integer vector of length 2 with the number of strata in each dimension. Default
 value is \code{c(1, 1e2)}}
@@ -36,17 +43,18 @@ value is \code{c(1, 1e2)}}
 }
 \value{
 \code{postNt} computes the posterior mean, median, and mode of the posterior distribution
-for each cell. The function returns a matrix with the estimates in columns and the cells in rows.
+for each cell at an arbitrary time $t$. The function returns a matrix with the estimates in
+columns and the cells in rows.
 }
 \description{
-Compute the time evolution of the posterior mean, median, and mode for the number of individuals
-unconditional on their estimated initial values, but starting from the input data themselves.
+Compute the posterior mean, median, and mode for the number of individuals
+generating posterior distribution according to the hierarchical model.
 }
 \details{
-The prior distributions are specified as named lists where the first component of each list must
-be the name of distribution ('unif', 'triang', 'degen', 'gamma') and the rest components must be
-named according to the name of the parameters of the random generator of the corresponding
-distribution according to:
+The prior distributions are specified as named lists where the first component of each
+list must be the name of distribution ('unif', 'triang', 'degen', 'gamma') and the rest of
+components must be named according to the name of the parameters of the random generator of the
+corresponding distribution according to:
 
   \itemize{
 
@@ -58,11 +66,48 @@ distribution according to:
   }
 }
 \examples{
+## First, the inputs:
+
+#The transition matrix of individuals detected by the MNO
+nMNOmat <- rbind(c(10, 3, 4), c(5, 21, 3), c(3, 9, 18))
+
+# Population at the initial time of each cell according to the population register
+nReg <- c(90, 130, 101)
+
+# List of priors for u
+u0 <- rowSums(nMNOmat) / nReg
+cv_u0 <- 0.15
+fu <- lapply(u0, function(u){
+ umin <- max(0, u - cv_u0 * u)
+ umax <- min(1, u + cv_u0 * u)
+ output <- list('unif', xMin = umin, xMax = umax)
+ return(output)
+})
+
+# List of priors for v
+v0 <- nReg
+cv_v0 <- 0.10
+fv <- lapply(v0, function(u){
+  umin <- max(0, u - cv_v0 * u)
+  umax <- u + cv_v0 * u
+  output <- list('unif', xMin = umin, xMax = umax)
+  return(output)
+})
+
+# List of priors for lambda
+cv_lambda <- 0.6
+alpha <- 1 / cv_lambda**2 - 1
+flambda <- lapply(v0, function(v){list('gamma', shape = 1 + alpha, scale = v / alpha)})
+
+# Names and parameters of priors for the transition probabilities
+distNames <- rep('unif', 3)
+variation <- rep(list(list(cv = 0.20)), 3)
+
+# It takes a couple of minutes.
+postNt(nMNOmat, nReg, fu, fv, flambda, distNames, variation)
 
 }
 \seealso{
-\code{\link{rNt}}
+\code{\link{rN0}}
 }
-\author{
-David Salgado
-}
+
