@@ -15,6 +15,9 @@ the rest of cells (including those remaining)}
 \item{variation}{list of lists whose components are parameters providing a measure of variation
 of each prior distribution}
 }
+\value{
+Return a list with a list in each component specifying the prior for each cell
+}
 \description{
 Generate a list of prior distributions for the parameters of the Dirichlet
 distribution in the hierarchical model. Each component of the list corresponds to the prior

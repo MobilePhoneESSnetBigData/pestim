@@ -1,9 +1,26 @@
-#' @title kummmer
-#' @description postestimates of
-#' @author David Salgado
-#' @export
+#' @title Generate values for the parameters of the Dirichlet distribution.
 #'
-
+#' @description Generate a matrix of values of the parameters \eqn{\alpha_{ij}(t_{0}, t_{n})} of the
+#'  Dirichlet distribution in the hierarchical model. This function initial works over a fixed
+#'  initial cell \eqn{i} under study.
+#'
+#' @param nSim number of values to generate
+#'
+#' @param flist list with the prior distributions for each cell
+#'
+#' @return Return a matrix with as many columns as cells and as many rows as number of generated
+#' values
+#'
+#' @details This function generates the \code{nSim} random values according to the prior of each
+#' cell specified in \code{flist}
+#'
+#' @include alphaPrior.R
+#'
+#' @examples
+#' priors <- alphaPrior(c(10, 3, 4), c('unif', 'triang', 'gamma'), list(list(cv = 0.1), list(cv = 0.05), list(cv = 0.15)))
+#' genAlpha(10, priors)
+#'
+#' @export
 genAlpha <- function(nSim, flist){
 
   nCells <- length(flist)

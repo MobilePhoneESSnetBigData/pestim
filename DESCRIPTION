@@ -30,8 +30,6 @@ Collate:
     'dg.R'
     'triang.R'
     'dlambda.R'
-    'factorBayes.R'
-    'factorEB.R'
     'genAlpha.R'
     'genUV.R'
     'modeLambda.R'

@@ -15,6 +15,8 @@
 #' @param variation list of lists whose components are parameters providing a measure of variation
 #' of each prior distribution
 #'
+#' @return Return a list with a list in each component specifying the prior for each cell
+#'
 #' @details The function takes the number of cells from the input parameter \code{nMNOfrom} which
 #' specifies the number of individuals detected by the network moving from the initial cell to each
 #' of the cells (including those remaining in the same). The function executes the same construction
