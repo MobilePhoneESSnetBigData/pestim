@@ -1,5 +1,4 @@
-#' @title Generation of random deviates of the posterior distribution of the number of individuals
-#' at the initial time instant.
+#' @title Generation of random deviates of the posterior distribution of initial population counts.
 #'
 #' @description Generate random points according to the posterior probability distribution of the
 #' number of individuals in the hierarchical model.
