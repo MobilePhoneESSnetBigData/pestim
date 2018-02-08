@@ -2,7 +2,8 @@
 % Please edit documentation in R/rN0.R
 \name{rN0}
 \alias{rN0}
-\title{Generation of random deviates of the posterior distribution of the number of individuals.}
+\title{Generation of random deviates of the posterior distribution of the number of individuals
+at the initial time instant.}
 \usage{
 rN0(n, nMNO, nReg, fu, fv, flambda, scale = 1, relTol = 1e-06,
   nSim = 10000, nStrata = c(1, 100), verbose = FALSE)
@@ -81,6 +82,6 @@ hist(rN0(500, nMNO = 20, nReg = 115, fu = list('unif', xMin = 0.3, xMax = 0.5),
 
 }
 \seealso{
-\code{\link{dlambda}}, \code{\link{rg}} for related functions.
+\code{\link{rlambda}}, \code{\link{rg}}, \code{\link{rNt}} for related functions.
 }
 

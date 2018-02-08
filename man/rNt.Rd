@@ -2,32 +2,38 @@
 % Please edit documentation in R/rNt.R
 \name{rNt}
 \alias{rNt}
-\title{Estimates unconditioned on the initial estimate of the population in each cell}
+\title{Generation of random deviates of the posterior distribution of the number of individuals
+at an arbitrary time instant.}
 \usage{
 rNt(n, nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale = 1,
-  relTol = 1e-05, nSim = 1000, nStrata = c(1, 100), verbose = FALSE)
+  relTol = 1e-06, nSim = 1000, nStrata = c(1, 100), verbose = FALSE)
 }
 \arguments{
 \item{n}{number of values to generate}
 
-\item{nMNOmat}{}
+\item{nMNOmat}{transition matrix with the number of individuals displaced from cell to cell
+detected by the Mobile Network Operator}
+
+\item{nReg}{non-negative integer vectors with the number of individuals detected in each
+cell according to the network operator and the register}
 
 \item{fu, }{fv named lists with the prior marginal distributions of the two-dimensional points
 for the Monte Carlo integration}
 
 \item{flambda}{named list with the prior distribution of the lambda parameter}
 
-\item{distNames}{a list of prior distribution names. It could contain the following names: 'unif', 'degen', 'triang' or 'gamma'}
+\item{distNames}{character vector with the names of the prior distributions for each cell}
 
-\item{variation}{??}
+\item{variation}{list of lists whose components are parameters providing a measure of variation
+of each prior distribution}
 
 \item{scale}{numeric vector with the scale to count the number of individuals. Default value is 1}
 
 \item{relTol}{relative tolerance in the computation of the \code{\link{kummer}} function. Default
-value is \code{1e-5}}
+value is \code{1e-6}}
 
 \item{nSim}{number of two-dimensional points to generate to compute the integral. Default value
-is \code{1e3}}
+is \code{1e4}}
 
 \item{nStrata}{integer vector of length 2 with the number of strata in each dimension. Default
 value is \code{c(1, 1e2)}}
@@ -54,7 +60,8 @@ together with the additional variables:
  }
 }
 \description{
-estimates unconditioned on the initial estimate of the population in each cell
+Generate random points according to the posterior probability distribution of the
+number of individuals in the hierarchical model at arbitrary time instants.
 }
 \details{
 The posterior distribution is a Poisson distribution with parameter \code{lambda *
@@ -75,12 +82,51 @@ distribution according to:
   }
 }
 \examples{
+## First, the inputs:
+# The number of generated values
+n <- 1e3
+
+#The transition matrix of individuals detected by the MNO
+nMNOmat <- rbind(c(10, 3, 4), c(5, 21, 3), c(3, 9, 18))
+
+# Population at the initial time of each cell according to the population register
+nReg <- c(90, 130, 101)
+
+# List of priors for u
+u0 <- rowSums(nMNOmat) / nReg
+cv_u0 <- 0.15
+fu <- lapply(u0, function(u){
+ umin <- max(0, u - cv_u0 * u)
+ umax <- min(1, u + cv_u0 * u)
+ output <- list('unif', xMin = umin, xMax = umax)
+ return(output)
+})
+
+# List of priors for v
+v0 <- nReg
+cv_v0 <- 0.10
+fv <- lapply(v0, function(u){
+  umin <- max(0, u - cv_v0 * u)
+  umax <- u + cv_v0 * u
+  output <- list('unif', xMin = umin, xMax = umax)
+  return(output)
+})
+
+# List of priors for lambda
+cv_lambda <- 0.6
+alpha <- 1 / cv_lambda**2 - 1
+flambda <- lapply(v0, function(v){list('gamma', shape = 1 + alpha, scale = v / alpha)})
+
+# Names and parameters of priors for the transition probabilities
+distNames <- rep('unif', 3)
+variation <- rep(list(list(cv = 0.20)), 3)
+
+# The output
+hist(rNt(n, nMNOmat, nReg, fu, fv, flambda, distNames, variation)$N,
+        breaks = seq(1, 200, by = 1), main ='', xlab = 'number of individuals')
 
 }
 \seealso{
-\code{\link{dlambda}}, \code{\link{rg}} for related functions.
+\code{\link{rlambda}}, \code{\link{rg}}, \code{\link{rNt}} for related functions.
 }
-\author{
-David Salgado
-#'
-}
+

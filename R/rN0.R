@@ -1,4 +1,5 @@
-#' @title Generation of random deviates of the posterior distribution of the number of individuals.
+#' @title Generation of random deviates of the posterior distribution of the number of individuals
+#' at the initial time instant.
 #'
 #' @description Generate random points according to the posterior probability distribution of the
 #' number of individuals in the hierarchical model.
@@ -62,7 +63,7 @@
 #'   }
 
 #'
-#' @seealso \code{\link{dlambda}}, \code{\link{rg}} for related functions.
+#' @seealso \code{\link{rlambda}}, \code{\link{rg}}, \code{\link{rNt}} for related functions.
 #'
 #' @examples
 #' # It takes a couple of minutes
