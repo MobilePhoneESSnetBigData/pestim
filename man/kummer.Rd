@@ -2,13 +2,28 @@
 % Please edit documentation in R/kummer.R
 \name{kummer}
 \alias{kummer}
-\title{kummmer}
+\title{Confluent hypergeometric or Kummer function}
 \usage{
 kummer(x, a, b, relTol = 1e-06)
 }
+\arguments{
+\item{x, }{a, b numeric vectors of the same length}
+
+\item{relTol}{relative tolerance (default value \code{1e-6}) understood as the ratio of each term
+in the series relative to the sum}
+}
+\value{
+Return a numeric vector with the values of the function
+}
 \description{
-a function
+Partial implementation of the confluent hypergeometric function
+\eqn{{}_{1}F_{1}(x ; a; b)}
+}
+\details{
+This function is implemented in C++. It is based on Pearson et al (2016). It only
+implements the Taylor series method together with an asymtoptic expansion based on Watson's lemma
 }
 \author{
-David Salgado, Bogdan Oancea
+Luis Sanguiao, Bogdan Oancea
 }
+
