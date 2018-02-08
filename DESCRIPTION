@@ -2,9 +2,9 @@ Package: pestim
 Type: Package
 Title: Population Estimations Using Mobile Phone Data
 Version: 0.1.0
-Author: David Salgado @R: c( person("David", "Salgado", email =
-    "david.Salgado.fernandez@gmail.com", role = c("aut", "cre")), 
-    person("Bogdan", "Oancea", email = "bogdan.oancea@gmail.com", role = c("cre", ctb")))
+Authors@R: c(person("David", "Salgado", email = "david.Salgado.fernandez@gmail.com", 
+    role = c("aut", "cre")), 
+    person("Bogdan", "Oancea", email = "bogdan.oancea@gmail.com", role = c("ctb")))
 Description: This package contains functions that implement a simple
     hierarchical model to estimate the population counts of different territorial
     cells combining the information from aggregated mobile phone data and a
@@ -13,12 +13,11 @@ License: GPL2
 Encoding: UTF-8
 LazyData: true
 Depends:
-    data.table,
+    R (>= 3.3.0)
+Imports:
+    data.table (>= 1.10.4),
     Rcpp (>= 0.12.12),
     MCMCpack (>= 1.4-2)
-Imports:
-    data.table,
-    Rcpp (>= 0.12.12)
 LinkingTo: Rcpp
 RoxygenNote: 6.0.1
 Collate:

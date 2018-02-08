@@ -67,6 +67,7 @@ of the cells (including those remaining in the same). The function executes the 
 }
 \examples{
 # Three cells. Cell 1 under study. 10 individuals remain.
-alphaPrior(c(10, 3, 4), c('unif', 'triang', 'gamma'), list(list(cv = 0.1), list(cv = 0.05), list(cv = 0.15)))
+alphaPrior(c(10, 3, 4), c('unif', 'triang', 'gamma'),
+           list(list(cv = 0.1), list(cv = 0.05), list(cv = 0.15)))
 
 }

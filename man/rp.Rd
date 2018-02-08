@@ -17,7 +17,7 @@ Return a matrix with \code{n} rows and as many columns as cells taken from the l
 }
 \description{
 Generate random vector deviates of the transition probabilities
-\deq{p_{ij}(t_{0}, t_{n})} for a given cell \deq{i} stacked into an \deq{n\times}(number of cells)
+\eqn{p_{ij}(t_{0}, t_{n})} for a given cell \eqn{i} stacked into an \eqn{n\times}(number of cells)
  matrix
 }
 \details{

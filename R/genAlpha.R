@@ -32,7 +32,8 @@
 #' @include alphaPrior.R
 #'
 #' @examples
-#' priors <- alphaPrior(c(10, 3, 4), c('unif', 'triang', 'gamma'), list(list(cv = 0.1), list(cv = 0.05), list(cv = 0.15)))
+#' priors <- alphaPrior(c(10, 3, 4), c('unif', 'triang', 'gamma'),
+#'                      list(list(cv = 0.1), list(cv = 0.05), list(cv = 0.15)))
 #' genAlpha(10, priors)
 #'
 #' @export
