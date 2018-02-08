@@ -26,7 +26,6 @@ Collate:
     'Phi.R'
     'RcppExports.R'
     'alphaPrior.R'
-    'dBeta0EB.R'
     'data.R'
     'dg.R'
     'triang.R'

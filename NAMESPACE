@@ -2,7 +2,6 @@
 
 export(Phi)
 export(alphaPrior)
-export(dBeta0EB)
 export(dg)
 export(dlambda)
 export(dtriang)

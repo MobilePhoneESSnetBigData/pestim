@@ -2,7 +2,7 @@
 % Please edit documentation in R/dg.R
 \name{dg}
 \alias{dg}
-\title{Density function of the candidate distribution.}
+\title{Density function of a candidate distribution in the accept-reject method.}
 \usage{
 dg(lambda, nMNO, nReg, fu, fv, flambda, relTol = 1e-06, nSim = 10000,
   nStrata = c(1, 100), verbose = FALSE)
@@ -34,7 +34,7 @@ value is \code{c(1, 1e2)}}
 the candidate distribution in the accept-reject method.
 }
 \description{
-Generate values of the candidate distribution density function in the accept-reject
+Generate values of a candidate distribution density function in the accept-reject
 method of generation of random variables applied to the distribution of the lambda parameter
 }
 \details{
@@ -56,3 +56,4 @@ curve(dg(x, nMNO = 20, nReg = 115, fu = list('unif', xMin = 0.3, xMax = 0.5),
 \seealso{
 \code{\link{modeLambda}}, \code{\link{dlambda}} for related functions.
 }
+
