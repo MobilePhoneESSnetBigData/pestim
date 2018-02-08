@@ -2,6 +2,10 @@
 % Please edit documentation in R/triang.R
 \name{dtriang}
 \alias{dtriang}
+\alias{dtriang,}
+\alias{ptriang}
+\alias{qtriang,}
+\alias{rtriang,}
 \title{The Triangular Distribution.}
 \usage{
 dtriang(x, xMin, xMax, xMode)
@@ -40,3 +44,4 @@ hist(rtriang(1e6, 0, 3, 1), breaks = seq(0, 3, by = 0.01))
 \seealso{
 \code{\link{Distributions}} for other distributions
 }
+
