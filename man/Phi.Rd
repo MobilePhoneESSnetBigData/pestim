@@ -37,3 +37,4 @@ Phi(1:4, 4:1, c(2, 3), c(4, 3, 1))
 \seealso{
 \code{\link{ratioBeta}}, \code{\link{kummer}} for related functions.
 }
+
