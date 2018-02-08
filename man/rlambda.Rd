@@ -28,8 +28,6 @@ is \code{1e4}}
 value is \code{c(1, 1e2)}}
 
 \item{verbose}{logical (default \code{FALSE}) to report progress of the computation}
-
-\item{scale}{numeric vector with the scale to count the number of individuals. Default value is 1}
 }
 \value{
 \code{rlambda} generates \code{n} points according to the posterior distribution of

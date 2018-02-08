@@ -1,7 +1,5 @@
 #' @title The Triangular Distribution.
 #'
-#' @aliases dtriang rtriang qtriang ptriang
-#'
 #' @description Density, distribution funtion, quantile function and random generation for the
 #' triangular distribution
 #'
@@ -31,6 +29,8 @@
 #' curve(qtriang(x, 0, 3, 1), xlim = c(0, 1))
 #' hist(rtriang(1e6, 0, 3, 1), breaks = seq(0, 3, by = 0.01))
 #'
+#'
+#' @aliases dtriang
 #' @export
 #'
 
@@ -54,6 +54,9 @@ dtriang <- function(x, xMin, xMax, xMode){
   return(output)
 }
 
+#' @aliases ptriang
+#'
+#' @export
 ptriang <- function(q, xMin, xMax, xMode){
 
   if (any(xMin > xMax)) stop('xMax must be greater than xMin.')
@@ -73,6 +76,9 @@ ptriang <- function(q, xMin, xMax, xMode){
   output[range2] <- 1 - ((output[range2] - xMax[range2])^2) / ((xMax[range2] - xMin[range2]) * (xMax[range2] - xMode[range2]))
   return(output)
 }
+#' @aliases qtriang
+#'
+#' @export
 
 qtriang <- function(q, xMin, xMax, xMode){
 
@@ -91,6 +97,9 @@ qtriang <- function(q, xMin, xMax, xMode){
   output[range2] <- xMax[range2] - sqrt((1 - q[range2]) * (xMax[range2] - xMin[range2]) * (xMax[range2] - xMode[range2]))
   return(output)
 }
+#' @aliases rtriang
+#'
+#' @export
 
 rtriang <- function(n, xMin, xMax, xMode){
 

@@ -13,10 +13,10 @@
 #' @details This function is implemented in C++. It is based on Pearson et al (2016). It only
 #' implements the Taylor series method together with an asymtoptic expansion based on Watson's lemma
 #'
-#' @author Luis Sanguiao, Bogdan Oancea
+#' @author Luis Sanguiao Bogdan Oancea
 #'
 #' @useDynLib pestim
-#'
+#' @importFrom Rcpp sourceCpp
 #' @export
 kummer <- function(x, a, b, relTol = 1e-6){
 

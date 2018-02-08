@@ -13,8 +13,6 @@
 #'
 #' @param flambda named list with the prior distribution of the lambda parameter
 #'
-#' @param scale numeric vector with the scale to count the number of individuals. Default value is 1
-#'
 #' @param relTol relative tolerance in the computation of the \code{\link{kummer}} function. Default
 #' value is \code{1e-6}
 #'

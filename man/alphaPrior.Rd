@@ -54,7 +54,7 @@ of the cells (including those remaining in the same). The function executes the 
  \item \code{degen}: This is the degenerate distribution with parameter \code{X0} taken as
  \eqn{u_{j}^{*}} in each cell \eqn{j}.
 
- \item \code{triang}: This is the triangular distribution \code{\link{triang}} with parameters
+ \item \code{triang}: This is the triangular distribution \code{\link{dtriang}} with parameters
  \code{xMax}, \code{xMin}, and \code{xMode}. The latter is taken directly from \code{nMNOfrom}.
  The distribution is assumed to be symmetrical so that the two former parameters are computed by
  \eqn{u_{j}^{*}\cdot(1\pm\sqrt{3}\textrm{cv})}, respectively, in each cell \eqn{j}.

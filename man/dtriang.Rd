@@ -2,9 +2,6 @@
 % Please edit documentation in R/triang.R
 \name{dtriang}
 \alias{dtriang}
-\alias{rtriang}
-\alias{qtriang}
-\alias{ptriang}
 \title{The Triangular Distribution.}
 \usage{
 dtriang(x, xMin, xMax, xMode)
@@ -38,6 +35,7 @@ curve(dtriang(x, 0, 3, 1), xlim = c(0, 3))
 curve(ptriang(x, 0, 3, 1), xlim = c(0, 3))
 curve(qtriang(x, 0, 3, 1), xlim = c(0, 1))
 hist(rtriang(1e6, 0, 3, 1), breaks = seq(0, 3, by = 0.01))
+
 
 }
 \seealso{

@@ -121,8 +121,8 @@ distNames <- rep('unif', 3)
 variation <- rep(list(list(cv = 0.20)), 3)
 
 # The output
-hist(rNt(n, nMNOmat, nReg, fu, fv, flambda, distNames, variation)$N,
-        breaks = seq(1, 200, by = 1), main ='', xlab = 'number of individuals')
+Nt <- rNt(n, nMNOmat, nReg, fu, fv, flambda, distNames, variation)$N
+hist(Nt, breaks = seq(1, max(Nt) + 10, by = 1), main ='', xlab = 'number of individuals')
 
 }
 \seealso{

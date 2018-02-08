@@ -24,5 +24,5 @@ This function is implemented in C++. It is based on Pearson et al (2016). It onl
 implements the Taylor series method together with an asymtoptic expansion based on Watson's lemma
 }
 \author{
-Luis Sanguiao, Bogdan Oancea
+Luis Sanguiao Bogdan Oancea
 }
