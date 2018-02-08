@@ -35,9 +35,9 @@
 #'
 #' @details The lengths of the input vectors \code{nMNO} and \code{nReg} must be equal and
 #' independent of the length of the input vector \code{lambda}. Notice that \code{nSim} points are
-#' generated for each of the \code{length(nMNO)}\deq{\times}\code{length(lambda)} combinations so
-#' that the final \linkS4class{data.table} has \code{nSim}\deq{\times}\code{length(nMNO)}
-#' \deq{\times}\code{length(lambda)} rows.
+#' generated for each of the \code{length(nMNO)}\eqn{\times}\code{length(lambda)} combinations so
+#' that the final \linkS4class{data.table} has \code{nSim}\eqn{\times}\code{length(nMNO)}
+#' \eqn{\times}\code{length(lambda)} rows.
 #'
 #' The prior distributions are specified as named lists where the first component of each list must
 #' be the name of distribution ('unif', 'triang', 'degen', 'gamma') and the rest components must be
