@@ -78,7 +78,6 @@ postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-
 
     })
     output <- Reduce(rbind, lapply(output, rbind))
-    #output <- list(postMean = output['postMean', ], postMedian = output['postMedian', ], postMode = output['postMode', ])
     return(output)
   }
 }

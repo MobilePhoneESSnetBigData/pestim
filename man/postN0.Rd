@@ -65,3 +65,4 @@ postN0(nMNO = 20, nReg = 115, fu = list('unif', xMin = 0.3, xMax = 0.5),
 \seealso{
 \code{\link{rN0}}
 }
+
