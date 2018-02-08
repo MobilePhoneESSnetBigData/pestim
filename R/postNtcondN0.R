@@ -18,7 +18,8 @@
 #' @param n number of points to generate in the posterior distribution for the computation. Default
 #' value is 1e3
 #'
-#' @return
+#' @return Return a matrix with three columns (mean, median, and mode estimates) and one row per
+#' cell
 #'
 #' @examples
 #' ## First, the inputs:

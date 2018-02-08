@@ -22,7 +22,8 @@ of each prior distribution}
 value is 1e3}
 }
 \value{
-
+Return a matrix with three columns (mean, median, and mode estimates) and one row per
+cell
 }
 \description{
 Compute the posterior mean, median, and mode for the number of individuals
