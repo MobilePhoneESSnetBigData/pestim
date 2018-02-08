@@ -1,8 +1,8 @@
 #' @title Generate random vector deviates of transition probabilities.
 #'
 #' @description Generate random vector deviates of the transition probabilities
-#' \deq{p_{ij}(t_{0}, t_{n})} for a given cell \deq{i} stacked into an \deq{n\times\textrm{number of
-#' cells}} matrix
+#' \deq{p_{ij}(t_{0}, t_{n})} for a given cell \deq{i} stacked into an \deq{n\times}(number of cells)
+#'  matrix
 #'
 #' @param n number of probability vectors to generate
 #'

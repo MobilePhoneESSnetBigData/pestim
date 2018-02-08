@@ -17,8 +17,8 @@ Return a matrix with \code{n} rows and as many columns as cells taken from the l
 }
 \description{
 Generate random vector deviates of the transition probabilities
-\deq{p_{ij}(t_{0}, t_{n})} for a given cell \deq{i} stacked into an \deq{n\times\textrm{number of
-cells}} matrix
+\deq{p_{ij}(t_{0}, t_{n})} for a given cell \deq{i} stacked into an \deq{n\times}(number of cells)
+ matrix
 }
 \details{
 The prior distributions are specified as named lists where the first component of each list must
