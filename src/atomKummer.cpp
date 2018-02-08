@@ -1,16 +1,28 @@
-#include<Rcpp.h>
+#include <Rcpp.h>
+#include <cmath>
 using namespace Rcpp;
-//[[Rcpp::export]]
-NumericVector atomKummer(NumericVector x, NumericVector a, NumericVector b, double relTol) {
-  long n;
-  long dim = x.size();
-  NumericVector sumando(dim,1.), suma(dim,1.);
 
-  long j;
-  for(j=0;j<dim;j++) {
-    a[j]--;
-    b[j]--;
-    for(n=1; sumando[j] / suma[j] > relTol; ++n, sumando[j] *= x[j] * (a[j]+n) / ((b[j]+n)*n), suma[j] +=sumando[j]);
+// [[Rcpp::export]]
+NumericVector Kummer(NumericVector z, NumericVector a, NumericVector b, double relTol) {
+  double sumando;
+  int n=z.size(),i,j;
+  NumericVector suma(n);
+
+  for (i=0;i<n;++i) {
+    if (z[i]<80) {
+      for (j=0,sumando=1,suma[i]=1;fabs(sumando/suma[i])>relTol;++j){
+        sumando*=(z[i] / (j+1)) * ((a[i] + j) / (b[i] + j));
+        suma[i]+=sumando;
+      }
+    }
+    else {
+      for (j=0,sumando=1,suma[i]=1;fabs(sumando/suma[i])>relTol;++j){
+        sumando*=((1-a[i]+j) / (j+1)) * ((b[i] - a[i] + j) / (z[i]));
+        suma[i]+=sumando;
+      }
+      suma[i]*=exp(z[i]+(a[i]-b[i])*log(z[i])+lgamma(b[i])-lgamma(a[i]));
+    }
   }
+
   return(suma);
 }

@@ -136,9 +136,4 @@ dlambda <- function(lambda, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1
     integral[, flambda := NULL]
     return(integral[])
   }
-
-  #integral[, cellID := NULL]
-  #integral[, parID := NULL]
-
-
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/postN0.R
 \name{postN0}
 \alias{postN0}
-\title{Posterior mean, median, and mode for the number of individuals.}
+\title{Posterior mean, median, and mode for the number of individuals at the initial time.}
 \usage{
 postN0(nMNO, nReg, fu, fv, flambda, n = 1000, scale = 1, relTol = 1e-08,
   nSim = 1000, nStrata = c(1, 100), verbose = FALSE)
@@ -38,13 +38,13 @@ for each cell. The function returns a matrix with the estimates in columns and t
 }
 \description{
 Compute the posterior mean, median, and mode for the number of individuals
-generating posterior distribution according to the hierarchical model.
+generating posterior distribution according to the hierarchical model at the initial time instant
 }
 \details{
-The prior distributions are specified as named lists where the first component of each list must
-be the name of distribution ('unif', 'triang', 'degen', 'gamma') and the rest components must be
-named according to the name of the parameters of the random generator of the corresponding
-distribution according to:
+The prior distributions are specified as named lists where the first component of each
+list must be the name of distribution ('unif', 'triang', 'degen', 'gamma') and the rest of
+components must be named according to the name of the parameters of the random generator of the
+corresponding distribution according to:
 
   \itemize{
 

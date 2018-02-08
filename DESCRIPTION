@@ -2,36 +2,44 @@ Package: pestim
 Type: Package
 Title: Population Estimations Using Mobile Phone Data
 Version: 0.1.0
-Author: David Salgado @R: c(
-    person("David", "Salgado", email = "david.Salgado.fernandez@ine.es", role = c("aut", cre")),
-    person("Bogdan", "Oancea", email = "bogdan.oancea@gmail.com", role = c("cre", ctb")))
-Description: This package contains functions that implement a simple hierarchical model to estimate the population counts
-  of different territorial cells combining the information from aggregated mobile phone data and a population register or survey data.
+Author: David Salgado @R: c( person("David", "Salgado", email =
+    "david.Salgado.fernandez@ine.es", role = c("aut", cre")), person("Bogdan",
+    "Oancea", email = "bogdan.oancea@gmail.com", role = c("cre", ctb")))
+Description: This package contains functions that implement a simple
+    hierarchical model to estimate the population counts of different territorial
+    cells combining the information from aggregated mobile phone data and a
+    population register or survey data.
 License: GPL2
 Encoding: UTF-8
 LazyData: true
-Depends: 
-  data.table, 
-  Rcpp (>= 0.12.12)
-Imports: 
-  data.table, 
-  Rcpp (>= 0.12.12)
+Depends:
+    data.table,
+    Rcpp (>= 0.12.12)
+Imports:
+    data.table,
+    Rcpp (>= 0.12.12)
 LinkingTo: Rcpp
-RoxygenNote: 6.0.1
-Collate: 
+RoxygenNote: 5.0.1
+Collate:
     'ratioBeta.R'
     'kummer.R'
     'Phi.R'
     'RcppExports.R'
-    'dBeta0EB.R'
+    'alphaPrior.R'
+    'data.R'
     'dg.R'
     'triang.R'
     'dlambda.R'
-    'factorBayes.R'
-    'factorEB.R'
+    'genAlpha.R'
     'genUV.R'
     'modeLambda.R'
     'rlambda.R'
     'rN0.R'
     'postN0.R'
+    'rmatProb.R'
+    'rNtcondN0.R'
+    'rNt.R'
+    'postNt.R'
+    'postNtcondN0.R'
     'rg.R'
+    'rp.R'

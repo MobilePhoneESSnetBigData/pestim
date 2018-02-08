@@ -1,6 +1,6 @@
-#' @title Density function of the candidate distribution.
+#' @title Density function of a candidate distribution in the accept-reject method.
 #'
-#' @description Generate values of the candidate distribution density function in the accept-reject
+#' @description Generate values of a candidate distribution density function in the accept-reject
 #' method of generation of random variables applied to the distribution of the lambda parameter
 #'
 #' @param lambda numeric vector with the lambda parameter values
