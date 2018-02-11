@@ -1,3 +1,9 @@
+#' @name triang
+#' @aliases dtriang
+#' @aliases ptriang
+#' @aliases qtriang
+#' @aliases rtriang
+#'
 #' @title The Triangular Distribution.
 #'
 #' @description Density, distribution funtion, quantile function and random generation for the
@@ -29,11 +35,12 @@
 #' curve(qtriang(x, 0, 3, 1), xlim = c(0, 1))
 #' hist(rtriang(1e6, 0, 3, 1), breaks = seq(0, 3, by = 0.01))
 #'
-#'
-#' @aliases dtriang
+#' @rdname triang
 #' @export
 #'
-
+#'
+#' @rdname triang
+#' @export
 dtriang <- function(x, xMin, xMax, xMode){
 
   if (any(xMin > xMax)) stop('xMax must be greater than xMin.')
@@ -54,8 +61,7 @@ dtriang <- function(x, xMin, xMax, xMode){
   return(output)
 }
 
-#' @aliases ptriang
-#'
+#' @rdname triang
 #' @export
 ptriang <- function(q, xMin, xMax, xMode){
 
@@ -76,10 +82,9 @@ ptriang <- function(q, xMin, xMax, xMode){
   output[range2] <- 1 - ((output[range2] - xMax[range2])^2) / ((xMax[range2] - xMin[range2]) * (xMax[range2] - xMode[range2]))
   return(output)
 }
-#' @aliases qtriang
-#'
-#' @export
 
+#' @rdname triang
+#' @export
 qtriang <- function(q, xMin, xMax, xMode){
 
   if (any(xMin > xMax)) stop('xMax must be greater than xMin.')
@@ -97,10 +102,9 @@ qtriang <- function(q, xMin, xMax, xMode){
   output[range2] <- xMax[range2] - sqrt((1 - q[range2]) * (xMax[range2] - xMin[range2]) * (xMax[range2] - xMode[range2]))
   return(output)
 }
-#' @aliases rtriang
-#'
-#' @export
 
+#' @rdname triang
+#' @export
 rtriang <- function(n, xMin, xMax, xMode){
 
   if (any(xMin > xMax)) stop('xMax must be greater than xMin.')
@@ -114,3 +118,4 @@ rtriang <- function(n, xMin, xMax, xMode){
   output <- eval(mc)
   return(output)
 }
+
