@@ -80,4 +80,5 @@
 #'
 #' @docType package
 #' @name pestim
+#' @export
 NULL
