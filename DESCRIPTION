@@ -22,7 +22,7 @@ LinkingTo: Rcpp
 RoxygenNote: 6.0.1
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
-Collate:
+Collate: 
     'ratioBeta.R'
     'kummer.R'
     'Phi.R'
@@ -35,6 +35,7 @@ Collate:
     'genAlpha.R'
     'genUV.R'
     'modeLambda.R'
+    'pestim.R'
     'rlambda.R'
     'rN0.R'
     'postN0.R'
