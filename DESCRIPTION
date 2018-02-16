@@ -9,7 +9,7 @@ Description: This package contains functions that implement a simple
     hierarchical model to estimate the population counts of different territorial
     cells combining the information from aggregated mobile phone data and a
     population register or survey data.
-License: GPL2
+License: GPL-3 and EUPL
 Encoding: UTF-8
 LazyData: true
 Depends:
