@@ -161,9 +161,7 @@ csl: chicago-author-date.csl
 ---
 
 \newtheorem{lemma}{Lemma}
-\newcommand{\appropto}{\mathrel{\vcenter{
-  \offinterlineskip\halign{\hfil$##$\cr
-    \propto\cr\noalign{\kern2pt}\sim\cr\noalign{\kern-2pt}}}}}
+
 
 ```{r, echo = FALSE, message = FALSE}
 #```{r setup, include=FALSE}
@@ -236,8 +234,8 @@ Then it is straighforward to show that the unnormalized posterior probability de
 
 \begin{align}
 \mathbb{P}\left(\lambda|N^{\textrm{MNO}}; N^{\textrm{REG}}\right)&\propto f_{3}(\lambda; N^{\textrm{REG}})\cdot\textrm{Po}\left(N^{\textrm{MNO}}; \lambda\right)\cdot\sum_{n=0}^{\infty}\frac{\lambda^{n}}{n!}\frac{B(u^{*}\cdot N^{*} + N^{\textrm{MNO}}, (1-u^{*})\cdot N^{*} + n)}{B(u^{*}\cdot N^{*}, (1-u^{*})\cdot N^{*})}\nonumber\\
-&\appropto f_{3}(\lambda; N^{\textrm{REG}})\cdot \textrm{Po}\left(N^{\textrm{MNO}}; \lambda\right)\cdot \sum_{n=0}^{\infty}\frac{\lambda^{n}}{n!}\cdot u^{*N^{\textrm{MNO}}}\cdot (1- u^{*})^{n} \nonumber\\
-\label{EBprob}&\appropto f_{3}(\lambda; N^{\textrm{REG}})\cdot e^{-\lambda u^{*}}\cdot\frac{(\lambda u^{*})^{N^{\textrm{MNO}}}}{N^{\textrm{MNO}}!},
+&{\underset{\sim}{\propto}} f_{3}(\lambda; N^{\textrm{REG}})\cdot \textrm{Po}\left(N^{\textrm{MNO}}; \lambda\right)\cdot \sum_{n=0}^{\infty}\frac{\lambda^{n}}{n!}\cdot u^{*N^{\textrm{MNO}}}\cdot (1- u^{*})^{n} \nonumber\\
+\label{EBprob}&{\underset{\sim}{\propto}} f_{3}(\lambda; N^{\textrm{REG}})\cdot e^{-\lambda u^{*}}\cdot\frac{(\lambda u^{*})^{N^{\textrm{MNO}}}}{N^{\textrm{MNO}}!},
 \end{align}
 
 \noindent where we have used the approximation $\frac{\Gamma(x + a)}{\Gamma(x)}\approx x^{a}$ (which can be proved using Stirling's approximation) and where $\textrm{Po}(N; \lambda)$ denotes the probability function of a Poisson random variable $N$ with parameter $\lambda$..
@@ -281,14 +279,14 @@ We will try to be analytical as far as possible, leaving numerical computations 
 \begin{align}
 \mathbb{P}\left(\lambda\big|N^{\textrm{MNO}};N^{\textbf{REG}}\right)&\propto\mathbb{P}\left(N^{\textrm{MNO}}|\lambda;N^{\textbf{REG}}\right)\nonumber\\
 &\propto\int_{0}^{\infty}\int_{0}^{\infty}d\alpha d\beta\int_{0}^{1}dp\sum_{n = N^{\textrm{MNO}}}^{\infty}\mathbb{P}\left(N^{MNO}|p, N\right)\mathbb{P}\left(N|\lambda;N^{\textrm{REG}}\right)\mathbb{P}\left(p|\alpha,\beta\right)\mathbb{P}\left(\alpha,\beta; N^{\textrm{REG}}\right)\mathbb{P}\left(\lambda\right)\nonumber\\
-&\hspace*{-4cm}\propto\mathbb{P}\left(\lambda\right)\int_{0}^{\infty}\int_{0}^{\infty}d\alpha d\beta\int_{0}^{1}dp\sum_{n = N^{\textrm{MNO}}}^{\infty}\binom{n}{N^{\textrm{MNO}}}p^{N^{\textrm{MNO}}}(1-p)^{n-N^{\textrm{MNO}}}e^{-\lambda}\frac{\left(\lambda\right)^{n}}{n!}\frac{p^{\alpha-1}(1-p)^{\beta-1}}{B(\alpha, \beta)}\frac{f_{1}(\frac{\alpha}{\alpha+\beta}; \mathbf{N}^{\textrm{REG}})\cdot f_{2}(\alpha+\beta; \mathbf{N}^{\textrm{REG}})}{\alpha+\beta}
+&\propto\mathbb{P}\left(\lambda\right)\int_{0}^{\infty}\int_{0}^{\infty}d\alpha d\beta\int_{0}^{1}dp\sum_{n = N^{\textrm{MNO}}}^{\infty}\binom{n}{N^{\textrm{MNO}}}p^{N^{\textrm{MNO}}}(1-p)^{n-N^{\textrm{MNO}}}e^{-\lambda}\frac{\left(\lambda\right)^{n}}{n!}\frac{p^{\alpha-1}(1-p)^{\beta-1}}{B(\alpha, \beta)}\frac{f_{1}(\frac{\alpha}{\alpha+\beta}; \mathbf{N}^{\textrm{REG}})\cdot f_{2}(\alpha+\beta; \mathbf{N}^{\textrm{REG}})}{\alpha+\beta}
 \end{align}
 
 Simplifying we arrive at
 
 \begin{align}
 \mathbb{P}\left(\lambda\big|N^{\textrm{MNO}};N^{\textbf{REG}}\right)&\propto\nonumber\\
-&\hspace*{-3.5cm}\mathbb{P}\left(\lambda\right)\sum_{n = N^{\textrm{MNO}}}^{\infty}\binom{n}{N^{\textrm{MNO}}}e^{-\lambda}\frac{\lambda^{n}}{n!}\int_{0}^{\infty}\hspace*{-2mm}\int_{0}^{\infty}d\alpha d\beta\frac{f_{1}(\frac{\alpha}{\alpha+\beta}; N^{\textrm{REG}})\cdot f_{2}(\alpha+\beta; N^{\textrm{REG}})}{\alpha+\beta}\frac{B\left(\alpha+N^{\textrm{MNO}}, \beta+n-N^{\textrm{MNO}}\right)}{B\left(\alpha, \beta\right)}\nonumber\\
+&\mathbb{P}\left(\lambda\right)\sum_{n = N^{\textrm{MNO}}}^{\infty}\binom{n}{N^{\textrm{MNO}}}e^{-\lambda}\frac{\lambda^{n}}{n!}\int_{0}^{\infty}\int_{0}^{\infty}d\alpha d\beta\frac{f_{1}(\frac{\alpha}{\alpha+\beta}; N^{\textrm{REG}})\cdot f_{2}(\alpha+\beta; N^{\textrm{REG}})}{\alpha+\beta}\frac{B\left(\alpha+N^{\textrm{MNO}}, \beta+n-N^{\textrm{MNO}}\right)}{B\left(\alpha, \beta\right)}\nonumber\\
 &\propto\mathbb{P}\left(\lambda\right)\sum_{n = N^{\textrm{MNO}}}^{\infty}\binom{n}{N^{\textrm{MNO}}}e^{-\lambda}\frac{\lambda^{n}}{n!}I_{N^{\textrm{MNO}}, n-N^{\textrm{MNO}}}(N^{\textrm{REG}})\nonumber\\
 &\propto\mathbb{P}\left(\lambda\right)\textrm{Po}(N^{\textrm{MNO}}; \lambda)\sum_{n = 0}^{\infty}\frac{\lambda^{n}}{n!}I_{N^{\textrm{MNO}}, n}(N^{\textrm{REG}})\nonumber\\
 \label{Hyper}&\propto\mathbb{P}\left(\lambda\right)\cdot \textrm{Po}(N^{\textrm{MNO}}; \lambda) \cdot S\left(\lambda, N^{\textrm{MNO}}, N^{REG}\right),
@@ -366,6 +364,185 @@ I_{n,m}(N^{\textrm{REG}})=\lim_{M\to\infty}\frac{1}{M}\sum_{h_{1}=1}^{H_{1}}\sum
 \noindent where the random values $\mathbf{x}_{i_{h_{1}}i_{h_{2}}}$ are generated with the corresponding density function $f_{h_{1}h_{2}}$.
 
 Once computed the integrals $I_{N^{\textrm{MNO}}, n}(N^{\textrm{REG}})$, the series $S(\beta_{0}, N^{\textrm{MNO}}, N^{\textrm{REG}})$ is summed up with standard procedures (iteratively or with a tail-recursice algorithm) within a given tolerance $\tau$.
+
+### Approach 2
+
+In this second approach we reverse the order of computation. We first sum up the series and then we compute the integral. Thus we write
+
+\begin{align}
+S(\lambda, N^{\textrm{MNO}}, N^{\textrm{REG}})&=\int_{0}^{\infty}\int_{0}^{\infty}d\alpha d\beta\ \frac{f_{1}(\frac{\alpha}{\alpha+\beta}; \mathbf{N}^{\textrm{REG}}, \mathbf{z})\cdot f_{2}(\alpha+\beta; \mathbf{N}^{\textrm{REG}}, \mathbf{z})}{\alpha+\beta}\sum_{n=0}^{\infty}\frac{\lambda^{n}}{n!}\frac{B(\alpha + N^{\textrm{MNO}}, \beta + n)}{B(\alpha, \beta)}\nonumber\\
+&=\int_{0}^{\infty}\int_{0}^{\infty}d\alpha d\beta\ \frac{f_{1}(\frac{\alpha}{\alpha+\beta}; \mathbf{N}^{\textrm{REG}}, \mathbf{z})\cdot f_{2}(\alpha+\beta; \mathbf{N}^{\textrm{REG}}, \mathbf{z})}{(\alpha+\beta) \cdot B(\alpha, \beta)}\int_{0}^{1}dx\ x^{\beta -1}(1-x)^{\alpha + N^{\textrm{MNO}} -1}\sum_{n=0}^{\infty}\frac{(\lambda x)^{n}}{n!}\nonumber\\
+&=\int_{0}^{\infty}\int_{0}^{\infty}d\alpha d\beta\ \frac{f_{1}(\frac{\alpha}{\alpha+\beta}; \mathbf{N}^{\textrm{REG}}, \mathbf{z})\cdot f_{2}(\alpha+\beta; \mathbf{N}^{\textrm{REG}}, \mathbf{z})}{(\alpha+\beta) \cdot B(\alpha, \beta)}\int_{0}^{1}dx\ e^{\lambda x}x^{\beta -1}(1-x)^{\alpha + N^{\textrm{MNO}} -1}\nonumber\\
+&=\int_{0}^{\infty}\int_{0}^{\infty}d\alpha d\beta\ \frac{f_{1}(\frac{\alpha}{\alpha+\beta}; \mathbf{N}^{\textrm{REG}}, \mathbf{z})\cdot f_{2}(\alpha+\beta; \mathbf{N}^{\textrm{REG}}, \mathbf{z})}{\alpha+\beta}\frac{B(\alpha + N^{\textrm{MNO}}, \beta)}{B(\alpha, \beta)}\cdot {}_{1}F_{1}(z; \beta, \alpha+\beta +N^{\textrm{MNO}})\nonumber\\
+&\equiv\int_{0}^{\infty}\int_{0}^{\infty}d\alpha d\beta\ \frac{f_{1}(\frac{\alpha}{\alpha+\beta}; \mathbf{N}^{\textrm{REG}}, \mathbf{z})\cdot f_{2}(\alpha+\beta; \mathbf{N}^{\textrm{REG}}, \mathbf{z})}{\alpha+\beta}\Phi(\alpha, \beta; \lambda, N^{\textrm{MNO}}, N^{\textrm{REG}}),
+\end{align}
+
+\noindent where we have defined $\Phi(\alpha, \beta; \lambda, N^{\textrm{MNO}}, N^{\textrm{REG}}) = \frac{B(\alpha + N^{\textrm{MNO}}, \beta)}{B(\alpha, \beta)}\cdot {}_{1}F_{1}(\lambda; \beta, \alpha+\beta +N^{\textrm{MNO}})$. Now to compute this integral let us change variables as in the preceding section so that:
+
+\begin{align}
+S(\lambda, N^{\textrm{MNO}}, N^{\textrm{REG}})&=\int_{0}^{\infty}dv\ f_{2}(v)\int_{0}^{1} du\ f_{1}(u)\cdot \Phi(u\cdot v, (1-u)\cdot v; \lambda, N^{\textrm{MNO}}, N^{\textrm{REG}})\nonumber\\
+&=\int_{0}^{\infty}dv\ f_{2}(v)\int_{0}^{1} du\ f_{1}(u) \cdot\bar{\Phi}(u, v; \lambda, N^{\textrm{MNO}}, N^{\textrm{REG}})
+\end{align}
+
+\emph{Mutatis mutandi} defining $\mathbf{x}=(u,v)^{T}$ we can apply the same Monte Carlo technique as in the preceding section to arrive at 
+
+\begin{equation}
+S(\lambda, N^{\textrm{MNO}}, N^{\textrm{REG}})=\lim_{M\to\infty}\frac{1}{M}\sum_{h_{1}=1}^{H_{1}}\sum_{h_{2}=1}^{H_{2}}\sum_{i_{h_{1}}=1}^{M/H_{2}}\sum_{i_{h_{2}}=1}^{M/H_{1}}\bar{\Phi}(\mathbf{x}_{i_{h_{1}}i_{h_{2}}}; \lambda, N^{\textrm{MNO}}, N^{\textrm{REG}}),
+\end{equation}
+
+\noindent where the random values $\mathbf{x}_{i_{h_{1}}i_{h_{2}}}$ are generated with the corresponding density function $f_{h_{1}h_{2}}$.
+
+# Generation of random variables
+
+To conduct simulation studies and carry out the estimation on the number of individuals per cell we need to generate random variables according to the posterior distribution $\mathbb{P}\left(N_{i}|\mathbf{N}^{\textrm{MNO}};\mathbf{N}^{\textrm{REG}}\right)$. We have two options: either we use \eqref{PostProbN} to compute an expression for the probability function of $N_{i}$ or we make use of the hierarchy by generating random values of $\lambda$ according to $\mathbb{P}\left(\lambda|\mathbf{N}^{\textrm{MNO}}; \mathbf{N}^{\textrm{REG}}\right)$ and then use these values to generate $N_{i}$ according to $\textrm{Po}(\lambda)$. We choose the latter. Thus we need to generate random values of the hyperparameter $\lambda$ according to its posterior distribution \eqref{Hyper}:
+
+\begin{align}
+\mathbb{P}\left(\lambda\big|N^{\textrm{MNO}};N^{\textbf{REG}}\right)&\propto\mathbb{P}\left(\lambda\right)\cdot\textrm{Po}(N^{\textrm{MNO}}; \lambda) \cdot S\left(\lambda, N^{\textrm{MNO}}, N^{REG}\right).\nonumber
+\end{align}
+
+The unnormalized posterior density $\mathbb{P}\left(\lambda|\mathbf{N}^{\textrm{MNO}};\mathbf{N}^{\textrm{REG}}\right)$ does not allow us to find easily the corresponding posterior distribution function to apply the inverse method to generate random variables (see e.g. @Dev86a). We then try to use the acceptance-rejection method. Indeed this method is appropriate to use with unnormalized probability functions.
+
+Let us define $f(x)=\mathbb{P}\left(x|N^{\textrm{MNO}};N^{\textrm{REG}}\right)$. As candidate distribution $g(x)$ we will use a Cauchy distribution $g(x)=\textrm{Cauchy}(x; x_{0}= \lambda^{*}, \sigma)$ truncated at $\mathbb{R}^{+}$ with $\lambda^{*}=\textrm{argmax}_{\lambda\geq 0}f(\lambda)$ (i.e. the mode of $f(\lambda)$). We need to prove rigorously that $f$ is majorized by this candidate distribution $g$. So far, computing tests have been satisfactory. Also we do not have a general recipe for the scale parameter $\sigma$. For the family of prior distributions $\lambda\simeq\Gamma(\alpha + 1, \alpha / N^{\textrm{REG}})$ (with mode $N^{\textrm{REG}}$ and variance $\frac{\alpha + 1}{(\alpha / N^{\textrm{REG}})^2}$) we choose $\sigma = N^{\textrm{REG}}/\sqrt{\alpha}$. The parameter $\alpha$ is a measure of the a priori concentration of $\lambda$ around the value $N^{\textrm{REG}}$ (see next section).
+
+Next we must find $c\in\mathbb{R}$ such that 
+
+\begin{equation}
+\inf_{x\geq 0}\frac{c\cdot g(\beta)}{f(x)}\geq 1
+\end{equation}
+
+Taking the minimal $c$ for sampling efficiency reasons we have 
+
+$$c=\sup_{x\geq 0}\frac{f(x)}{g(x)}.$$
+
+To generate random values $\lambda$ according to $\mathbb{P}\left(\lambda|\mathbf{N}^{\textrm{MNO}};\mathbf{N}^{\textrm{REG}}\right)$ we generate values according to $g(\lambda)$, and values $v$ according to $\textrm{Unif}(0,1)$ so that we accept those $\lambda$ such that $v\leq \frac{f(\lambda)}{c\cdot g(\lambda)}$.
+
+To generate random values $N$ according to $\mathbb{P}\left(N|N^{\textrm{MNO}};N^{\textrm{REG}}\right)$ we generate values $\lambda$ and then the corresponding values $N$ according to the Poisson distribution with parameter $\lambda$.
+
+
+# Illustrative examples: toy simulations
+
+Let us illustrate these considerations with concrete examples. We will proceed from the simplest case to the actual data collected during the SGA-1  passing through some simulated data sets.
+
+
+## The prior distributions
+
+For the model we will make use of the following priors.
+
+### Uniform
+This is a well known distribution. For $u=\frac{\alpha}{\alpha + \beta}$ the support can be $[0,1]$ or any subinterval therein. For example, we can assume that the local market share in a territorial cell lies between a minimum value $u_{m}$ and a maximum value $u_{M}$. This is a safe way to minimally incorporate some weak information into the model.
+
+For $v=\alpha + \beta$ we can also use prior uniform distributions with support in large intervals $[v_{m}, v_{M}]$ of possible minimum and maximum values for the cell size.
+
+
+### Triangular
+This can be considered a slight variant of the preceding priors. Instead of having a flat distribution along the support, we may single out a mode so that we have probability density functions as 
+
+```{r, echo = FALSE}
+library(ggplot2)
+dtriang <- function(x, xMin, xMax, xMode){
+  
+  n <- length(x)
+  if (length(xMin) == 1) xMin <- rep(xMin, n)
+  if (length(xMax) == 1) xMax <- rep(xMax, n)
+  if (length(xMode) == 1) xMode <- rep(xMode, n)
+  
+  output <- x
+  output[x <= xMin] <- 0
+  output[x >= xMax] <- 0
+  range1 <- (x > xMin & x <= xMode)
+  output[range1] <- (2 * (x[range1] - xMin[range1])) / ((xMax[range1] - xMin[range1]) * (xMode[range1] - xMin[range1]))
+  range2 <- (x >= xMode & x < xMax)
+  output[range2] <- (2 * (xMax[range2] - x[range2])) / ((xMax[range2] - xMin[range2]) * (xMax[range2] - xMode[range2]))
+  return(output)
+}
+
+x <- seq(0.10, 0.65, by = 0.01)
+y <- dtriang(x, xMin = 0.10, xMax = 0.65, xMode = 0.32)
+df <- data.frame(x = x, y= y)
+ggplot(df, aes(x, y)) + geom_line() + scale_x_continuous(limits = c(0, 1)) + xlab('u') + ylab('Probability Density')
+```
+
+Triangular distributions can be easily generated. They can be used for modelling the local market shares $u$, the cell size $v$ and the hyperparameter $\lambda$.
+
+### Gamma distribution
+The gamma distribution is another choice for modelling both the cell size $v$ and the hyperparameter $\lambda$.The reasoning is common to both cases. We can assume a parameterization $\Gamma(\alpha + 1, \xi^{*} / \alpha)$, where $\xi^{*}$ stands for the mode of the modelled variable ($v$ or $\lambda$) and $\alpha> 0$ determines the degree of concentration around the mode $\xi^{*}$ (see figure below).
+
+```{r, echo = FALSE}
+alphas <- c(1, 5, 10, 100, 1000)
+mode <- 35
+df <- lapply(alphas, function(alpha){
+  
+  x <- 0:100
+  y <- dgamma(x, shape = alpha + 1, scale = mode / alpha)
+  z <- as.character(alpha)
+  output <- data.frame(x = x, y = y, alpha = z)
+  return(output)
+})
+df <- Reduce(rbind, df)
+ggplot(df, aes(x, y, col = alpha, group = alpha)) + geom_line(aes(linetype = alpha)) + scale_x_continuous(limits = c(0, 100)) + xlab('') + ylab('')
+```
+
+The choice of $\alpha$ must be guided by the data themselves. Thus we do not propose concrete methods until we practise the simulations.
+
+Let us remind that we are combining both aggregated mobile phone data and official data at a given time instant to infer the actual population size in each cell. Official data for a concrete time instant will certainly not represent the exact population size of each cell since both data sources work at very different time scales. However, we can assume that appropriately choosing the time instant we can expect a high correlation between the actual size and official data (see e.g. @Q2016). 
+
+
+In this sense, for the simulated data that we will generate, for a given actual true value $N^{0}_{i}$ we will simulate a population register value $N^{\textrm{REG}_{i}}\simeq \lfloor N(\mu = N^{0}_{i}, \sigma = 10\%\cdot N^{0}_{i})\rfloor$. For the corresponding number of individuals detected through the mobile network, we will generate it assuming a proportion of detected individuals randomly between $15\%$ and $40\%$ as realistic figures (see e.g. @WP5Del11 to compare with market shares as an approximation to these figures).
+
+## One cell
+
+Since the treatment of all cells is independent of each other, it is fundamental to get acquainted with the estimation process for a single cell. We investigate different combinations of priors and numerical regimes for $N^{\textrm{MNO}}$ and $N^{\textrm{REG}}$. In all cases we assume a priori $f_{3}\simeq\Gamma\left(\alpha + 1, \frac{N^{\textrm{Reg}}}{\alpha}\right)$.
+
+Firstly, we will investigate how the estimates vary in different realizations of the estimation procedure. Let us consider a true population size of $N^{(0)} = 100$. The population register gives $N^{\textrm{Reg}}=97$ assuming an error of $3\%$. Let us also consider the number of individuals detected by the mobile network as $N^{\textrm{MNO}} = 19$ assuming a proportion of detected individuals of around $20\%$.
+
+For the prior distribution of the proportion of detected individuals we will assume a weakly informative distribution $f_{u}=\textrm{Unif}(u_{m}, u_{M})$ with $u_{m}=0$ and $u_{M}=0.50$. For the prior distribution of the cell size we will assume a triangular distribution with parameters $v_{m}=87$, $v_{M}=107$, and $v^{*}=97$, assuming an (unknown) error of $10\%$ over the population register size. Later on we will study the effect of diverse choices on these priors.
+
+We compute the estimates for values of $\alpha=1,10,100,1000$ to observe the effect of the amount of uncertainty in the population size (from more uncertainty to less uncertainty, respectively).
+
+```{r, cache = TRUE, echo = FALSE}
+library(data.table)
+library(ggplot2)
+```
+
+We can observe how the more precise the prior value of $\lambda = N^{\textrm{Reg}}$ is, the more precise the final estimate around $N^{\textrm{Reg}}$ will result. Notice how this final estimate inherits the original difference between $N^{(0)}$ and $N^{\textrm{Reg}}$, as expected (we are not modelling the values coming from the population register).
+
+In the subsequent sections we will just compute one single estimate and vary the diverse prior parameters to study the effect.
+
+### $f_{1}\simeq\textrm{Unif}(u_{m}, u_{M})$, $f_{2}\simeq\textrm{Unif}(N_{m}, N_{M})$
+
+Let us now consider a range of values for the hyperparameters to observe the effects on the final estimate. We will choose $\alpha = 1$ as a weakly informative choice\footnote{The value of $\alpha$ will be later on better motivated when having data from several cells.}.
+
+For the intervals $(u_{m}, u_{M})$ we will choose as centres of the intervals the natural value $N^{\textrm{MNO}} / N^{\textrm{Reg}}$. As radii, we will progressively shorten the intervals starting from $r_{1}=min(N^{\textrm{MNO}} / N^{\textrm{Reg}}, 1- N^{\textrm{MNO}} / N^{\textrm{Reg}})$ down to $0.005$.
+
+For the intervals $(N_{m}, N_{M})$ we will choose as centres of the intervals the natural value $N^{\textrm{Reg}}$. As radii, we will progressively shorten the intervals starting from $R_{1}=\lfloor 0.25\cdot N^{\textrm{Reg}}\rfloor$ down to $1$.
+
+The relative bias $\frac{\hat{N}-N^{\textrm{Reg}}}{N^{\textrm{Reg}}} \cdot 100$ for the posterior mean, median and mode estimates, respectively, for each pair of interval lengths $(u_{M}-u_{m}, N_{M} - N_{m})$ are:
+
+```{r, eval=TRUE, cache=TRUE, echo = FALSE}
+library(data.table)
+
+```
+
+
+### $f_{1}\simeq\textrm{Unif}(u_{m}, u_{M})$, $f_{2}\simeq\textrm{triang}(N_{m}, N_{M}, N^{\textrm{Reg}})$
+
+We now carry out the same computation with the prior distribution for the actual population size $f_{2}$ being a triangular distribution. Its parameters will be $N_{m}$ and $N_{M}$ as in the preceding section and the mode as $N^{*}=N^{\textrm{Reg}}$.
+
+
+```{r, eval=TRUE, cache=TRUE, echo = FALSE}
+library(data.table)
+
+```
+
+
+### $f_{1}\simeq\textrm{Unif}(u_{m}, u_{M})$, $f_{2}\simeq\Gamma(a + 1, \frac{N^{\textrm{Reg}}}{a})$
+
+Again we repeat the computation now with $f_{2}\simeq\Gamma(a+1, \frac{N^{\textrm{Reg}}}{a})$ and $\log_{10}(a)=-3, -2, \dots, 2, 3$.
+
+```{r, eval=TRUE, cache=TRUE, echo = FALSE}
+library(data.table)
+
+```
 
 
 
