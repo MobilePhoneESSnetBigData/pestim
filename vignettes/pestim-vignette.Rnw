@@ -53,6 +53,11 @@ in which we can equate population figures from both sources.
 network operator which they are subscribed to.
 \end{itemize}
 
+<<>>=
+summary(cars)
+plot(pressure)
+@
+
 The inference of the population counts from mobile phone data and official data is achieved in a two step process:
 \begin{itemize}
 	\item {at a given time instant $t_{0}$ both mobile phone and
