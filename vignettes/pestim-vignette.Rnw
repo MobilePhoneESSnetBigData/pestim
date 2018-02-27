@@ -17,9 +17,9 @@
 }
 
 \title{pestim - an R package to estimate population counts from aggregated mobile phone data}
-\author{here are the authors}
+\author{Bogdan Oancea}
 
-\date{}
+\date{27-feb-2018}
 
 
 \begin{document}
@@ -57,6 +57,7 @@ network operator which they are subscribed to.
 summary(cars)
 plot(pressure)
 @
+
 
 The inference of the population counts from mobile phone data and official data is achieved in a two step process:
 \begin{itemize}
