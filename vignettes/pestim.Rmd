@@ -194,7 +194,7 @@ In the model, we will make use as auxiliary information of the official populati
 More rigorously, aiming at the quality assessment of the estimation procedure, we will produce a probability distribution for the number of individuals of the target population in each cell $i$ using both the mobile phone and official population data as inputs (see figure \ref{Tool}). The posterior probability distribution $\mathbb{P}\left(\mathbf{N}|\mathbf{N}^{\textrm{MNO}};\mathbf{N}^{\textrm{REG}}\right)$ will allow us to assess the uncertainty in the output estimates.
 
 <figure>
-  <img src="Tool1.png" alt="Schematic diagram for the output intended using mobile phone and official population data" width="100%" >
+  <img src="img/Tool1.png" alt="Schematic diagram for the output intended using mobile phone and official population data" width="100%" >
 </figure>
 
 We propose the hierarchical model given by:
@@ -437,7 +437,7 @@ For $v=\alpha + \beta$ we can also use prior uniform distributions with support 
 ### Triangular
 This can be considered a slight variant of the preceding priors. Instead of having a flat distribution along the support, we may single out a mode so that we have probability density functions as 
 
-```{r, echo = FALSE}
+```{r, echo = TRUE}
 library(ggplot2)
 dtriang <- function(x, xMin, xMax, xMode){
   
@@ -467,7 +467,7 @@ Triangular distributions can be easily generated. They can be used for modelling
 ### Gamma distribution
 The gamma distribution is another choice for modelling both the cell size $v$ and the hyperparameter $\lambda$.The reasoning is common to both cases. We can assume a parameterization $\Gamma(\alpha + 1, \xi^{*} / \alpha)$, where $\xi^{*}$ stands for the mode of the modelled variable ($v$ or $\lambda$) and $\alpha> 0$ determines the degree of concentration around the mode $\xi^{*}$ (see figure below).
 
-```{r, echo = FALSE}
+```{r, echo = TRUE}
 alphas <- c(1, 5, 10, 100, 1000)
 mode <- 35
 df <- lapply(alphas, function(alpha){
@@ -499,9 +499,43 @@ For the prior distribution of the proportion of detected individuals we will ass
 
 We compute the estimates for values of $\alpha=1,10,100,1000$ to observe the effect of the amount of uncertainty in the population size (from more uncertainty to less uncertainty, respectively).
 
-```{r, cache = TRUE, echo = FALSE}
+```{r, cache = TRUE, echo = TRUE}
 library(data.table)
 library(ggplot2)
+# the package could be installed from GitHub
+# devtools::install_github('MobilePhoneESSnetBigData/pestim')
+library(pestim)
+nReg <- 5 #97
+nMNO <- 2 #19
+fu <- list('unif', xMin = 0, xMax = 0.50)
+fv <- list('triang', xMin = 87, xMax = 107, xMode = 97)
+alphaSeq <- c(1, 10, 100, 1000)
+flambdaList <- list()
+for (alpha in alphaSeq){
+  
+  flambdaList[[as.character(alpha)]] <- list('gamma', shape = 1 + alpha, scale = nReg / alpha)
+  
+}
+nSim <- 100
+results <- lapply(alphaSeq, function(alpha){
+  
+  flambda <- flambdaList[[as.character(alpha)]]
+  output <- replicate(nSim, postN0(nMNO, nReg, fu, fv, flambda))
+  output <- as.data.table(t(matrix(unlist(output), nrow = 3)))
+  setnames(output, c('postMean', 'postMedian', 'postMode'))
+  output[, sim := 1:nSim]
+  output <- melt(output, id.vars = 'sim')
+  output[, 'alpha' := alpha]
+  return(output)
+  
+})
+names(results) <- alphaSeq
+results <- rbindlist(results)
+ggplot(results, aes(x = variable, y = value)) + 
+  geom_boxplot() + facet_grid(. ~ alpha) + 
+  xlab('') + ylab('') + 
+  geom_hline(yintercept = nReg) + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = .5))
 ```
 
 We can observe how the more precise the prior value of $\lambda = N^{\textrm{Reg}}$ is, the more precise the final estimate around $N^{\textrm{Reg}}$ will result. Notice how this final estimate inherits the original difference between $N^{(0)}$ and $N^{\textrm{Reg}}$, as expected (we are not modelling the values coming from the population register).
@@ -518,8 +552,51 @@ For the intervals $(N_{m}, N_{M})$ we will choose as centres of the intervals th
 
 The relative bias $\frac{\hat{N}-N^{\textrm{Reg}}}{N^{\textrm{Reg}}} \cdot 100$ for the posterior mean, median and mode estimates, respectively, for each pair of interval lengths $(u_{M}-u_{m}, N_{M} - N_{m})$ are:
 
-```{r, eval=TRUE, cache=TRUE, echo = FALSE}
+```{r, eval=TRUE, cache=TRUE, echo = TRUE}
 library(data.table)
+library(pestim)
+nReg <- 5 #97
+nMNO <- 2 #19
+nPar <- 10
+radShares <- seq(from = nMNO / nReg, to = 0.005, length.out = nPar)
+radPopSizes <- round(seq(from = 0.25 * nReg, to = 1, length.out = nPar))
+alpha <- 1
+flambda <- list('gamma', shape = alpha + 1, scale = nReg / alpha)
+results.Mean <- matrix(NA, ncol = nPar, nrow = nPar)
+results.Median <- matrix(NA, ncol = nPar, nrow = nPar)
+results.Mode <- matrix(NA, ncol = nPar, nrow = nPar)
+for (radShare.index in seq(along = radShares)) {
+  for (radPopSize.index in seq(along = radPopSizes)) {
+    
+    um <- nMNO / nReg - radShares[radShare.index]
+    uM <- nMNO / nReg + radShares[radShare.index]
+    fu <- list('unif', xMin = um, xMax = uM)
+    
+    Nm <- nReg - radPopSizes[radPopSize.index]
+    NM <- nReg + radPopSizes[radPopSize.index]
+    fv <- list('unif', xMin = Nm, xMax = NM)
+    
+    auxResults <- postN0(nMNO, nReg, fu, fv, flambda)
+    results.Mean[radShare.index, radPopSize.index] <- auxResults[['postMean']] 
+    results.Median[radShare.index, radPopSize.index] <- auxResults[['postMedian']]
+    results.Mode[radShare.index, radPopSize.index] <- auxResults[['postMode']]
+  }
+}
+rownames(results.Mean) <- round(2 * radShares, 2)
+rownames(results.Median) <- round(2 * radShares, 2)
+rownames(results.Mode) <- round(2 * radShares, 2)
+colnames(results.Mean) <- 2 * radPopSizes
+colnames(results.Median) <- 2 * radPopSizes
+colnames(results.Mode) <- 2 * radPopSizes
+relBias.Mean <- round((results.Mean - nReg) / nReg * 100, 1)
+relBias.Median <- round((results.Median - nReg) / nReg * 100, 1)
+relBias.Mode <- round((results.Mode - nReg) / nReg * 100, 1)
+knitr::kable(relBias.Mean, 
+             caption = 'Relative bias (%) for posterior mean estimates')
+knitr::kable(relBias.Median, 
+             caption = 'Relative bias (%) for posterior median estimates')
+knitr::kable(relBias.Mode, 
+             caption = 'Relative bias (%) for posterior mode estimates')
 
 ```
 
@@ -529,8 +606,51 @@ library(data.table)
 We now carry out the same computation with the prior distribution for the actual population size $f_{2}$ being a triangular distribution. Its parameters will be $N_{m}$ and $N_{M}$ as in the preceding section and the mode as $N^{*}=N^{\textrm{Reg}}$.
 
 
-```{r, eval=TRUE, cache=TRUE, echo = FALSE}
+```{r, eval=TRUE, cache=TRUE, echo = TRUE}
 library(data.table)
+library(pestim)
+nReg <- 5 #97
+nMNO <- 2 #19
+nPar <- 10
+radShares <- seq(from = nMNO / nReg, to = 0.005, length.out = nPar)
+radPopSizes <- round(seq(from = 0.25 * nReg, to = 1, length.out = nPar))
+alpha <- 1
+flambda <- list('gamma', shape = alpha + 1, scale = nReg / alpha)
+results.Mean <- matrix(NA, ncol = nPar, nrow = nPar)
+results.Median <- matrix(NA, ncol = nPar, nrow = nPar)
+results.Mode <- matrix(NA, ncol = nPar, nrow = nPar)
+for (radShare.index in seq(along = radShares)) {
+  for (radPopSize.index in seq(along = radPopSizes)) {
+    
+    um <- nMNO / nReg - radShares[radShare.index]
+    uM <- nMNO / nReg + radShares[radShare.index]
+    fu <- list('unif', xMin = um, xMax = uM)
+    
+    Nm <- nReg - radPopSizes[radPopSize.index]
+    NM <- nReg + radPopSizes[radPopSize.index]
+    fv <- list('triang', xMin = Nm, xMax = NM, xMode = nReg)
+    
+    auxResults <- postN0(nMNO, nReg, fu, fv, flambda)
+    results.Mean[radShare.index, radPopSize.index] <- auxResults[['postMean']] 
+    results.Median[radShare.index, radPopSize.index] <- auxResults[['postMedian']]
+    results.Mode[radShare.index, radPopSize.index] <- auxResults[['postMode']]
+  }
+}
+rownames(results.Mean) <- round(2 * radShares, 2)
+rownames(results.Median) <- round(2 * radShares, 2)
+rownames(results.Mode) <- round(2 * radShares, 2)
+colnames(results.Mean) <- 2 * radPopSizes
+colnames(results.Median) <- 2 * radPopSizes
+colnames(results.Mode) <- 2 * radPopSizes
+relBias.Mean <- round((results.Mean - nReg) / nReg * 100, 1)
+relBias.Median <- round((results.Median - nReg) / nReg * 100, 1)
+relBias.Mode <- round((results.Mode - nReg) / nReg * 100, 1)
+knitr::kable(relBias.Mean, 
+             caption = 'Relative bias (%) for posterior mean estimates')
+knitr::kable(relBias.Median, 
+             caption = 'Relative bias (%) for posterior median estimates')
+knitr::kable(relBias.Mode, 
+             caption = 'Relative bias (%) for posterior mode estimates')
 
 ```
 
@@ -539,20 +659,1092 @@ library(data.table)
 
 Again we repeat the computation now with $f_{2}\simeq\Gamma(a+1, \frac{N^{\textrm{Reg}}}{a})$ and $\log_{10}(a)=-3, -2, \dots, 2, 3$.
 
-```{r, eval=TRUE, cache=TRUE, echo = FALSE}
+```{r, eval=TRUE, cache=TRUE, echo = TRUE}
 library(data.table)
+library(pestim)
+nReg <- 5 #97
+nMNO <- 2 #19
+nPar <- 10
+radShares <- seq(from = nMNO / nReg, to = 0.005, length.out = nPar)
+aPopSizes <- 10^{seq(-3, 3, by = 1)}
+alpha <- 1
+flambda <- list('gamma', shape = alpha + 1, scale = nReg / alpha)
+results.Mean <- matrix(NA, ncol = length(aPopSizes), nrow = length(radShares))
+results.Median <- matrix(NA, ncol = length(aPopSizes), nrow = length(radShares))
+results.Mode <- matrix(NA, ncol = length(aPopSizes), nrow = length(radShares))
+for (radShare.index in seq(along = radShares)) {
+  
+  um <- nMNO / nReg - radShares[radShare.index]
+  uM <- nMNO / nReg + radShares[radShare.index]
+  fu <- list('unif', xMin = um, xMax = uM)
+  
+  for (aPopSize.index in seq(along = aPopSizes)) {
+    
+    fv <- list('gamma', 
+               shape = aPopSizes[aPopSize.index], 
+               scale = nReg / aPopSizes[aPopSize.index])
+    
+    auxResults <- postN0(nMNO, nReg, fu, fv, flambda)
+    results.Mean[radShare.index, aPopSize.index] <- auxResults[['postMean']] 
+    results.Median[radShare.index, aPopSize.index] <- auxResults[['postMedian']]
+    results.Mode[radShare.index, aPopSize.index] <- auxResults[['postMode']]
+  }
+}
+rownames(results.Mean) <- round(2 * radShares, 2)
+rownames(results.Median) <- round(2 * radShares, 2)
+rownames(results.Mode) <- round(2 * radShares, 2)
+colnames(results.Mean) <- aPopSizes
+colnames(results.Median) <- aPopSizes
+colnames(results.Mode) <- aPopSizes
+relBias.Mean <- round((results.Mean - nReg) / nReg * 100, 1)
+relBias.Median <- round((results.Median - nReg) / nReg * 100, 1)
+relBias.Mode <- round((results.Mode - nReg) / nReg * 100, 1)
+knitr::kable(relBias.Mean, 
+             caption = 'Relative bias (%) for posterior mean estimates')
+knitr::kable(relBias.Median, 
+             caption = 'Relative bias (%) for posterior median estimates')
+knitr::kable(relBias.Mode, 
+             caption = 'Relative bias (%) for posterior mode estimates')
 
 ```
+
+
+### $f_{1}\simeq\textrm{Triang}(u_{m}, u_{M}, u^{*})$, $f_{2}\simeq\textrm{Unif}(N_{m}, N_{M})$
+
+Once more, we repeat the computation now with $f_{1}\simeq\textrm{Triang}$ and $f_{2}\simeq\textrm{Unif}$. The hyperparameters are chosen as before.
+
+```{r, eval=TRUE, cache=TRUE, echo = TRUE}
+library(data.table)
+library(pestim)
+nReg <- 5 #97
+nMNO <- 2 #19
+nPar <- 10
+radShares <- seq(from = nMNO / nReg, to = 0.005, length.out = nPar)
+radPopSizes <- round(seq(from = 0.25 * nReg, to = 1, length.out = nPar))
+alpha <- 1
+flambda <- list('gamma', shape = alpha + 1, scale = nReg / alpha)
+results.Mean <- matrix(NA, ncol = nPar, nrow = nPar)
+results.Median <- matrix(NA, ncol = nPar, nrow = nPar)
+results.Mode <- matrix(NA, ncol = nPar, nrow = nPar)
+for (radShare.index in seq(along = radShares)) {
+  
+  um <- nMNO / nReg - radShares[radShare.index]
+  uM <- nMNO / nReg + radShares[radShare.index]
+  uMode <- nMNO / nReg
+  fu <- list('triang', xMin = um, xMax = uM, xMode = uMode)
+  
+  for (radPopSize.index in seq(along = radPopSizes)) {
+    
+    Nm <- nReg - radPopSizes[radPopSize.index]
+    NM <- nReg + radPopSizes[radPopSize.index]
+    fv <- list('unif', xMin = Nm, xMax = NM)
+    
+    auxResults <- postN0(nMNO, nReg, fu, fv, flambda)
+    results.Mean[radShare.index, radPopSize.index] <- auxResults[['postMean']] 
+    results.Median[radShare.index, radPopSize.index] <- auxResults[['postMedian']]
+    results.Mode[radShare.index, radPopSize.index] <- auxResults[['postMode']]
+  }
+}
+rownames(results.Mean) <- round(2 * radShares, 2)
+rownames(results.Median) <- round(2 * radShares, 2)
+rownames(results.Mode) <- round(2 * radShares, 2)
+colnames(results.Mean) <- 2 * radPopSizes
+colnames(results.Median) <- 2 * radPopSizes
+colnames(results.Mode) <- 2 * radPopSizes
+relBias.Mean <- round((results.Mean - nReg) / nReg * 100, 1)
+relBias.Median <- round((results.Median - nReg) / nReg * 100, 1)
+relBias.Mode <- round((results.Mode - nReg) / nReg * 100, 1)
+knitr::kable(relBias.Mean, 
+             caption = 'Relative bias (%) for posterior mean estimates')
+knitr::kable(relBias.Median, 
+             caption = 'Relative bias (%) for posterior median estimates')
+knitr::kable(relBias.Mode, 
+             caption = 'Relative bias (%) for posterior mode estimates')
+
+```
+
+
+### $f_{1}\simeq\textrm{Triang}(u_{m}, u_{M}, u^{*})$, $f_{2}\simeq\textrm{Triang}(N_{m}, N_{M}, N^{\textrm{Reg}})$
+
+Now both prior distributions are triangular with the same choice of hyperparameters are before.
+
+```{r, eval=TRUE, cache=TRUE, echo = TRUE}
+library(data.table)
+library(pestim)
+nReg <- 5 #97
+nMNO <- 2 #19
+nPar <- 10
+radShares <- seq(from = nMNO / nReg, to = 0.005, length.out = nPar)
+radPopSizes <- round(seq(from = 0.25 * nReg, to = 1, length.out = nPar))
+alpha <- 1
+flambda <- list('gamma', shape = alpha + 1, scale = nReg / alpha)
+results.Mean <- matrix(NA, ncol = nPar, nrow = nPar)
+results.Median <- matrix(NA, ncol = nPar, nrow = nPar)
+results.Mode <- matrix(NA, ncol = nPar, nrow = nPar)
+for (radShare.index in seq(along = radShares)) {
+  
+  um <- nMNO / nReg - radShares[radShare.index]
+  uM <- nMNO / nReg + radShares[radShare.index]
+  uMode <- nMNO / nReg
+  fu <- list('triang', xMin = um, xMax = uM, xMode = uMode)
+  
+  for (radPopSize.index in seq(along = radPopSizes)) {
+    
+    Nm <- nReg - radPopSizes[radPopSize.index]
+    NM <- nReg + radPopSizes[radPopSize.index]
+    Nmode <- nReg
+    fv <- list('triang', xMin = Nm, xMax = NM, xMode = nReg)
+    
+    auxResults <- postN0(nMNO, nReg, fu, fv, flambda)
+    results.Mean[radShare.index, radPopSize.index] <- auxResults[['postMean']] 
+    results.Median[radShare.index, radPopSize.index] <- auxResults[['postMedian']]
+    results.Mode[radShare.index, radPopSize.index] <- auxResults[['postMode']]
+  }
+}
+rownames(results.Mean) <- round(2 * radShares, 2)
+rownames(results.Median) <- round(2 * radShares, 2)
+rownames(results.Mode) <- round(2 * radShares, 2)
+colnames(results.Mean) <- 2 * radPopSizes
+colnames(results.Median) <- 2 * radPopSizes
+colnames(results.Mode) <- 2 * radPopSizes
+relBias.Mean <- round((results.Mean - nReg) / nReg * 100, 1)
+relBias.Median <- round((results.Median - nReg) / nReg * 100, 1)
+relBias.Mode <- round((results.Mode - nReg) / nReg * 100, 1)
+knitr::kable(relBias.Mean, 
+             caption = 'Relative bias (%) for posterior mean estimates')
+knitr::kable(relBias.Median, 
+             caption = 'Relative bias (%) for posterior median estimates')
+knitr::kable(relBias.Mode, 
+             caption = 'Relative bias (%) for posterior mode estimates')
+
+```
+
+
+### $f_{1}\simeq\textrm{Triang}(u_{m}, u_{M}, u^{*})$, $f_{2}\simeq\Gamma(a + 1, \frac{N^{\textrm{Reg}}}{a})$
+
+Finally we combine a triangular distribution for $f_{1}$ and a gamma distribution for $f_{2}$.
+
+```{r, eval=TRUE, cache=TRUE, echo = TRUE}
+library(data.table)
+library(pestim)
+nReg <- 5 #97
+nMNO <- 2 #19
+nPar <- 10
+radShares <- seq(from = nMNO / nReg, to = 0.005, length.out = nPar)
+aPopSizes <- 10^{seq(-3, 3, by = 1)}
+alpha <- 1
+flambda <- list('gamma', shape = alpha + 1, scale = nReg / alpha)
+results.Mean <- matrix(NA, ncol = length(aPopSizes), nrow = length(radShares))
+results.Median <- matrix(NA, ncol = length(aPopSizes), nrow = length(radShares))
+results.Mode <- matrix(NA, ncol = length(aPopSizes), nrow = length(radShares))
+for (radShare.index in seq(along = radShares)) {
+  
+  um <- nMNO / nReg - radShares[radShare.index]
+  uM <- nMNO / nReg + radShares[radShare.index]
+  uMode <- nMNO / nReg
+  fu <- list('triang', xMin = um, xMax = uM, xMode = uMode)
+  
+  for (aPopSize.index in seq(along = aPopSizes)) {
+    
+    fv <- list('gamma', 
+               shape = aPopSizes[aPopSize.index], 
+               scale = nReg / aPopSizes[aPopSize.index])
+    
+    auxResults <- postN0(nMNO, nReg, fu, fv, flambda)
+    results.Mean[radShare.index, aPopSize.index] <- auxResults[['postMean']] 
+    results.Median[radShare.index, aPopSize.index] <- auxResults[['postMedian']]
+    results.Mode[radShare.index, aPopSize.index ] <- auxResults[['postMode']]
+  }
+}
+rownames(results.Mean) <- round(2 * radShares, 2)
+rownames(results.Median) <- round(2 * radShares, 2)
+rownames(results.Mode) <- round(2 * radShares, 2)
+colnames(results.Mean) <- aPopSizes
+colnames(results.Median) <- aPopSizes
+colnames(results.Mode) <- aPopSizes
+relBias.Mean <- round((results.Mean - nReg) / nReg * 100, 1)
+relBias.Median <- round((results.Median - nReg) / nReg * 100, 1)
+relBias.Mode <- round((results.Mode - nReg) / nReg * 100, 1)
+knitr::kable(relBias.Mean, 
+             caption = 'Relative bias (%) for posterior mean estimates')
+knitr::kable(relBias.Median, 
+             caption = 'Relative bias (%) for posterior median estimates')
+knitr::kable(relBias.Mode, 
+             caption = 'Relative bias (%) for posterior mode estimates')
+
+```
+
+## Several cells
+Since by design the estimation in each cell is independent of each other, the process for a grid of cells only entails longer computation times. However, having more information allows us to seek for more objective criteria to set the prior information.
+
+Regarding the prior distribution for the proportions of detected individuals $u_{i}$ we can consider the ratios $\frac{N_{i}^{\textrm{MNO}}}{N^{\textrm{Reg}}_{i}}$ as an initial guess as a highly probable value whose uncertainty will depend both on the process to obtain $N_{i}^{\textrm{MNO}}$ (in the preprocessing and aggregation stages of the whole process for mobile phone data; not considered here) and on the process to compile the population register figures $N_{i}^{\textrm{Reg}}$ (with non-sampling error considerations like measurement errors, processing errors, coverage, \dots). Any of the three prior distributions (uniform, triangular, gamma) can be used to express this uncertainty around $\frac{N_{i}^{\textrm{MNO}}}{N^{\textrm{Reg}}_{i}}$ and, if necessary, even more complex alternative possibilities can be built.
+
+Regarding the prior distribution for the local cell size $v_{i}$ we can make exactly similar considerations around the value $N_{i}^{\textrm{Reg}}$ for each cell $i$ now only focusing on the process of construction of the population register.
+
+Finally, for the prior distribution for the parameter $\lambda_{i}$ we must clearly state how critical this choice is. If we choose $\alpha_{i}\gg 1$, we are expressing a high confidence on our population register as the true population at this instant of time. In this sense it seems advisable to be conservative and choose low values so that we do not artificially  \textquotedblleft force\textquotedblright\ the final estimates to be close to $N_{i}^{\textrm{Reg}}$. In the choice of $\alpha_{i}$ in the multiple cell case, however, we can make use of the grid construction and the distribution of $N_{i}^{\textrm{Reg}}$ to propose some prior values. The variance of $\Gamma(\alpha_{i} + 1, \frac{N^{\textrm{Reg}}_{i}}{\alpha_{i}})$ is $\frac{\alpha_{i} + 1}{\alpha_{i}^{2}}\cdot N^{\textrm{Reg}}_{i}$. Thus, under the assumption of having a regular grid over the population, we can equate $\frac{\alpha_{i} + 1}{\alpha_{i}^{2}}\cdot N^{\textrm{Reg}}=\frac{1}{N_{cells} - 1}\sum_{i=1}^{N_{cell}}\left(N_{i}^{\textrm{Reg}} - \bar{N}^{\textrm{Reg}}\right)^{2}$
+ to have a first value (upper bound) for $\alpha\leq\min_{i}\alpha_{i}$. In case of an irregular grid (in terms of population size), we can think of some clustering analysis to carry out the same procedure. 
+ 
+ In any case, we claim that one can envisage objective estimation processes for the prior hyperparameters so that final estimates are not based upon dangerously subjective
+beliefs.  In our view, this is another indication of why having knowledge about the preprocessing and aggregation phases in the whole process is important to arrive at final objective values to be considered official figures.
+
+
+### $f_{1}\simeq\textrm{Unif}(u_{m,i}, u_{M,i})$, $f_{2}\simeq\textrm{Unif}(N_{m,i}, N_{M,i})$
+
+Let us now consider a range of values for the hyperparameters to observe the effects on the final estimate. For the intervals $(u_{m,i}, u_{M,i})$ we will choose as centres of the intervals the natural values $N^{\textrm{MNO}}_{i} / N^{\textrm{Reg}}_{i}$. As radii, we will progressively shorten the intervals starting from $r_{1,i}=min(N^{\textrm{MNO}}_{i} / N^{\textrm{Reg}}_{i}, 1- N^{\textrm{MNO}}_{i} / N^{\textrm{Reg}}_{i})$ down to $0.005$.
+
+For the intervals $(N_{m,i}, N_{M,i})$ we will choose as centres of the intervals the natural values $N^{\textrm{Reg}}_{i}$. As radii, we will progressively shorten the intervals starting from $R_{1,i}=\lfloor 0.25\cdot N^{\textrm{Reg}}_{i}\rfloor$ down to $1$.
+
+The distribution of the relative bias $\frac{\hat{N}_{i}-N^{\textrm{Reg}}_{i}}{N^{\textrm{Reg}}} \cdot 100$ for the posterior mean, median and mode estimates, respectively, for all pairs of interval lengths $(u_{M,i}-u_{m,i}, N_{M,i} - N_{m,i})$ and all cells ($N_{c} = 50$) are:
+
+```{r, eval=FALSE, cache=TRUE, echo = TRUE}
+library(data.table)
+library(ggplot2)
+library(pestim)
+nCell <- 50
+#nReg <- round(rnorm(nCell, 71, 3))
+nReg <- round(rnorm(nCell, 25, 3))
+#nMNO <- round(rnorm(nCell, 19, 2))
+nMNO <- round(rnorm(nCell, 15, 2))
+nPar <- 5
+radShares <- lapply(1:nCell, function(i){
+  seq(from = (nMNO / nReg)[i], to = 0.005, length.out = nPar)
+})
+radPopSizes <- lapply(1:nCell, function(i){
+  round(seq(from = 0.25 * nReg[i], to = 1, length.out = nPar))
+})
+varnReg <- var(nReg)
+alphaBound <- sapply(1:nCell, function(i){
+  0.5 * (nReg[i] / varnReg + sqrt((nReg[i] / varnReg)^2 + 4 * nReg[i] / varnReg))
+})
+alpha <- min(alphaBound)
+results.Mean <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+results.Median <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+results.Mode <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+relBias.Mean <- list()
+relBias.Median <- list()
+relBias.Mode <- list()
+for (i in 1:nCell){
+  #print(paste0('i=', i))
+  for (radShare.index in seq(along = radShares[[i]])) {
+    #print(paste0('radShare.index=', radShare.index))
+    for (radPopSize.index in seq(along = radPopSizes[[i]])) {
+      #print(paste0('radPopSize.index=', radPopSize.index))
+      um <- nMNO[[i]] / nReg[[i]] - radShares[[i]][radShare.index]
+      uM <- nMNO[[i]] / nReg[[i]] + radShares[[i]][radShare.index]
+      fu <- list('unif', xMin = um, xMax = uM)
+      
+      Nm <- nReg[[i]] - radPopSizes[[i]][radPopSize.index]
+      NM <- nReg[[i]] + radPopSizes[[i]][radPopSize.index]
+      fv <- list('unif', xMin = Nm, xMax = NM)
+      flambda <- list('gamma', shape = alpha + 1, scale = nReg[[i]] / alpha)
+      
+      auxResults <- postN0(nMNO[[i]], nReg[[i]], fu, fv, flambda)
+      results.Mean[[i]][radShare.index, radPopSize.index] <- auxResults[['postMean']] 
+      results.Median[[i]][radShare.index, radPopSize.index] <- auxResults[['postMedian']]
+      results.Mode[[i]][radShare.index, radPopSize.index] <- auxResults[['postMode']]
+    }
+  }
+
+  rownames(results.Mean[[i]]) <- round(2 * radShares[[i]], 2)
+  rownames(results.Median[[i]]) <- round(2 * radShares[[i]], 2)
+  rownames(results.Mode[[i]]) <- round(2 * radShares[[i]], 2)
+  colnames(results.Mean[[i]]) <- 2 * radPopSizes[[i]]
+  colnames(results.Median[[i]]) <- 2 * radPopSizes[[i]]
+  colnames(results.Mode[[i]]) <- 2 * radPopSizes[[i]]
+  relBias.Mean[[i]] <- round((results.Mean[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+  relBias.Median[[i]] <- round((results.Median[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+  relBias.Mode[[i]] <- round((results.Mode[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+}
+
+parNames <- expand.grid(paste0('u', 1:5), paste0('v', 1:5))
+colnames(parNames) <- c('u', 'v')
+
+relBias.Mean.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+relBias.Median.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+relBias.Mode.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+for (i in 1:nCell){
+  
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Mean[[i]]))
+ relBias.Mean.df <- rbind(relBias.Mean.df, aux)
+
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Median[[i]]))
+ relBias.Median.df <- rbind(relBias.Median.df, aux)
+ 
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Mode[[i]]))
+ relBias.Mode.df <- rbind(relBias.Mode.df, aux)
+}
+ggplot(relBias.Mean.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Mean Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+ggplot(relBias.Median.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Median Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+ggplot(relBias.Mode.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Mode Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+```
+
+<figure>
+  <img src="img/631_1.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+<figure>
+  <img src="img/631_2.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+<figure>
+  <img src="img/631_3.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+### $f_{1}\simeq\textrm{Unif}(u_{m}, u_{M})$, $f_{2}\simeq\textrm{triang}(N_{m}, N_{M}, N^{\textrm{Reg}})$
+
+We now carry out the same computation with the prior distribution for the actual population size $f_{2}$ being a triangular distribution. Its parameters will be $N_{m}$ and $N_{M}$ as in the preceding section and the mode as $N^{*}=N^{\textrm{Reg}}$.
+
+```{r, eval=FALSE, cache=TRUE, echo = TRUE}
+library(data.table)
+library(ggplot2)
+library(pestim)
+nCell <- 10 #50
+#nReg <- round(rnorm(nCell, 71, 3))
+nReg <- round(rnorm(nCell, 5, 3))
+#nMNO <- round(rnorm(nCell, 19, 2))
+nMNO <- round(rnorm(nCell, 2, 2))
+nPar <- 5
+radShares <- lapply(1:nCell, function(i){
+  seq(from = (nMNO / nReg)[i], to = 0.005, length.out = nPar)
+})
+radPopSizes <- lapply(1:nCell, function(i){
+  round(seq(from = 0.25 * nReg[i], to = 1, length.out = nPar))
+})
+varnReg <- var(nReg)
+alphaBound <- sapply(1:nCell, function(i){
+  0.5 * (nReg[i] / varnReg + sqrt((nReg[i] / varnReg)^2 + 4 * nReg[i] / varnReg))
+})
+alpha <- min(alphaBound)
+results.Mean <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+results.Median <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+results.Mode <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+relBias.Mean <- list()
+relBias.Median <- list()
+relBias.Mode <- list()
+for (i in 1:nCell){
+  #print(paste0('i=', i))
+  for (radShare.index in seq(along = radShares[[i]])) {
+    #print(paste0('radShare.index=', radShare.index))
+    for (radPopSize.index in seq(along = radPopSizes[[i]])) {
+      #print(paste0('radPopSize.index=', radPopSize.index))
+      um <- nMNO[[i]] / nReg[[i]] - radShares[[i]][radShare.index]
+      uM <- nMNO[[i]] / nReg[[i]] + radShares[[i]][radShare.index]
+      fu <- list('unif', xMin = um, xMax = uM)
+      
+      Nm <- nReg[[i]] - radPopSizes[[i]][radPopSize.index]
+      NM <- nReg[[i]] + radPopSizes[[i]][radPopSize.index]
+      fv <- list('triang', xMin = Nm, xMax = NM, xMode = nReg[[i]])
+      flambda <- list('gamma', shape = alpha + 1, scale = nReg[[i]] / alpha)
+      
+      auxResults <- postN0(nMNO[[i]], nReg[[i]], fu, fv, flambda)
+      results.Mean[[i]][radShare.index, radPopSize.index] <- auxResults[['postMean']] 
+      results.Median[[i]][radShare.index, radPopSize.index] <- auxResults[['postMedian']]
+      results.Mode[[i]][radShare.index, radPopSize.index] <- auxResults[['postMode']]
+    }
+  }
+
+  rownames(results.Mean[[i]]) <- round(2 * radShares[[i]], 2)
+  rownames(results.Median[[i]]) <- round(2 * radShares[[i]], 2)
+  rownames(results.Mode[[i]]) <- round(2 * radShares[[i]], 2)
+  colnames(results.Mean[[i]]) <- 2 * radPopSizes[[i]]
+  colnames(results.Median[[i]]) <- 2 * radPopSizes[[i]]
+  colnames(results.Mode[[i]]) <- 2 * radPopSizes[[i]]
+  relBias.Mean[[i]] <- round((results.Mean[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+  relBias.Median[[i]] <- round((results.Median[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+  relBias.Mode[[i]] <- round((results.Mode[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+}
+
+parNames <- expand.grid(paste0('u', 1:5), paste0('v', 1:5))
+colnames(parNames) <- c('u', 'v')
+
+relBias.Mean.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+relBias.Median.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+relBias.Mode.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+for (i in 1:nCell){
+  
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Mean[[i]]))
+ relBias.Mean.df <- rbind(relBias.Mean.df, aux)
+
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Median[[i]]))
+ relBias.Median.df <- rbind(relBias.Median.df, aux)
+ 
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Mode[[i]]))
+ relBias.Mode.df <- rbind(relBias.Mode.df, aux)
+}
+ggplot(relBias.Mean.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Mean Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+ggplot(relBias.Median.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Median Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+ggplot(relBias.Mode.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Mode Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+```
+
+<figure>
+  <img src="img/632_1.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+<figure>
+  <img src="img/632_2.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+<figure>
+  <img src="img/632_3.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+### $f_{1}\simeq\textrm{Unif}(u_{m}, u_{M})$, $f_{2}\simeq\Gamma(a + 1, \frac{N^{\textrm{Reg}}}{a})$
+
+Again we repeat the computation now with $f_{2}\simeq\Gamma(a+1, \frac{N^{\textrm{Reg}}}{a})$ and $\log_{10}(a)=-3, -2, \dots, 2, 3$.
+
+```{r, eval=FALSE, cache=TRUE, echo = TRUE}
+library(data.table)
+library(ggplot2)
+library(pestim)
+nCell <- 50
+nReg <- round(rnorm(nCell, 71, 3))
+varnReg <- var(nReg)
+nMNO <- round(rnorm(nCell, 19, 2))
+nPar <- 5
+radShares <- lapply(1:nCell, function(i){
+  seq(from = (nMNO / nReg)[i], to = 0.005, length.out = nPar)
+})
+alphaBound <- sapply(1:nCell, function(i){
+  0.5 * (nReg[i] / varnReg + sqrt((nReg[i] / varnReg)^2 + 4 * nReg[i] / varnReg))
+})
+alphaMin <- min(alphaBound)
+aPopSizes <- seq(1000, to = alphaMin, length.out = nPar)
+
+results.Mean <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+results.Median <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+results.Mode <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+relBias.Mean <- list()
+relBias.Median <- list()
+relBias.Mode <- list()
+for (i in 1:nCell){
+  #print(paste0('i=', i))
+  for (radShare.index in seq(along = radShares[[i]])) {
+    #print(paste0('radShare.index=', radShare.index))
+    for (aPopSize.index in seq(along = aPopSizes)) {
+      #print(paste0('aPopSize.index=', aPopSize.index))
+      um <- nMNO[[i]] / nReg[[i]] - radShares[[i]][radShare.index]
+      uM <- nMNO[[i]] / nReg[[i]] + radShares[[i]][radShare.index]
+      fu <- list('unif', xMin = um, xMax = uM)
+      
+      alpha <- aPopSizes[aPopSize.index]
+      fv <- list('gamma', 
+               shape = aPopSizes[aPopSize.index] + 1, 
+               scale = nReg[[i]] / aPopSizes[aPopSize.index])
+      flambda <- list('gamma', shape = alphaMin + 1, scale = nReg[[i]] / alphaMin)
+      
+      auxResults <- postN0(nMNO[[i]], nReg[[i]], fu, fv, flambda)
+      results.Mean[[i]][radShare.index, aPopSize.index] <- auxResults[['postMean']] 
+      results.Median[[i]][radShare.index, aPopSize.index] <- auxResults[['postMedian']]
+      results.Mode[[i]][radShare.index, aPopSize.index] <- auxResults[['postMode']]
+    }
+  }
+
+  rownames(results.Mean[[i]]) <- round(2 * radShares[[i]], 2)
+  rownames(results.Median[[i]]) <- round(2 * radShares[[i]], 2)
+  rownames(results.Mode[[i]]) <- round(2 * radShares[[i]], 2)
+  colnames(results.Mean[[i]]) <- aPopSizes
+  colnames(results.Median[[i]]) <- aPopSizes
+  colnames(results.Mode[[i]]) <- aPopSizes
+  relBias.Mean[[i]] <- round((results.Mean[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+  relBias.Median[[i]] <- round((results.Median[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+  relBias.Mode[[i]] <- round((results.Mode[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+}
+
+parNames <- expand.grid(paste0('u', 1:nPar), paste0('v', 1:nPar))
+colnames(parNames) <- c('u', 'v')
+
+relBias.Mean.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+relBias.Median.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+relBias.Mode.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+for (i in 1:nCell){
+  
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Mean[[i]]))
+ relBias.Mean.df <- rbind(relBias.Mean.df, aux)
+
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Median[[i]]))
+ relBias.Median.df <- rbind(relBias.Median.df, aux)
+ 
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Mode[[i]]))
+ relBias.Mode.df <- rbind(relBias.Mode.df, aux)
+}
+ggplot(relBias.Mean.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Mean Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+ggplot(relBias.Median.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Median Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+ggplot(relBias.Mode.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Mode Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+```
+
+<figure>
+  <img src="img/633_1.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+<figure>
+  <img src="img/633_2.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+<figure>
+  <img src="img/633_3.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+
+
+### $f_{1}\simeq\textrm{Triang}(u_{m}, u_{M}, u^{*})$, $f_{2}\simeq\textrm{Unif}(N_{m}, N_{M})$
+
+Once more, we repeat the computation now with $f_{1}\simeq\textrm{Triang}$ and $f_{2}\simeq\textrm{Unif}$. The hyperparameters are chosen as before.
+
+```{r, eval=FALSE, cache=TRUE, echo = TRUE}
+library(data.table)
+library(ggplot2)
+library(pestim)
+nCell <- 50
+nReg <- round(rnorm(nCell, 71, 3))
+nMNO <- round(rnorm(nCell, 19, 2))
+nPar <- 5
+radShares <- lapply(1:nCell, function(i){
+  seq(from = (nMNO / nReg)[i], to = 0.005, length.out = nPar)
+})
+radPopSizes <- lapply(1:nCell, function(i){
+  round(seq(from = 0.25 * nReg[i], to = 1, length.out = nPar))
+})
+varnReg <- var(nReg)
+alphaBound <- sapply(1:nCell, function(i){
+  0.5 * (nReg[i] / varnReg + sqrt((nReg[i] / varnReg)^2 + 4 * nReg[i] / varnReg))
+})
+alpha <- min(alphaBound)
+results.Mean <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+results.Median <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+results.Mode <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+relBias.Mean <- list()
+relBias.Median <- list()
+relBias.Mode <- list()
+for (i in 1:nCell){
+  #print(paste0('i=', i))
+  for (radShare.index in seq(along = radShares[[i]])) {
+    #print(paste0('radShare.index=', radShare.index))
+    for (radPopSize.index in seq(along = radPopSizes[[i]])) {
+      #print(paste0('radPopSize.index=', radPopSize.index))
+      um <- nMNO[[i]] / nReg[[i]] - radShares[[i]][radShare.index]
+      uM <- nMNO[[i]] / nReg[[i]] + radShares[[i]][radShare.index]
+      uMode <- nMNO[[i]] / nReg[[i]]
+      fu <- list('triang', xMin = um, xMax = uM, xMode = uMode)
+  
+      Nm <- nReg[[i]] - radPopSizes[[i]][radPopSize.index]
+      NM <- nReg[[i]] + radPopSizes[[i]][radPopSize.index]
+      fv <- list('unif', xMin = Nm, xMax = NM)
+      
+      flambda <- list('gamma', shape = alpha + 1, scale = nReg[[i]] / alpha)
+      
+      auxResults <- postN0(nMNO[[i]], nReg[[i]], fu, fv, flambda)
+      results.Mean[[i]][radShare.index, radPopSize.index] <- auxResults[['postMean']] 
+      results.Median[[i]][radShare.index, radPopSize.index] <- auxResults[['postMedian']]
+      results.Mode[[i]][radShare.index, radPopSize.index] <- auxResults[['postMode']]
+    }
+  }
+
+  rownames(results.Mean[[i]]) <- round(2 * radShares[[i]], 2)
+  rownames(results.Median[[i]]) <- round(2 * radShares[[i]], 2)
+  rownames(results.Mode[[i]]) <- round(2 * radShares[[i]], 2)
+  colnames(results.Mean[[i]]) <- 2 * radPopSizes[[i]]
+  colnames(results.Median[[i]]) <- 2 * radPopSizes[[i]]
+  colnames(results.Mode[[i]]) <- 2 * radPopSizes[[i]]
+  relBias.Mean[[i]] <- round((results.Mean[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+  relBias.Median[[i]] <- round((results.Median[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+  relBias.Mode[[i]] <- round((results.Mode[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+}
+
+parNames <- expand.grid(paste0('u', 1:5), paste0('v', 1:5))
+colnames(parNames) <- c('u', 'v')
+
+relBias.Mean.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+relBias.Median.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+relBias.Mode.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+for (i in 1:nCell){
+  
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Mean[[i]]))
+ relBias.Mean.df <- rbind(relBias.Mean.df, aux)
+
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Median[[i]]))
+ relBias.Median.df <- rbind(relBias.Median.df, aux)
+ 
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Mode[[i]]))
+ relBias.Mode.df <- rbind(relBias.Mode.df, aux)
+}
+ggplot(relBias.Mean.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Mean Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+ggplot(relBias.Median.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Median Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+ggplot(relBias.Mode.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Mode Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+```
+
+<figure>
+  <img src="img/634_1.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+<figure>
+  <img src="img/634_2.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+<figure>
+  <img src="img/634_3.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+
+
+### $f_{1}\simeq\textrm{Triang}(u_{m}, u_{M}, u^{*})$, $f_{2}\simeq\textrm{Triang}(N_{m}, N_{M}, N^{\textrm{Reg}})$
+
+Now both prior distributions are triangular with the same choice of hyperparameters are before.
+
+```{r, eval=FALSE, cache=TRUE, echo = TRUE}
+library(data.table)
+library(ggplot2)
+library(pestim)
+nCell <- 50
+nReg <- round(rnorm(nCell, 71, 3))
+nMNO <- round(rnorm(nCell, 19, 2))
+nPar <- 5
+radShares <- lapply(1:nCell, function(i){
+  seq(from = (nMNO / nReg)[i], to = 0.005, length.out = nPar)
+})
+radPopSizes <- lapply(1:nCell, function(i){
+  round(seq(from = 0.25 * nReg[i], to = 1, length.out = nPar))
+})
+varnReg <- var(nReg)
+alphaBound <- sapply(1:nCell, function(i){
+  0.5 * (nReg[i] / varnReg + sqrt((nReg[i] / varnReg)^2 + 4 * nReg[i] / varnReg))
+})
+alpha <- min(alphaBound)
+results.Mean <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+results.Median <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+results.Mode <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+relBias.Mean <- list()
+relBias.Median <- list()
+relBias.Mode <- list()
+for (i in 1:nCell){
+  #print(paste0('i=', i))
+  for (radShare.index in seq(along = radShares[[i]])) {
+    #print(paste0('radShare.index=', radShare.index))
+    for (radPopSize.index in seq(along = radPopSizes[[i]])) {
+      #print(paste0('radPopSize.index=', radPopSize.index))
+      um <- nMNO[[i]] / nReg[[i]] - radShares[[i]][radShare.index]
+      uM <- nMNO[[i]] / nReg[[i]] + radShares[[i]][radShare.index]
+      uMode <- nMNO[[i]] / nReg[[i]]
+      fu <- list('triang', xMin = um, xMax = uM, xMode = uMode)
+  
+      Nm <- nReg[[i]] - radPopSizes[[i]][radPopSize.index]
+      NM <- nReg[[i]] + radPopSizes[[i]][radPopSize.index]
+      fv <- list('triang', xMin = Nm, xMax = NM, xMode = nReg[[i]])
+      
+      flambda <- list('gamma', shape = alpha + 1, scale = nReg[[i]] / alpha)
+      
+      auxResults <- postN0(nMNO[[i]], nReg[[i]], fu, fv, flambda)
+      results.Mean[[i]][radShare.index, radPopSize.index] <- auxResults[['postMean']] 
+      results.Median[[i]][radShare.index, radPopSize.index] <- auxResults[['postMedian']]
+      results.Mode[[i]][radShare.index, radPopSize.index] <- auxResults[['postMode']]
+    }
+  }
+
+  rownames(results.Mean[[i]]) <- round(2 * radShares[[i]], 2)
+  rownames(results.Median[[i]]) <- round(2 * radShares[[i]], 2)
+  rownames(results.Mode[[i]]) <- round(2 * radShares[[i]], 2)
+  colnames(results.Mean[[i]]) <- 2 * radPopSizes[[i]]
+  colnames(results.Median[[i]]) <- 2 * radPopSizes[[i]]
+  colnames(results.Mode[[i]]) <- 2 * radPopSizes[[i]]
+  relBias.Mean[[i]] <- round((results.Mean[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+  relBias.Median[[i]] <- round((results.Median[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+  relBias.Mode[[i]] <- round((results.Mode[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+}
+
+parNames <- expand.grid(paste0('u', 1:5), paste0('v', 1:5))
+colnames(parNames) <- c('u', 'v')
+
+relBias.Mean.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+relBias.Median.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+relBias.Mode.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+for (i in 1:nCell){
+  
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Mean[[i]]))
+ relBias.Mean.df <- rbind(relBias.Mean.df, aux)
+
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Median[[i]]))
+ relBias.Median.df <- rbind(relBias.Median.df, aux)
+ 
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Mode[[i]]))
+ relBias.Mode.df <- rbind(relBias.Mode.df, aux)
+}
+ggplot(relBias.Mean.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Mean Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+ggplot(relBias.Median.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Median Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+ggplot(relBias.Mode.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Mode Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+```
+
+<figure>
+  <img src="img/635_1.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+<figure>
+  <img src="img/635_2.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+<figure>
+  <img src="img/635_3.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+
+### $f_{1}\simeq\textrm{Triang}(u_{m}, u_{M}, u^{*})$, $f_{2}\simeq\Gamma(a + 1, \frac{N^{\textrm{Reg}}}{a})$
+
+Finally we combine a triangular distribution for $f_{1}$ and a gamma distribution for $f_{2}$.
+
+```{r, eval=FALSE, cache=TRUE, echo = TRUE}
+library(data.table)
+library(ggplot2)
+library(pestim)
+nCell <- 50
+nReg <- round(rnorm(nCell, 71, 3))
+varnReg <- var(nReg)
+nMNO <- round(rnorm(nCell, 19, 2))
+nPar <- 5
+radShares <- lapply(1:nCell, function(i){
+  seq(from = (nMNO / nReg)[i], to = 0.005, length.out = nPar)
+})
+alphaBound <- sapply(1:nCell, function(i){
+  0.5 * (nReg[i] / varnReg + sqrt((nReg[i] / varnReg)^2 + 4 * nReg[i] / varnReg))
+})
+alphaMin <- min(alphaBound)
+aPopSizes <- seq(1000, to = alphaMin, length.out = nPar)
+
+results.Mean <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+results.Median <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+results.Mode <- lapply(1:nCell, function(i){matrix(NA, ncol = nPar, nrow = nPar)})
+relBias.Mean <- list()
+relBias.Median <- list()
+relBias.Mode <- list()
+for (i in 1:nCell){
+  #print(paste0('i=', i))
+  for (radShare.index in seq(along = radShares[[i]])) {
+    #print(paste0('radShare.index=', radShare.index))
+    for (aPopSize.index in seq(along = aPopSizes)) {
+      #print(paste0('aPopSize.index=', aPopSize.index))
+      um <- nMNO[[i]] / nReg[[i]] - radShares[[i]][radShare.index]
+      uM <- nMNO[[i]] / nReg[[i]] + radShares[[i]][radShare.index]
+      uMode <- nMNO[[i]] / nReg[[i]]
+      fu <- list('triang', xMin = um, xMax = uM, xMode = uMode)
+      
+      alpha <- aPopSizes[aPopSize.index]
+      fv <- list('gamma', 
+               shape = aPopSizes[aPopSize.index] + 1, 
+               scale = nReg[[i]] / aPopSizes[aPopSize.index])
+      
+      flambda <- list('gamma', shape = alphaMin + 1, scale = nReg[[i]] / alphaMin)
+      
+      auxResults <- postN0(nMNO[[i]], nReg[[i]], fu, fv, flambda)
+      results.Mean[[i]][radShare.index, aPopSize.index] <- auxResults[['postMean']] 
+      results.Median[[i]][radShare.index, aPopSize.index] <- auxResults[['postMedian']]
+      results.Mode[[i]][radShare.index, aPopSize.index] <- auxResults[['postMode']]
+    }
+  }
+
+  rownames(results.Mean[[i]]) <- round(2 * radShares[[i]], 2)
+  rownames(results.Median[[i]]) <- round(2 * radShares[[i]], 2)
+  rownames(results.Mode[[i]]) <- round(2 * radShares[[i]], 2)
+  colnames(results.Mean[[i]]) <- aPopSizes
+  colnames(results.Median[[i]]) <- aPopSizes
+  colnames(results.Mode[[i]]) <- aPopSizes
+  relBias.Mean[[i]] <- round((results.Mean[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+  relBias.Median[[i]] <- round((results.Median[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+  relBias.Mode[[i]] <- round((results.Mode[[i]] - nReg[[i]]) / nReg[[i]] * 100, 1)
+}
+
+parNames <- expand.grid(paste0('u', 1:5), paste0('v', 1:5))
+colnames(parNames) <- c('u', 'v')
+
+relBias.Mean.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+relBias.Median.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+relBias.Mode.df <- data.frame(u = character(0), 
+                              v = character(0), 
+                              cell = character(0), 
+                              N = numeric(0))
+for (i in 1:nCell){
+  
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Mean[[i]]))
+ relBias.Mean.df <- rbind(relBias.Mean.df, aux)
+
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Median[[i]]))
+ relBias.Median.df <- rbind(relBias.Median.df, aux)
+ 
+ aux <- cbind(parNames, cell = as.character(i), N = as.vector(relBias.Mode[[i]]))
+ relBias.Mode.df <- rbind(relBias.Mode.df, aux)
+}
+ggplot(relBias.Mean.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Mean Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+ggplot(relBias.Median.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Median Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+ggplot(relBias.Mode.df, aes(x = ' ', y = N)) +
+  geom_boxplot() +
+  facet_grid(factor(u) ~ factor(v)) +
+  xlab('Diverse combinations of prior parameters') + ylab('Mode Estimates\n') +
+  ggtitle(paste0('Relative bias (%) distributions of the ', nCell, ' cells\n')) +
+  theme(plot.title = element_text(face = 'bold', size = 14, hjust = 0.5))
+
+```
+
+<figure>
+  <img src="img/636_1.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+<figure>
+  <img src="img/636_2.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+<figure>
+  <img src="img/636_3.png" alt="Relative bias (%) distributions of the 50 cells" width="100%" >
+</figure>
+
+
+## Simulations with aggregated mobile phone data and the Spanish population register
+For more realistic values (more than 3-digit figures) we have detected some needs of improvement in the implementation of the Kummer function computation and of the optimization algorithm. We will carry these simulations in a separate document as soon as these improvements have been completed.
+
+For the time being we will illustrate in a complementary document the IT side of the preceding computations so that these tools can be used for any user upon his/her own data.
+
+
+## Next steps
+
+This document illustrates our proposal to infer population counts $N_{i,0}$ over a population partition into cells $i$ at a given time instant $t_{0}$ from the input values $(N_{i,0}^{\textrm{Reg}}, N_{i,0}^{\textrm{MNO}})$ of population counts in a population register or a similar auxiliary data source and detected by a cellular telecommunication network.
+
+The next step is to introduce the time dimension by considering how these population counts evolve. This work is already ongoing and is based on the main working hypothesis that the displacement of individuals among territorial cells is independent of the MNO of each subscriber. Taking the matrix $N^{\textrm{MNO}}(t_{0}, t_{1})=[N_{ij}^{\textrm{MNO}}(t_{0}, t_{1})]_{1\leq i,j\leq I}$ of number of displaced subscribers from cell $i$ to cell $j$ in the time interval $[t_{0}, t_{1}]$ and the registered population counts $N_{i,0}^{\textrm{Reg}}$ as input data we propose the next hierarchical model:
+
+\begin{align}
+N_{i}(t_{1})&=\big\lfloor\sum_{j=1}^{I}p_{j\to i}(t_{0}, t_{1})N_{j}(t_{0})-\sum_{\substack{j=1\\j\neq i}}^{I}p_{i\to j}(t_{0}, t_{1})N_{i}(t_{0})\big\rfloor,\quad i=1,\dots,I\\
+\mathbf{p}_{i\cdot}(t_{0}, t_{1})& \simeq \textrm{Dirichlet}(\mathbf{\alpha}_{i\cdot}(t_{0}, t_{1})),\quad i=1,\dots,I\nonumber\\
+\mathbf{\alpha}_{i\cdot}&\simeq\frac{\prod_{j=1}^{I-1}f_{1}\left(\frac{\alpha_{ij}(t_{0}, t_{1})}{\alpha_{i}^{(0)}(t_{0}, t_{1})};\frac{N_{ij}^{\textrm{MNO}}(t_{0}, t_{1})}{N_{i}^{\textrm{MNO}}(t_{0})}\right)\cdot f_{2}\left(\right)}{(\alpha_{i}^{(0)}(t_{0}, t_{1}))^{I - 1}},\quad i=1,\dots,I\nonumber\\
+N_{i}^{\textrm{MNO}}(t_{0})&\simeq\textrm{Bin}\left(N_{i}(t_{0}), p_{i}(t_{0})\right),\qquad N_{i}^{\textrm{MNO}}(t_{0})\perp N_{j}^{\textrm{MNO}}(t_{0}),\quad i\neq j=1,\dots,I\nonumber\\
+N_{i}(t_{0})&\simeq\textrm{Po}\left(\lambda_{i}(t_{0})\right),\qquad N_{i}(t_{0})\perp N_{j}(t_{0}),\quad i\neq j=1,\dots,I\nonumber\\
+p_{i}(t_{0})&\simeq\textrm{Beta}\left(\alpha_{i}(t_{0}),\beta_{i}(t_{0})\right),\qquad p_{i}(t_{0})\perp p_{j}(t_{0})\quad i\neq j=1,\dots,I\nonumber\\
+\hspace*{-1cm}\left(\alpha_{i}(t_{0}), \beta_{i}(t_{0})\right)&\simeq \frac{f_{1}(\frac{\alpha_{i}(t_{0})}{\alpha_{i}(t_{0})+\beta_{i}(t_{0})}; \mathbf{N}^{\textrm{REG}}(t_{0}))\cdot f_{2}(\alpha_{i}(t_{0})+\beta_{i}(t_{0}); \mathbf{N}^{\textrm{REG}}(t_{0}))}{\alpha_{i}(t_{0})+\beta_{i}}(t_{0}),\qquad (\alpha_{i}(t_{0}),\beta_{i}(t_{0}))\perp(\alpha_{j}(t_{0}),\beta_{j}(t_{0})),\nonumber\\
+\lambda_{i}(t_{0})&\simeq f_{3}(\lambda_{i}(t_{0}); N_{i}^{\textrm{REG}}(t_{0}))\quad (\lambda_{i}(t_{0}) > 0, \lambda_{i}(t_{0})\perp\lambda_{j})(t_{0}), \quad i=1,\dots,I,\nonumber
+\end{align}
+
+\noindent where $\alpha_{i}^{(0)}(t_{0}, t_{1})=\sum_{j=1}^{I}\alpha_{ij}(t_{0}, t_{1})$. The posterior probability distribution to compute is $$\hspace*{-1cm}\mathbb{P}\left(N_{i}(t_{1})\big| N^{\textrm{MNO}}(t_{0}, t_{1}), N^{\textrm{Reg}}(t_{0})\right) = \sum_{n=0}^{\infty}\mathbb{P}\left(N_{i}(t_{1})\big| N_{i}(t_{0}) = n, N^{\textrm{MNO}}(t_{0}, t_{1}), N^{\textrm{Reg}}(t_{0})\right)\mathbb{P}\left(N_{i}(t_{0})=n\big| N^{\textrm{MNO}}(t_{0}, t_{1}), N^{\textrm{Reg}}(t_{0})\right).$$
+
+This will be undertaken in a separate document. Notice that $\mathbb{P}\left(N_{i}(t_{0})=n\big| N^{\textrm{MNO}}(t_{0}, t_{1}), N^{\textrm{Reg}}(t_{0})\right)$ is the result of the preceding proposal and $\mathbb{P}\left(N_{i}(t_{1})\big| N_{i}(t_{0}) = n, N^{\textrm{MNO}}(t_{0}, t_{1}), N^{\textrm{Reg}}(t_{0})\right)$ can be computed using simulations.
+
+
+
+\newpage
+
+# Appendix A: Computation of $J_{n+m, p}(N)$
+
+The integral $J_{n+m, p}(N)$ can be computed using the residue theorem (see e.g. @BroChu03a). Applying this theorem to $g(z)=f_{N}(z)\cdot \frac{z^{p}}{\prod_{k=1}^{n+m-1}(z+k)}\cdot \log(z)$ in the closed path around the origin composed by a straight path $\gamma_{1}$ along and above the positive real axis (from $+\epsilon$ to $+R$), a counterclockwise circular path $\gamma_{R}$ at radius $R$, a straight path $\gamma_{2}$ along and below the positive real axis (from $+R$ to $+\epsilon$) and a clockwise circular path $\gamma_{\epsilon}$ at radius $\epsilon$. We place a branch cut at the positive real axis. Then it is easy to prove (via Jordan's lemma) that $\int_{\gamma_{R}}g(z)dz\to 0$ and $\int_{\gamma_{\epsilon}}g(z)dz$ when $R\to\infty$ and $\epsilon\to 0$, while 
+
+\begin{align}
+\int_{\gamma_{1}}g(z)dz&\to\int_{0}^{\infty}dx\ f_{N}(x)\frac{x^{p}}{\prod_{k=1}^{n+m-1}(x+k)}\log(x),\\
+\int_{\gamma_{2}}g(z)dz&\to-\int_{0}^{\infty}dx\ f_{N}(x)\frac{x^{p}}{\prod_{k=1}^{n+m-1}(x+k)}\left(\log(x) + 2\pi i\right).
+\end{align}
+
+The poles of $g(z)$ are simple and located at $z = -k$, $k=1, \dots, n+m-1$ and the residues can be computed easily:
+
+\begin{align}
+\textrm{Res}(g, -k)&=f_{N}(-k)\cdot \frac{(-k)^{p}}{\prod_{\substack{i=1\\i\neq k}}^{n+m-1}(i-k)}\log\left(ke^{i\pi}\right)\nonumber\\
+&=f_{N}(-k)\frac{(-1)^{p}k^{p}}{(-1)^{k-1}(k-1)!(n+m-1-k)!}\left(\log(k) + i\pi\right)\nonumber\\
+&=f_{N}(-k)\cdot\frac{(-1)^{p-k} k^{p + 1}}{(n+m-1)!}\binom{n+m-1}{k}\left(\log(k) + i\pi\right)
+\end{align}
+
+Substituting on the residue theorem and focusing on the imaginary part of the expressions we have 
+
+\begin{align}
+-2\pi i\int_{0}^{\infty}dx\quad f_{N}(x)\frac{x^{p}}{\prod_{k=1}^{n+m-1}(x+k)}&=2\pi i\sum_{k=1}^{n+m-1}f(-k)\cdot\frac{(-1)^{p-k} k^{p+1}}{(n+m-1)!}\binom{n+m-1}{k}\left(\log(k) + i\pi\right),
+\end{align}
+
+thus arriving at
+
+\begin{align}
+J_{n+m,p}(N)=\int_{0}^{\infty}dx\quad f_{N}(x)\frac{x^{p}}{\prod_{k=1}^{n+m-1}(x+k)}&=\frac{1}{(n+m-1)!}\sum_{k=1}^{n+m-1}(-1)^{p-k-1}\binom{n+m-1}{k}f(-k)\cdot k^{p+1}\log(k).
+\end{align}
+
+Setting $n=N_{i}^{\textrm{MNO}}$, $m=n_{i}-N_{i}^{\textrm{MNO}}$ and $N=N_{i}^{\textrm{REG}}$, we have 
+
+\begin{align}
+J_{n_{i},p_{i}}(N_{i}^{\textrm{REG}})&=\frac{1}{(n_{i}-1)!}\sum_{k_{i}=1}^{n_{i}-1}(-1)^{p_{i}-k_{i}-1}\binom{n_{i}-1}{k_{i}}f_{N_{i}^{\textrm{REG}}}(-k_{i})\cdot k_{i}^{p_{i}+1}\log(k_{i}).
+\end{align}
+
+
+
+# Appendix B: computation of $a_{N, n- N}(m)$
+
+Let us consider the following attempt to compute the numerical factors $$a_{N,n-N}(p)=\sum_{q=0}^{p}q!\left[\begin{matrix}n\\q\end{matrix}\right](p-q)!\left[\begin{matrix}n-N\\p-q\end{matrix}\right].$$
+
+Let us consider the generating function $G_{k}(z)=\frac{(\log(1+z))^{k}}{k!}=\sum_{n=0}^{\infty}(-1)^{n-k}\left[\begin{matrix}n\\k\end{matrix}\right]\frac{z^{n}}{n!}$. Notice that $G_{k}^{(n)}(0) = (-1)^{n-k}\left[\begin{matrix}N\\s\end{matrix}\right]$. 
+
+We apply Bruno di Faà's formula (@Joh02a) to $k!G_{k}^{(n)}(z)=(\log(1+z))^{k}$:
+
+$$\frac{d^{n}}{dz^{n}}f(g(z)) = \sum_{m=1}^{n}\sum_{\substack{k_{1},\dots,k_{n}=0\\k_{1}+2\cdot k_{2}+\dots+n\cdot k_{n}=n}}^{m}\frac{n!}{k_{1}!\dots k_{n}!}f^{(m)}(g(z))\left(\frac{g^{(1)}(z)}{1!}\right)^{k_{1}}\cdots\left(\frac{g^{(n)}(z)}{n!}\right)^{k_{n}}.$$
+
+Now, in our case we have $f(z) = z^{k}$ and $g(z)= \log(1+z)$. Then we can write
+
+\begin{align}
+k!\left[\begin{matrix}n\\k\end{matrix}\right]= (-1)^{n-k}k!G_{k}^{(n)}(0)&=(-1)^{n-k}\sum_{m=1}^{k}\sum_{\substack{k_{1},\dots, k_{n}=0\\k_{1}+2\cdot k_{2}+\dots+ n\cdot k_{n}=n}}^{m}\frac{n!}{k_{1}!\cdots k_{n}!}\frac{k!}{(k-m)!}\delta_{km}\left(\frac{(-1)^{1-1}}{1}\right)^{k_{1}}\cdots \left(\frac{(-1)^{n-1}}{n}\right)^{k_{n}}\nonumber\\
+&=(-1)^{n-k}\cdot n!\cdot k!\sum_{\substack{k_{1},\dots, k_{n}=0\\k_{1}+2\cdot k_{2}+\dots +n\cdot k_{n}=n}}^{k}\frac{1}{k_{1}!\dots k_{n}!}\left(\frac{1}{1}\right)^{k_{1}}\cdots \left(\frac{(-1)^{n-1}}{n}\right)^{k_{n}}.
+\end{align}
+
+We have found no way to further simplify this expression. Notice also that for large $n$ and $k$ as in our case, it can hardly be implemented in a computer routine (indeed, Stirling numbers are often computed using recurrence relations in $O(n^{2})$ steps). So far, no further simplification has been found. 
 
 
 
 
 # Complete model
 
+This part of the document contains a hierarchical model to estimate population counts using a combination of aggregated mobile phone data and official data both at a given time instant and along a sequence of time periods. This work completes the preceding proposal which sets the model for the initial time instant estimates (cf.\ @WP5IntDoc4). Thus, in the subsequent we show how to extend the estimates along a sequence of time instants, not just the initial one.
+
+We provide a full view of the proposal to offer a complete view of this methodological approach. 
 
 Our approach can be graphically represented by figure: 
 <figure>
-  <img src="Tool2.png" alt="Schematic diagram for the output intended using mobile phone and official population data" width="100%" >
+  <img src="img/Tool2.png" alt="Schematic diagram for the output intended using mobile phone and official population data" width="100%" >
 </figure>
 
 
