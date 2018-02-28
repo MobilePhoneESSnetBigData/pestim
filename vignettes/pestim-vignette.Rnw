@@ -273,7 +273,7 @@ S(\lambda, N^{\textrm{MNO}}, N^{\textrm{REG}})=\lim_{M\to\infty}\frac{1}{M}\sum_
 To estimate the number of individuals per cell we need a method to generate random variables
 according to the posterior distribution $\mathbb{P}\left(N_{i}|\mathbf{N}^{\textrm{MNO}};\mathbf{N}^{\textrm{REG}}\right)$.
 For this we need to generate random values for
-hyperparameter $\lambda$ according to its posterior distribution \eqref{Hyper}:
+hyperparameter $\lambda$ according to its posterior distribution \eqref{hyper}:
 
 \begin{align}
 \mathbb{P}\left(\lambda\big|N^{\textrm{MNO}};N^{\textbf{REG}}\right)&\propto\mathbb{P}\left(\lambda\right)\cdot\textrm{Po}(N^{\textrm{MNO}}; \lambda) \cdot S\left(\lambda, N^{\textrm{MNO}}, N^{REG}\right).\nonumber
@@ -1453,7 +1453,7 @@ presented at Q2016 Conference, June, 2016.
 ~ESSnet on Big Data WP5, Current status of access to mobile phone data in the ESS, 2017.
 
 \bibitem{RefMan}
-~Oancea, B., Reference Manual, [https://github.com/MobilePhoneESSnetBigData/pestim/raw/master/doc/pestim_Reference_Manual.pdf], 2018.
+~Oancea, B., Reference Manual, 2018, \hfill \break \url{https://github.com/MobilePhoneESSnetBigData/pestim/raw/master/doc/pestim_Reference_Manual.pdf}
 
 \bibitem{watson}
 ~Watson, G.N., The Harmonic Functions Associated with the Parabolic Cylinder, Proceedings
