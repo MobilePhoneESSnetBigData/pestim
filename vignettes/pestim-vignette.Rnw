@@ -53,12 +53,6 @@ in which we can equate population figures from both sources.
 network operator which they are subscribed to.
 \end{itemize}
 
-<<>>=
-summary(cars)
-plot(pressure)
-@
-
-
 The inference of the population counts from mobile phone data and official data is achieved in a two step process:
 \begin{itemize}
 	\item {at a given time instant $t_{0}$ both mobile phone and
@@ -1457,9 +1451,11 @@ presented at Q2016 Conference, June, 2016.
 \bibitem{WP5Del11}
 ~ESSnet on Big Data WP5, Current status of access to mobile phone data in the ESS, 2017.
 
+\bibitem{RefMan}
+~ESSnet on Big Data WP5, Current status of access to mobile phone data in the ESS, 2017.
+
 \bibitem{watson}
-~Watson, G.N., The Harmonic Functions Associated with the Parabolic Cylinder, Proceedings
- of the London Mathematical Society, 2, 1918, pp. 116–148.
+~Oancea, B., Reference Manual, [https://github.com/MobilePhoneESSnetBigData/pestim/raw/master/doc/pestim_Reference_Manual.pdf], 2018.
 \end{thebibliography}
 
 
