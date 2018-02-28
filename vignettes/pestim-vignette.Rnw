@@ -84,8 +84,9 @@ at least R version 3.3.0, but upgrading R to the newest version is highly recomm
 It can be installed using \texttt{install\_github()} function from \texttt{devtools} package:
 \begin{verbatim}
 library(devtools)
-install_github("MobilePhoneESSnetBigData/pestim")
+install_github("MobilePhoneESSnetBigData/pestim", build_vignettes=TRUE)
 \end{verbatim}
+The Reference Manual is available at the following address: \url{https://github.com/MobilePhoneESSnetBigData/pestim/raw/master/doc/pestim_Reference_Manual.pdf}.
 
 Since it contains \texttt{C++} code, the user need to install \texttt{Rtools} under Windows
 enviroment or to have a  \texttt{C++}  compiler under Linux or Mac OS X environments.
