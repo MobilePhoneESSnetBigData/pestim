@@ -28,11 +28,12 @@
 \maketitle
 
 \begin{abstract}
-This package has been developed in the context of a European research project
+This package has been developed in the context of an European research project
 within the European Statistical System called ESSnet on Big Data.
-It provides an implementation for a hierarchical model to combine both
+It provides an implementation of a hierarchical model that combine both
 aggregated mobile phone data and external official (administrative or survey)
-data to produce estimates of population counts in each cell of a division of a territory using a Bayesian approach.
+data to produce estimates of population counts in each cell of a division of a territory
+using a Bayesian approach.
 \end{abstract}
 
 
