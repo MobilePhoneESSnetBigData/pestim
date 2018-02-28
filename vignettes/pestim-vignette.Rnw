@@ -1453,11 +1453,13 @@ presented at Q2016 Conference, June, 2016.
 ~ESSnet on Big Data WP5, Current status of access to mobile phone data in the ESS, 2017.
 
 \bibitem{RefMan}
-~ESSnet on Big Data WP5, Current status of access to mobile phone data in the ESS, 2017.
+~Oancea, B., Reference Manual, [https://github.com/MobilePhoneESSnetBigData/pestim/raw/master/doc/pestim_Reference_Manual.pdf], 2018.
 
 \bibitem{watson}
-~Oancea, B., Reference Manual, [https://github.com/MobilePhoneESSnetBigData/pestim/raw/master/doc/pestim_Reference_Manual.pdf], 2018.
+~Watson, G.N., The Harmonic Functions Associated with the Parabolic Cylinder, Proceedings
+ of the London Mathematical Society, 2, 1918, pp. 116–148.
+
 \end{thebibliography}
 
-
 \end{document}
+
