@@ -1,7 +1,7 @@
 #' @title Confluent hypergeometric or Kummer function
 #'
-#' @description Partial implementation of the confluent hypergeometric function
-#' \eqn{{}_{1}F_{1}(x ; a; b)}
+#' @description A parallel implementation of the confluent hypergeometric function
+#' \eqn{{}_{1}F_{1}(x ; a; b)} using RcppParallel package
 #'
 #' @param x, a, b numeric vectors of the same length
 #'
@@ -10,10 +10,12 @@
 #'
 #' @return Return a numeric vector with the values of the function
 #'
-#' @details This function is implemented in C++. It is based on Pearson et al (2016). It only
-#' implements the Taylor series method together with an asymtoptic expansion based on Watson's lemma
+#' @details This function is implemented in C++. It is based on Pearson et al (2016). It 
+#' implements the Taylor series method together with an asymtoptic expansion based on Watson's lemma. The 
+#' actual implementation uses parallelFor from RcppParallel package together with a functor that computes
+#'confluent hypergeometric function for chunks of vectors x, a, b
 #'
-#' @author Luis Sanguiao Bogdan Oancea
+#' @author Bogdan Oancea
 #'
 #' @useDynLib pestim
 #' @importFrom Rcpp RcppParallel sourceCpp
