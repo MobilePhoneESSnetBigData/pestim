@@ -5,3 +5,7 @@ Kummer <- function(z, a, b, relTol) {
     .Call('_pestim_Kummer', PACKAGE = 'pestim', z, a, b, relTol)
 }
 
+pKummer <- function(z, a, b, relTol) {
+    .Call('_pestim_pKummer', PACKAGE = 'pestim', z, a, b, relTol)
+}
+

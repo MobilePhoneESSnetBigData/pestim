@@ -1,0 +1,26 @@
+#' @title Confluent hypergeometric or Kummer function
+#'
+#' @description Partial implementation of the confluent hypergeometric function
+#' \eqn{{}_{1}F_{1}(x ; a; b)}
+#'
+#' @param x, a, b numeric vectors of the same length
+#'
+#' @param relTol relative tolerance (default value \code{1e-6}) understood as the ratio of each term
+#' in the series relative to the sum
+#'
+#' @return Return a numeric vector with the values of the function
+#'
+#' @details This function is implemented in C++. It is based on Pearson et al (2016). It only
+#' implements the Taylor series method together with an asymtoptic expansion based on Watson's lemma
+#'
+#' @author Luis Sanguiao Bogdan Oancea
+#'
+#' @useDynLib pestim
+#' @importFrom Rcpp RcppParallel sourceCpp
+#' @export
+pkummer <- function(x, a, b, relTol = 1e-6){
+  
+  output <- pKummer(x, a, b, relTol)
+  output[is.infinite(output)] <- .Machine$double.xmax
+  return(output)
+}

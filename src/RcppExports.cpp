@@ -19,9 +19,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// pKummer
+Rcpp::NumericVector pKummer(Rcpp::NumericVector z, Rcpp::NumericVector a, Rcpp::NumericVector b, double relTol);
+RcppExport SEXP _pestim_pKummer(SEXP zSEXP, SEXP aSEXP, SEXP bSEXP, SEXP relTolSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type z(zSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type a(aSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type b(bSEXP);
+    Rcpp::traits::input_parameter< double >::type relTol(relTolSEXP);
+    rcpp_result_gen = Rcpp::wrap(pKummer(z, a, b, relTol));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_pestim_Kummer", (DL_FUNC) &_pestim_Kummer, 4},
+    {"_pestim_pKummer", (DL_FUNC) &_pestim_pKummer, 4},
     {NULL, NULL, 0}
 };
 
