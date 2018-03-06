@@ -46,11 +46,20 @@ struct wKummer : public Worker {
 Rcpp::NumericVector pKummer(Rcpp::NumericVector z, Rcpp::NumericVector a, Rcpp::NumericVector b, double relTol) {
   int n=z.size();
   Rcpp::NumericVector suma(n);
+  int grain_size = 1;
+
+  // an automatic procedure to compute the optimum grain size  - to be developed
+  // for now we use some heuristic numbers
+  if (n >= 1e4)
+    grain_size = 1000;
+  else
+    grain_size = 100;
+
 
   wKummer wk(z, a, b, relTol, suma);
 
   // call it with parallelFor
-  parallelFor(0, z.length(), wk);
+  parallelFor(0, z.length(), wk, grain_size);
 
   return(suma);
 }
