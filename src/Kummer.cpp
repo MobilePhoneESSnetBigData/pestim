@@ -5,7 +5,8 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 NumericVector Kummer(NumericVector z, NumericVector a, NumericVector b, double relTol) {
   double sumando;
-  int n=z.size(),i,j;
+  int n=z.size(),i;
+  long j;
   NumericVector suma(n);
 
   for (i=0;i<n;++i) {

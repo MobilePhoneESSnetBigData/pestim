@@ -22,7 +22,7 @@ struct wKummer : public Worker {
 
   // function call operator that work for the specified range (begin/end)
   void operator()(std::size_t begin, std::size_t end) {
-    int j;
+    long j;
     double sumando;
     for (std::size_t i = begin; i < end; i++) {
       if (z[i]<80) {
