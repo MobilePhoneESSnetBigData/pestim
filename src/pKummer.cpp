@@ -1,5 +1,6 @@
 #include "Rcpp.h"
 #include "RcppParallel.h"
+#include "compute.h"
 #include <cmath>
 using namespace RcppParallel;
 
@@ -24,21 +25,22 @@ struct wKummer : public Worker {
   void operator()(std::size_t begin, std::size_t end) {
     long j;
     double sumando;
-    for (std::size_t i = begin; i < end; i++) {
-      if (z[i]<80) {
-        for (j=0,sumando=1,suma[i]=1;fabs(sumando/suma[i])>relTol;++j){
-          sumando*=(z[i] / (j+1)) * ((a[i] + j) / (b[i] + j));
-          suma[i]+=sumando;
-        }
-      }
-      else {
-        for (j=0,sumando=1,suma[i]=1;fabs(sumando/suma[i])>relTol;++j){
-          sumando*=((1-a[i]+j) / (j+1)) * ((b[i] - a[i] + j) / (z[i]));
-          suma[i]+=sumando;
-        }
-        suma[i]*=exp(z[i]+(a[i]-b[i])*log(z[i])+lgamma(b[i])-lgamma(a[i]));
-      }
-    }
+    compute(z,a,b,suma, relTol, begin, end);
+  //   for (std::size_t i = begin; i < end; i++) {
+  //     if (z[i]<80) {
+  //       for (j=0,sumando=1,suma[i]=1;fabs(sumando/suma[i])>relTol;++j){
+  //         sumando*=(z[i] / (j+1)) * ((a[i] + j) / (b[i] + j));
+  //         suma[i]+=sumando;
+  //       }
+  //     }
+  //     else {
+  //       for (j=0,sumando=1,suma[i]=1;fabs(sumando/suma[i])>relTol;++j){
+  //         sumando*=((1-a[i]+j) / (j+1)) * ((b[i] - a[i] + j) / (z[i]));
+  //         suma[i]+=sumando;
+  //       }
+  //       suma[i]*=exp(z[i]+(a[i]-b[i])*log(z[i])+lgamma(b[i])-lgamma(a[i]));
+  //     }
+  //   }
   }
 };
 
