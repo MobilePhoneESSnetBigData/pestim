@@ -23,8 +23,8 @@ struct wKummer : public Worker {
 
   // function call operator that work for the specified range (begin/end)
   void operator()(std::size_t begin, std::size_t end) {
-    long j;
-    double sumando;
+    //long j;
+    //double sumando;
     compute(z,a,b,suma, relTol, begin, end);
   //   for (std::size_t i = begin; i < end; i++) {
   //     if (z[i]<80) {

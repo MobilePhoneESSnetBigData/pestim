@@ -1,9 +1,9 @@
 #ifndef __COMPUTE_H__
 #define __COMPUTE_H__
 template<typename T>
-  void compute(const T z, T a, T b, T& suma, double relTol, std::size_t begin, std::size_t end) {
+  void compute(const T& z, const T& a, const T& b, T& suma, double relTol, std::size_t begin, std::size_t end) {
     double sumando;
-    int i;
+    std::size_t i;
     long j;
     for (i=begin;i<end;++i) {
       if (z[i]<80) {
