@@ -4,7 +4,7 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector Kummer(NumericVector z, NumericVector a, NumericVector b, double relTol) {
+NumericVector Kummer(const NumericVector& z, const NumericVector& a, const NumericVector& b, double relTol) {
   //double sumando;
   int n=z.size();
   //long j;

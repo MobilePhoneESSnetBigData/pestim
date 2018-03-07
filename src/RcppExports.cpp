@@ -6,28 +6,28 @@
 using namespace Rcpp;
 
 // Kummer
-NumericVector Kummer(NumericVector z, NumericVector a, NumericVector b, double relTol);
+NumericVector Kummer(const NumericVector& z, const NumericVector& a, const NumericVector& b, double relTol);
 RcppExport SEXP _pestim_Kummer(SEXP zSEXP, SEXP aSEXP, SEXP bSEXP, SEXP relTolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type a(aSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type z(zSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type a(aSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type b(bSEXP);
     Rcpp::traits::input_parameter< double >::type relTol(relTolSEXP);
     rcpp_result_gen = Rcpp::wrap(Kummer(z, a, b, relTol));
     return rcpp_result_gen;
 END_RCPP
 }
 // pKummer
-Rcpp::NumericVector pKummer(Rcpp::NumericVector z, Rcpp::NumericVector a, Rcpp::NumericVector b, double relTol);
+Rcpp::NumericVector pKummer(const Rcpp::NumericVector& z, const Rcpp::NumericVector& a, const Rcpp::NumericVector& b, double relTol);
 RcppExport SEXP _pestim_pKummer(SEXP zSEXP, SEXP aSEXP, SEXP bSEXP, SEXP relTolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type z(zSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type a(aSEXP);
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type z(zSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type a(aSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type b(bSEXP);
     Rcpp::traits::input_parameter< double >::type relTol(relTolSEXP);
     rcpp_result_gen = Rcpp::wrap(pKummer(z, a, b, relTol));
     return rcpp_result_gen;

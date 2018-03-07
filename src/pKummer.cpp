@@ -18,7 +18,7 @@ struct wKummer : public Worker {
   RVector<double> suma;
 
   // initialize from Rcpp input and output
-  wKummer(Rcpp::NumericVector z1, Rcpp::NumericVector a1, Rcpp::NumericVector b1, double relTol1, Rcpp::NumericVector suma1)
+  wKummer(const Rcpp::NumericVector& z1, const Rcpp::NumericVector& a1, const Rcpp::NumericVector& b1, double relTol1, Rcpp::NumericVector& suma1)
     : z(z1), a(a1), b(b1), relTol(relTol1), suma(suma1) {}
 
   // function call operator that work for the specified range (begin/end)
@@ -45,7 +45,7 @@ struct wKummer : public Worker {
 };
 
 // [[Rcpp::export]]
-Rcpp::NumericVector pKummer(Rcpp::NumericVector z, Rcpp::NumericVector a, Rcpp::NumericVector b, double relTol) {
+Rcpp::NumericVector pKummer(const Rcpp::NumericVector& z, const Rcpp::NumericVector& a, const Rcpp::NumericVector& b, double relTol) {
   int n=z.size();
   Rcpp::NumericVector suma(n);
   int grain_size = 1;
