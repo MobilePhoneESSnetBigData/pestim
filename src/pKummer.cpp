@@ -55,7 +55,7 @@ Rcpp::NumericVector pKummer(Rcpp::NumericVector z, Rcpp::NumericVector a, Rcpp::
   if (n >= 1e4)
     grain_size = 1000;
   else
-    grain_size = 100;
+    grain_size = 500;
 
 
   wKummer wk(z, a, b, relTol, suma);
