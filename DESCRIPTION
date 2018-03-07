@@ -2,9 +2,10 @@ Package: pestim
 Type: Package
 Title: Population Estimations Using Mobile Phone Data
 Version: 0.1.0
+Date: 2018-02-01
 Authors@R: c(person("David", "Salgado", email = "david.Salgado.fernandez@gmail.com", 
-    role = c("aut", "cre")), 
-    person("Bogdan", "Oancea", email = "bogdan.oancea@gmail.com", role = c("ctb")))
+    role = c("aut")), 
+    person("Bogdan", "Oancea", email = "bogdan.oancea@gmail.com", role = c("aut", "ctb", "cre")))
 Description: This package contains functions that implement a simple
     hierarchical model to estimate the population counts of different territorial
     cells combining the information from aggregated mobile phone data and a
