@@ -78,7 +78,7 @@ postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-
     output <- lapply(seq(along = nMNO), function(i){
 
       postN0(nMNO[i], nReg[i], fu[[i]], fv[[i]], flambda[[i]],
-             n, scale, relTol, nSim, nStrata, verbose)
+             n, scale, relTol, nSim, nStrata, verbose, nThreads)
 
     })
     output <- Reduce(rbind, lapply(output, rbind))
