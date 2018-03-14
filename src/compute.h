@@ -1,5 +1,7 @@
 #ifndef __COMPUTE_H__
 #define __COMPUTE_H__
+#include <cmath>
+
 template<typename T>
   void compute(const T& z, const T& a, const T& b, T& suma, double relTol, std::size_t begin, std::size_t end) {
     double sumando;

@@ -1,7 +1,7 @@
 #include "Rcpp.h"
 #include "RcppParallel.h"
 #include "compute.h"
-#include <cmath>
+
 using namespace RcppParallel;
 
 
@@ -18,29 +18,13 @@ struct wKummer : public Worker {
   RVector<double> suma;
 
   // initialize from Rcpp input and output
-  wKummer(const Rcpp::NumericVector& z1, const Rcpp::NumericVector& a1, const Rcpp::NumericVector& b1, double relTol1, Rcpp::NumericVector& suma1)
+  wKummer(const Rcpp::NumericVector& z1, const Rcpp::NumericVector& a1, const Rcpp::NumericVector& b1, const double relTol1, Rcpp::NumericVector& suma1)
     : z(z1), a(a1), b(b1), relTol(relTol1), suma(suma1) {}
 
   // function call operator that work for the specified range (begin/end)
   void operator()(std::size_t begin, std::size_t end) {
-    //long j;
-    //double sumando;
-    compute(z,a,b,suma, relTol, begin, end);
-  //   for (std::size_t i = begin; i < end; i++) {
-  //     if (z[i]<80) {
-  //       for (j=0,sumando=1,suma[i]=1;fabs(sumando/suma[i])>relTol;++j){
-  //         sumando*=(z[i] / (j+1)) * ((a[i] + j) / (b[i] + j));
-  //         suma[i]+=sumando;
-  //       }
-  //     }
-  //     else {
-  //       for (j=0,sumando=1,suma[i]=1;fabs(sumando/suma[i])>relTol;++j){
-  //         sumando*=((1-a[i]+j) / (j+1)) * ((b[i] - a[i] + j) / (z[i]));
-  //         suma[i]+=sumando;
-  //       }
-  //       suma[i]*=exp(z[i]+(a[i]-b[i])*log(z[i])+lgamma(b[i])-lgamma(a[i]));
-  //     }
-  //   }
+
+    compute<RVector<double>>(z,a,b,suma, relTol, begin, end);
   }
 };
 
@@ -53,7 +37,7 @@ Rcpp::NumericVector pKummer(const Rcpp::NumericVector& z, const Rcpp::NumericVec
   // an automatic procedure to compute the optimum grain size  - to be developed
   // for now we use some heuristic numbers
   if (n >= 1e4)
-    grain_size = 1000;
+    grain_size = 2000;
   else
     grain_size = 500;
 

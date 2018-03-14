@@ -6,7 +6,7 @@
 using namespace Rcpp;
 
 // Kummer
-NumericVector Kummer(const NumericVector& z, const NumericVector& a, const NumericVector& b, double relTol);
+NumericVector Kummer(const NumericVector& z, const NumericVector& a, const NumericVector& b, const double relTol);
 RcppExport SEXP _pestim_Kummer(SEXP zSEXP, SEXP aSEXP, SEXP bSEXP, SEXP relTolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -14,7 +14,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const NumericVector& >::type z(zSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type a(aSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type b(bSEXP);
-    Rcpp::traits::input_parameter< double >::type relTol(relTolSEXP);
+    Rcpp::traits::input_parameter< const double >::type relTol(relTolSEXP);
     rcpp_result_gen = Rcpp::wrap(Kummer(z, a, b, relTol));
     return rcpp_result_gen;
 END_RCPP

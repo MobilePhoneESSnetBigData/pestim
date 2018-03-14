@@ -4,27 +4,9 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector Kummer(const NumericVector& z, const NumericVector& a, const NumericVector& b, double relTol) {
-  //double sumando;
+NumericVector Kummer(const NumericVector& z, const NumericVector& a, const NumericVector& b, const double relTol) {
   int n=z.size();
-  //long j;
   NumericVector suma(n);
-  compute(z,a,b,suma, relTol, 0, n);
-  // for (i=0;i<n;++i) {
-  //   if (z[i]<80) {
-  //     for (j=0,sumando=1,suma[i]=1;fabs(sumando/suma[i])>relTol;++j){
-  //       sumando*=(z[i] / (j+1)) * ((a[i] + j) / (b[i] + j));
-  //       suma[i]+=sumando;
-  //     }
-  //   }
-  //   else {
-  //     for (j=0,sumando=1,suma[i]=1;fabs(sumando/suma[i])>relTol;++j){
-  //       sumando*=((1-a[i]+j) / (j+1)) * ((b[i] - a[i] + j) / (z[i]));
-  //       suma[i]+=sumando;
-  //     }
-  //     suma[i]*=exp(z[i]+(a[i]-b[i])*log(z[i])+lgamma(b[i])-lgamma(a[i]));
-  //   }
-  // }
-
+  compute<NumericVector>(z,a,b,suma, relTol, 0, n);
   return(suma);
 }
