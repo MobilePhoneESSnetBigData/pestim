@@ -22,6 +22,8 @@
 #'
 #' @param verbose logical (default \code{FALSE}) to report progress of the computation
 #'
+#' @param nThreads number (default the number of all cores, including logical cores) to use for computation
+#'
 #' @return \code{modeLambda} returns a vector with the values of the mode of the density function
 #' (column \code{probLambda}) for each cell.
 #'
@@ -63,7 +65,7 @@
 #' @import data.table
 #'
 #' @export
-modeLambda <- function(nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e4, nStrata = c(1, 1e2), verbose = FALSE){
+modeLambda <- function(nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e4, nStrata = c(1, 1e2), verbose = FALSE, nThreads = RcppParallel::defaultNumThreads()){
 
   nCells <- length(nMNO)
   if (length(nReg) != nCells) stop('nReg and nMNO must have the same length.')
@@ -76,7 +78,7 @@ modeLambda <- function(nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e4, n
 
     x0 <- (nMNO + nReg) / 2
     h <- x0 / 2
-    f0lr <- dlambda(c(x0, max(x0 - h, 0), x0 + h), nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose)$probLambda
+    f0lr <- dlambda(c(x0, max(x0 - h, 0), x0 + h), nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)$probLambda
     diff0lr <- abs(f0lr[2:3] - f0lr[1])
     stopCrit <- FALSE
 
@@ -87,17 +89,17 @@ modeLambda <- function(nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e4, n
       if (index.max == 1) {
 
         h <- h / 2
-        f0lr <- c(f0lr[1], dlambda(c(max(x0 - h, 0), x0 + h), nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose)$probLambda)
+        f0lr <- c(f0lr[1], dlambda(c(max(x0 - h, 0), x0 + h), nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)$probLambda)
 
       } else if (index.max == 2) {
 
         x0 <- max(x0 - h, 0)
-        f0lr <- c(f0lr[2], dlambda(max(x0 - h, 0), nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose)$probLambda, f0lr[1])
+        f0lr <- c(f0lr[2], dlambda(max(x0 - h, 0), nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)$probLambda, f0lr[1])
 
       } else if (index.max == 3) {
 
         x0 <- x0 + h
-        f0lr <- c(f0lr[3], f0lr[1], dlambda(x0 + h, nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose)$probLambda)
+        f0lr <- c(f0lr[3], f0lr[1], dlambda(x0 + h, nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)$probLambda)
 
       }
       diff0lr <- abs(f0lr[2:3] - f0lr[1])
@@ -123,7 +125,7 @@ modeLambda <- function(nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e4, n
       locfv <- c(fv[[1L]], locfv.Pars)
       locflambda.Pars <- lapply(flambda[-1], '[', i)
       locflambda <- c(flambda[[1L]], locflambda.Pars)
-      locMode <- modeLambda(locnMNO, locnReg, locfu, locfv, locflambda, relTol, nSim, nStrata, verbose)
+      locMode <- modeLambda(locnMNO, locnReg, locfu, locfv, locflambda, relTol, nSim, nStrata, verbose, nThreads)
       if (verbose) cat(' ok.\n')
       return(locMode)
     })

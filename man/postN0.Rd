@@ -5,7 +5,8 @@
 \title{Posterior mean, median, and mode for the number of individuals at the initial time.}
 \usage{
 postN0(nMNO, nReg, fu, fv, flambda, n = 1000, scale = 1, relTol = 1e-08,
-  nSim = 1000, nStrata = c(1, 100), verbose = FALSE)
+  nSim = 1000, nStrata = c(1, 100), verbose = FALSE,
+  nThreads = RcppParallel::defaultNumThreads())
 }
 \arguments{
 \item{nMNO, }{nReg non-negative integer vectors with the number of individuals detected in each
@@ -31,6 +32,8 @@ is \code{1e4}}
 value is \code{c(1, 1e2)}}
 
 \item{verbose}{logical (default \code{FALSE}) to report progress of the computation}
+
+\item{nThreads}{number (default the number of all cores, including logical cores) to use for computation}
 }
 \value{
 \code{postN0} computes the posterior mean, median, and mode of the posterior distribution

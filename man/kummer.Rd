@@ -4,13 +4,16 @@
 \alias{kummer}
 \title{Confluent hypergeometric or Kummer function}
 \usage{
-kummer(x, a, b, relTol = 1e-06)
+kummer(x, a, b, relTol = 1e-06,
+  nThreads = RcppParallel::defaultNumThreads())
 }
 \arguments{
 \item{x, }{a, b numeric vectors of the same length}
 
 \item{relTol}{relative tolerance (default value \code{1e-6}) understood as the ratio of each term
 in the series relative to the sum}
+
+\item{nThreads}{number (default the number of all cores, including logical cores) to use for computation}
 }
 \value{
 Return a numeric vector with the values of the function

@@ -8,6 +8,8 @@
 #' @param relTol relative tolerance (default value \code{1e-6}) understood as the ratio of each term
 #' in the series relative to the sum
 #'
+#' @param nThreads number (default the number of all cores, including logical cores) to use for computation
+#'
 #' @return Return a numeric vector with the values of the function
 #'
 #' @details This function is implemented in C++. It is based on Pearson et al (2016). It only
@@ -18,9 +20,14 @@
 #' @useDynLib pestim
 #' @importFrom Rcpp sourceCpp
 #' @export
-kummer <- function(x, a, b, relTol = 1e-6){
+kummer <- function(x, a, b, relTol = 1e-6, nThreads = RcppParallel::defaultNumThreads()){
+  if(nThreads > 1) {
+     RcppParallel::setThreadOptions(numThreads = nThreads)
+     output <- pKummer(x, a, b, relTol)
+  }
+  else
+    output <- Kummer(x, a, b, relTol)
 
-  output <- Kummer(x, a, b, relTol)
   output[is.infinite(output)] <- .Machine$double.xmax
   return(output)
 }

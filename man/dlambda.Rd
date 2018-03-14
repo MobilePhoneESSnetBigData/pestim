@@ -5,7 +5,8 @@
 \title{Posterior density function of the lambda parameter.}
 \usage{
 dlambda(lambda, nMNO, nReg, fu, fv, flambda, relTol = 1e-06, nSim = 1000,
-  nStrata = c(1, 100), verbose = FALSE)
+  nStrata = c(1, 100), verbose = FALSE,
+  nThreads = RcppParallel::defaultNumThreads())
 }
 \arguments{
 \item{lambda}{numeric vector}
@@ -28,6 +29,8 @@ is \code{1e3}}
 value is \code{c(1, 1e2)}}
 
 \item{verbose}{logical (default \code{FALSE}) to report progress of the computation}
+
+\item{nThreads}{number (default the number of all cores, including logical cores) to use for computation}
 }
 \value{
 \code{dlambda} returns a \linkS4class{data.table} with the values of the density function

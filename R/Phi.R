@@ -12,6 +12,8 @@
 #' @param relTol relative tolerance in the computation of the \code{\link{kummer}} function. Default
 #' value is \code{1e-6}
 #'
+#' @param nThreads number (default the number of all cores, including logical cores) to use for computation
+#'
 #' @return \code{Phi} returns
 #' \eqn{\frac{B(alpha + m, beta + n)}{B(alpha, beta)}\cdot {}_{1}F_{1}(lambda; alpha; beta)}, where
 #' \eqn{{}_{1}F_{1}} stands for the confluent hypergeometric function
@@ -29,9 +31,8 @@
 #' @include kummer.R ratioBeta.R
 #'
 #' @export
-Phi <- function(alpha, beta, lambda, n, relTol = 1e-6){
-
-  output <- ratioBeta(alpha, beta, n, 0) * kummer(lambda, beta, alpha + beta + n, relTol)
+Phi <- function(alpha, beta, lambda, n, relTol = 1e-6, nThreads = RcppParallel::defaultNumThreads()){
+  output <- ratioBeta(alpha, beta, n, 0) * kummer(lambda, beta, alpha + beta + n, relTol, nThreads)
   return(output)
 
 }

@@ -26,6 +26,8 @@
 #'
 #' @param verbose logical (default \code{FALSE}) to report progress of the computation
 #'
+#' @param nThreads number (default the number of all cores, including logical cores) to use for computation
+#'
 #' @return \code{rN0} generates \code{n} points according to the posterior distribution. The
 #' function returns a \linkS4class{data.table} with these points (under the column \code{N0})
 #' together with the additional variables:
@@ -75,7 +77,7 @@
 #'
 #' @export
 rN0 <- function(n, nMNO, nReg, fu, fv, flambda, scale = 1, relTol = 1e-6, nSim = 1e4,
-                nStrata = c(1, 1e2), verbose = FALSE){
+                nStrata = c(1, 1e2), verbose = FALSE, nThreads = RcppParallel::defaultNumThreads()){
 
   nCell <- length(nMNO)
   if (nCell != length(nReg)) stop('nMNO and nReg must have the same length.')
@@ -91,7 +93,7 @@ rN0 <- function(n, nMNO, nReg, fu, fv, flambda, scale = 1, relTol = 1e-6, nSim =
 
   if (nCell == 1){
 
-    lambda <- rlambda(n, nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose)
+    lambda <- rlambda(n, nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)
     DT <- data.table(lambda = lambda)
     DT[ , lambdaID := 1:.N]
     nMNO <- DT[, list(nMNO = rep(nMNO, each = .N), nReg = rep(nReg, each = .N), cellID = rep(seq(along = nMNO))), by = 'lambdaID']
@@ -108,7 +110,7 @@ rN0 <- function(n, nMNO, nReg, fu, fv, flambda, scale = 1, relTol = 1e-6, nSim =
 
     output <- lapply(seq(along = nMNO), function(i){
 
-      outLocal <- rN0(n, nMNO[i], nReg[i], fu[[i]], fv[[i]], flambda[[i]], scale, relTol, nSim, nStrata, verbose)
+      outLocal <- rN0(n, nMNO[i], nReg[i], fu[[i]], fv[[i]], flambda[[i]], scale, relTol, nSim, nStrata, verbose, nThreads)
       outLocal[, cellID := i]
       return(outLocal)
 

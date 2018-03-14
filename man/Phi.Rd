@@ -4,7 +4,8 @@
 \alias{Phi}
 \title{The product of ratioBeta and Kummer functions}
 \usage{
-Phi(alpha, beta, lambda, n, relTol = 1e-06)
+Phi(alpha, beta, lambda, n, relTol = 1e-06,
+  nThreads = RcppParallel::defaultNumThreads())
 }
 \arguments{
 \item{alpha, }{beta non-negative numeric vectors}
@@ -15,6 +16,8 @@ Phi(alpha, beta, lambda, n, relTol = 1e-06)
 
 \item{relTol}{relative tolerance in the computation of the \code{\link{kummer}} function. Default
 value is \code{1e-6}}
+
+\item{nThreads}{number (default the number of all cores, including logical cores) to use for computation}
 }
 \value{
 \code{Phi} returns

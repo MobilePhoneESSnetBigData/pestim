@@ -28,6 +28,8 @@
 #'
 #' @param verbose logical (default \code{FALSE}) to report progress of the computation
 #'
+#' @param nThreads number (default the number of all cores, including logical cores) to use for computation
+#'
 #' @return \code{dlambda} returns a \linkS4class{data.table} with the values of the density function
 #' (column \code{probLambda}) for each value of lambda together with additional variables:
 #'
@@ -96,7 +98,7 @@
 #' @import data.table
 #'
 #' @export
-dlambda <- function(lambda, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e3, nStrata = c(1, 1e2), verbose = FALSE){
+dlambda <- function(lambda, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e3, nStrata = c(1, 1e2), verbose = FALSE, nThreads = RcppParallel::defaultNumThreads()){
 
   if (any(lambda < 0)) stop('lambda must be nonnegative.')
   if (any(nMNO < 0)) stop('nMNO must be nonnegative.')
@@ -112,7 +114,7 @@ dlambda <- function(lambda, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1
   if (verbose) cat(paste0(' ok.\n'))
   if (verbose) cat(paste0('Computing phi factors...'))
   uv.DT[factorPoisson < .Machine$double.xmin, phiValues := 0]
-  uv.DT[factorPoisson >= .Machine$double.xmin, phiValues := Phi(alpha, beta, lambda, nMNO, relTol)]
+  uv.DT[factorPoisson >= .Machine$double.xmin, phiValues := Phi(alpha, beta, lambda, nMNO, relTol, nThreads)]
   uv.DT[, prob := factorPoisson * phiValues]
   if (verbose) cat(paste0(' ok.\n'))
   if (verbose) cat('Computing the integral(s) by Monte Carlo approximations...')

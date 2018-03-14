@@ -34,6 +34,8 @@
 #'
 #' @param verbose logical (default \code{FALSE}) to report progress of the computation
 #'
+#' @param nThreads number (default the number of all cores, including logical cores) to use for computation
+#'
 #' @return \code{rNt} generates \code{n} points according to the posterior distribution. The
 #' function returns a \linkS4class{data.table} with these points (under the column \code{N0})
 #' together with the additional variables:
@@ -121,7 +123,7 @@
 #' @export
 
 rNt <- function(n, nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale = 1, relTol = 1e-6,
-                nSim = 1e3, nStrata = c(1, 1e2), verbose = FALSE){
+                nSim = 1e3, nStrata = c(1, 1e2), verbose = FALSE, nThreads = RcppParallel::defaultNumThreads()){
 
   if (!is.matrix(nMNOmat)) stop('nMNOmat must be a square matrix.')
   nCells <- length(nReg)
@@ -132,7 +134,7 @@ rNt <- function(n, nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale =
   if (length(fv) != 1 && length(fv) != nCells) stop('The length of fv must 1 or coincide with the numbers of cells.')
   if (length(flambda) != 1 && length(flambda) != nCells) stop('The length of flambda must 1 or coincide with the numbers of cells.')
 
-  DT <- rN0(n, nMNO, nReg, fu, fv, flambda, scale,  relTol, nSim, nStrata, verbose)
+  DT <- rN0(n, nMNO, nReg, fu, fv, flambda, scale,  relTol, nSim, nStrata, verbose, nThreads)
   DT[, lambda := NULL]
   DT[, n := rep(1:n, nCells)]
   DT[, N := rNtcondN0(1, N0, nMNOmat, distNames, variation), by = 'n']

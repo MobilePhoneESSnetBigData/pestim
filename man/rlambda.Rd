@@ -5,7 +5,8 @@
 \title{Generation of random deviates of the posterior distribution of parameter lambda.}
 \usage{
 rlambda(n, nMNO, nReg, fu, fv, flambda, relTol = 1e-06, nSim = 10000,
-  nStrata = c(1, 100), verbose = FALSE)
+  nStrata = c(1, 100), verbose = FALSE,
+  nThreads = RcppParallel::defaultNumThreads())
 }
 \arguments{
 \item{n}{number of values to generate}
@@ -28,6 +29,8 @@ is \code{1e4}}
 value is \code{c(1, 1e2)}}
 
 \item{verbose}{logical (default \code{FALSE}) to report progress of the computation}
+
+\item{nThreads}{number (default the number of all cores, including logical cores) to use for computation}
 }
 \value{
 \code{rlambda} generates \code{n} points according to the posterior distribution of

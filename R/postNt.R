@@ -35,6 +35,8 @@
 #'
 #' @param verbose logical (default \code{FALSE}) to report progress of the computation
 #'
+#' @param nThreads number (default the number of all cores, including logical cores) to use for computation
+#'
 #' @return \code{postNt} computes the posterior mean, median, and mode of the posterior distribution
 #' for each cell at an arbitrary time \eqn{t}. The function returns a matrix with the estimates in
 #' columns and the cells in rows.
@@ -101,10 +103,10 @@
 #'
 #' @export
 postNt <- function(nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale = 1, n = 1e3,
-                   relTol = 1e-6, nSim = 1e3, nStrata = c(1, 1e2), verbose = FALSE){
+                   relTol = 1e-6, nSim = 1e3, nStrata = c(1, 1e2), verbose = FALSE, nThreads = RcppParallel::defaultNumThreads()){
 
   Ntmat <- rNt(n, nMNOmat, nReg, fu, fv, flambda, distNames, variation,
-               scale, relTol, nSim, nStrata, verbose)
+               scale, relTol, nSim, nStrata, verbose, nThreads)
   postMean <- Ntmat[, round(mean(N)), by = c('cellID')]
   setnames(postMean, 'V1', 'value')
   postMean[, variable := 'postMean']

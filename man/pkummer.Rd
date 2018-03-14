@@ -4,7 +4,8 @@
 \alias{pkummer}
 \title{Confluent hypergeometric or Kummer function}
 \usage{
-pkummer(x, a, b, relTol = 1e-06)
+pkummer(x, a, b, relTol = 1e-06,
+  nThreads = RcppParallel::defaultNumThreads())
 }
 \arguments{
 \item{x, }{a, b numeric vectors of the same length}
@@ -20,8 +21,8 @@ A parallel implementation of the confluent hypergeometric function
 \eqn{{}_{1}F_{1}(x ; a; b)} using RcppParallel package
 }
 \details{
-This function is implemented in C++. It is based on Pearson et al (2016). It 
-implements the Taylor series method together with an asymtoptic expansion based on Watson's lemma. The 
+This function is implemented in C++. It is based on Pearson et al (2016). It
+implements the Taylor series method together with an asymtoptic expansion based on Watson's lemma. The
 actual implementation uses parallelFor from RcppParallel package together with a functor that computes
 confluent hypergeometric function for chunks of vectors x, a, b
 }

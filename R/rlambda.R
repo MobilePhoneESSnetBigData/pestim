@@ -24,6 +24,8 @@
 #'
 #' @param verbose logical (default \code{FALSE}) to report progress of the computation
 #'
+#' @param nThreads number (default the number of all cores, including logical cores) to use for computation
+#'
 #' @return \code{rlambda} generates \code{n} points according to the posterior distribution of
 #' the parameter lambda. The function returns a vector with these points.
 #'
@@ -58,7 +60,7 @@
 #' @include modeLambda.R
 #'
 #' @export
-rlambda <- function(n, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e4, nStrata = c(1, 1e2), verbose = FALSE){
+rlambda <- function(n, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e4, nStrata = c(1, 1e2), verbose = FALSE, nThreads = RcppParallel::defaultNumThreads()){
 
   nCells <- length(nMNO)
   if (length(nReg) != nCells) stop('nReg and nMNO must have the same length.')
@@ -67,11 +69,11 @@ rlambda <- function(n, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e4, n
   if (nCells == 1){
 
     ######  Computing lambdaOpt
-    lambdaOpt <- modeLambda(nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose)
+    lambdaOpt <- modeLambda(nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)
 
     ###### Computing rejection rate  #####################
     if (verbose) cat('Computing rejection rate...')
-    f <- function(x){dlambda(x, nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose)$probLambda}
+    f <- function(x){dlambda(x, nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)$probLambda}
     location <- lambdaOpt
     scale <- sqrt(flambda$shape * flambda$scale^2)
     F0 <- pcauchy(0, location = location, scale = scale)
@@ -118,7 +120,7 @@ rlambda <- function(n, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e4, n
 
     output <- lapply(seq(along = nMNO), function(i){
 
-      rlambda(n, nMNO[i], nReg[i], fu[[i]], fv[[i]], flambda[[i]], relTol, nSim, nStrata, verbose)
+      rlambda(n, nMNO[i], nReg[i], fu[[i]], fv[[i]], flambda[[i]], relTol, nSim, nStrata, verbose, nThreads)
 
     })
 

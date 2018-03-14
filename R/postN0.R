@@ -27,6 +27,8 @@
 #'
 #' @param verbose logical (default \code{FALSE}) to report progress of the computation
 #'
+#' @param nThreads number (default the number of all cores, including logical cores) to use for computation
+#'
 #' @return \code{postN0} computes the posterior mean, median, and mode of the posterior distribution
 #' for each cell. The function returns a matrix with the estimates in columns and the cells in rows.
 #'
@@ -57,14 +59,14 @@
 #'
 #' @export
 postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-8, nSim = 1e3,
-                   nStrata = c(1, 1e2), verbose = FALSE){
+                   nStrata = c(1, 1e2), verbose = FALSE, nThreads = RcppParallel::defaultNumThreads()){
 
   nCells <- length(nMNO)
   if (length(nReg) != nCells) stop('nReg and nMNO must have the same length.')
 
   if (nCells == 1) {
 
-    Nvalues <- rN0(n, nMNO, nReg, fu, fv, flambda, scale, relTol, nSim, nStrata, verbose)[['N0']]
+    Nvalues <- rN0(n, nMNO, nReg, fu, fv, flambda, scale, relTol, nSim, nStrata, verbose, nThreads)[['N0']]
     postMean <- round(mean(Nvalues))
     postMedian <- round(median(Nvalues))
     postMode <- Nvalues[which.max(names(table(Nvalues)))]
