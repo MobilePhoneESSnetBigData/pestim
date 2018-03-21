@@ -64,24 +64,35 @@ postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-
   nCells <- length(nMNO)
   if (length(nReg) != nCells) stop('nReg and nMNO must have the same length.')
 
-  if (nCells == 1) {
+    Nvalues <- rN0(n, nMNO, nReg, fu, fv, flambda, scale, relTol, nSim, nStrata, verbose, nThreads)
+    print(Nvalues)
+    #postMean <- round(mean(Nvalues))
+    postMean<-Nvalues[, .SD[, round(mean(N0))], by = cellID][[2]]
+    #print("postmean")
+    #print(postMean)
+    #postMedian <- round(median(Nvalues))
+    postMedian<-Nvalues[, .SD[, median(N0)], by = cellID][[2]]
+    #print("postmedian")
+    #print(postMedian)
+    #postMode <- Nvalues[which.max(names(table(Nvalues)))]
+    postMode<-Nvalues[, .SD[, Mode(N0)], by = cellID][[2]]
 
-    Nvalues <- rN0(n, nMNO, nReg, fu, fv, flambda, scale, relTol, nSim, nStrata, verbose, nThreads)[['N0']]
-    postMean <- round(mean(Nvalues))
-    postMedian <- round(median(Nvalues))
-    postMode <- Nvalues[which.max(names(table(Nvalues)))]
-    output <- c(postMean = postMean, postMedian = postMedian, postMode = postMode)
+    #print("postmode")
+    #print(postMode)
+    output <- cbind(postMean, postMedian, postMode)
+    colnames(output)<-c("postMean", "postMedian", "postMode")
     return(output)
+}
 
-  } else {
-
-    output <- lapply(seq(along = nMNO), function(i){
-
-      postN0(nMNO[i], nReg[i], fu[[i]], fv[[i]], flambda[[i]],
-             n, scale, relTol, nSim, nStrata, verbose, nThreads)
-
-    })
-    output <- Reduce(rbind, lapply(output, rbind))
-    return(output)
-  }
+Mode = function(x){
+  ta = table(x)
+  tam = max(ta)
+  if (all(ta == tam))
+    mod = NA
+  else
+    if(is.numeric(x))
+      mod = as.numeric(names(ta)[ta == tam])
+  else
+    mod = names(ta)[ta == tam]
+  return(mod)
 }

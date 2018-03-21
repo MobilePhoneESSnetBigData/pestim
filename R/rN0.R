@@ -104,20 +104,36 @@ rN0 <- function(n, nMNO, nReg, fu, fv, flambda, scale = 1, relTol = 1e-6, nSim =
     DT[, lambdaID := NULL]
     #DT[, cellID := NULL]
     setcolorder(DT, c('cellID', 'nMNO', 'nReg', 'lambda', 'N0'))
+
     return(DT[])
 
-  } else {
-
-    output <- lapply(seq(along = nMNO), function(i){
-
-      outLocal <- rN0(n, nMNO[i], nReg[i], fu[[i]], fv[[i]], flambda[[i]], scale, relTol, nSim, nStrata, verbose, nThreads)
-      outLocal[, cellID := i]
-      return(outLocal)
-
-    })
-    output <- rbindlist(output)
-    return(output)
-
   }
+  else {
+      if(nCell < nThreads) {
+        cl <- makeCluster(nCell)
+      } else {
+        cl <- makeCluster(nThreads)
+      }
+      registerDoParallel(cl)
+      output <- foreach(i=1:nCell, .combine = rbind, .options.snow = list(preschedule = TRUE)) %dopar% {
+        outLocal <- rN0(n, nMNO[i], nReg[i], fu[[i]], fv[[i]], flambda[[i]], scale, relTol, nSim, nStrata, verbose, nThreads)
+        outLocal[, cellID := i]
+        #setDT(outLocal, key  = 'cellID')
+      }
+      stopCluster(cl)
+      setDT(output, key  = 'cellID')
+      #output <- rbindlist(output)
+      return(output)
+    }
+
+      # output <- lapply(seq(along = nMNO), function(i){
+      #   print(i)
+      #   outLocal <- rN0(n, nMNO[i], nReg[i], fu[[i]], fv[[i]], flambda[[i]], scale, relTol, nSim, nStrata, verbose, nThreads)
+      #   outLocal[, cellID := i]
+      #   setDT(outLocal, key  = 'cellID')
+      #   return(outLocal)
+      # })
+      # output <- rbindlist(output)
+      # return(output)
 }
 

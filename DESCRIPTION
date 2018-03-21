@@ -19,7 +19,9 @@ Imports:
     data.table (>= 1.10.4),
     Rcpp (>= 0.12.12),
     MCMCpack (>= 1.4-2),
-    RcppParallel
+    RcppParallel,
+    doParallel,
+    foreach
 SystemRequirements: GNU make
 LinkingTo: Rcpp, RcppParallel
 RoxygenNote: 6.0.1
