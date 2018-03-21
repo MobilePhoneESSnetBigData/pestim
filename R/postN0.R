@@ -65,34 +65,26 @@ postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-
   if (length(nReg) != nCells) stop('nReg and nMNO must have the same length.')
 
     Nvalues <- rN0(n, nMNO, nReg, fu, fv, flambda, scale, relTol, nSim, nStrata, verbose, nThreads)
-    print(Nvalues)
+    setDT(Nvalues, key  = 'cellID')
     #postMean <- round(mean(Nvalues))
     postMean<-Nvalues[, .SD[, round(mean(N0))], by = cellID][[2]]
     #print("postmean")
-    #print(postMean)
+    print(postMean)
     #postMedian <- round(median(Nvalues))
     postMedian<-Nvalues[, .SD[, median(N0)], by = cellID][[2]]
     #print("postmedian")
-    #print(postMedian)
+    print(postMedian)
     #postMode <- Nvalues[which.max(names(table(Nvalues)))]
     postMode<-Nvalues[, .SD[, Mode(N0)], by = cellID][[2]]
 
     #print("postmode")
-    #print(postMode)
+    print(postMode)
     output <- cbind(postMean, postMedian, postMode)
     colnames(output)<-c("postMean", "postMedian", "postMode")
     return(output)
 }
 
 Mode = function(x){
-  ta = table(x)
-  tam = max(ta)
-  if (all(ta == tam))
-    mod = NA
-  else
-    if(is.numeric(x))
-      mod = as.numeric(names(ta)[ta == tam])
-  else
-    mod = names(ta)[ta == tam]
+  mod = which.max(table(x))
   return(mod)
 }
