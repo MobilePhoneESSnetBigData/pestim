@@ -71,7 +71,7 @@ postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-
     #print("postmean")
     print(postMean)
     #postMedian <- round(median(Nvalues))
-    postMedian<-Nvalues[, .SD[, median(N0)], by = cellID][[2]]
+    postMedian<-Nvalues[, .SD[, round(median(N0))], by = cellID][[2]]
     #print("postmedian")
     print(postMedian)
     #postMode <- Nvalues[which.max(names(table(Nvalues)))]
@@ -84,7 +84,7 @@ postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-
     return(output)
 }
 
-Mode = function(x){
-  mod = which.max(table(x))
-  return(mod)
+Mode = function(v){
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
 }
