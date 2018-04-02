@@ -74,7 +74,8 @@
 #'         breaks = seq(1, 200, by = 1), main ='', xlab = 'number of individuals')
 #'
 #' @include rlambda.R
-#'
+#' @import doParallel
+#' @import foreach
 #' @export
 rN0 <- function(n, nMNO, nReg, fu, fv, flambda, scale = 1, relTol = 1e-6, nSim = 1e4,
                 nStrata = c(1, 1e2), verbose = FALSE, nThreads = RcppParallel::defaultNumThreads()){
