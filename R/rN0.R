@@ -125,15 +125,5 @@ rN0 <- function(n, nMNO, nReg, fu, fv, flambda, scale = 1, relTol = 1e-6, nSim =
       #output <- rbindlist(output)
       return(output)
     }
-
-      # output <- lapply(seq(along = nMNO), function(i){
-      #   print(i)
-      #   outLocal <- rN0(n, nMNO[i], nReg[i], fu[[i]], fv[[i]], flambda[[i]], scale, relTol, nSim, nStrata, verbose, nThreads)
-      #   outLocal[, cellID := i]
-      #   setDT(outLocal, key  = 'cellID')
-      #   return(outLocal)
-      # })
-      # output <- rbindlist(output)
-      # return(output)
 }
 

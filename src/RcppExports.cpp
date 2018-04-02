@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // Kummer
-NumericVector Kummer(const NumericVector& z, const NumericVector& a, const NumericVector& b, const double relTol);
-RcppExport SEXP _pestim_Kummer(SEXP zSEXP, SEXP aSEXP, SEXP bSEXP, SEXP relTolSEXP) {
+NumericVector Kummer(const NumericVector& z, const NumericVector& a, const NumericVector& b, const double relTol, NumericVector& err);
+RcppExport SEXP _pestim_Kummer(SEXP zSEXP, SEXP aSEXP, SEXP bSEXP, SEXP relTolSEXP, SEXP errSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -15,13 +15,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const NumericVector& >::type a(aSEXP);
     Rcpp::traits::input_parameter< const NumericVector& >::type b(bSEXP);
     Rcpp::traits::input_parameter< const double >::type relTol(relTolSEXP);
-    rcpp_result_gen = Rcpp::wrap(Kummer(z, a, b, relTol));
+    Rcpp::traits::input_parameter< NumericVector& >::type err(errSEXP);
+    rcpp_result_gen = Rcpp::wrap(Kummer(z, a, b, relTol, err));
     return rcpp_result_gen;
 END_RCPP
 }
 // pKummer
-Rcpp::NumericVector pKummer(const Rcpp::NumericVector& z, const Rcpp::NumericVector& a, const Rcpp::NumericVector& b, double relTol);
-RcppExport SEXP _pestim_pKummer(SEXP zSEXP, SEXP aSEXP, SEXP bSEXP, SEXP relTolSEXP) {
+Rcpp::NumericVector pKummer(const Rcpp::NumericVector& z, const Rcpp::NumericVector& a, const Rcpp::NumericVector& b, double relTol, Rcpp::IntegerVector& err);
+RcppExport SEXP _pestim_pKummer(SEXP zSEXP, SEXP aSEXP, SEXP bSEXP, SEXP relTolSEXP, SEXP errSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -29,14 +30,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type a(aSEXP);
     Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type b(bSEXP);
     Rcpp::traits::input_parameter< double >::type relTol(relTolSEXP);
-    rcpp_result_gen = Rcpp::wrap(pKummer(z, a, b, relTol));
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector& >::type err(errSEXP);
+    rcpp_result_gen = Rcpp::wrap(pKummer(z, a, b, relTol, err));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_pestim_Kummer", (DL_FUNC) &_pestim_Kummer, 4},
-    {"_pestim_pKummer", (DL_FUNC) &_pestim_pKummer, 4},
+    {"_pestim_Kummer", (DL_FUNC) &_pestim_Kummer, 5},
+    {"_pestim_pKummer", (DL_FUNC) &_pestim_pKummer, 5},
     {NULL, NULL, 0}
 };
 

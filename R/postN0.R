@@ -68,17 +68,11 @@ postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-
     setDT(Nvalues, key  = 'cellID')
     #postMean <- round(mean(Nvalues))
     postMean<-Nvalues[, .SD[, round(mean(N0))], by = cellID][[2]]
-    #print("postmean")
-    print(postMean)
     #postMedian <- round(median(Nvalues))
     postMedian<-Nvalues[, .SD[, round(median(N0))], by = cellID][[2]]
-    #print("postmedian")
-    print(postMedian)
     #postMode <- Nvalues[which.max(names(table(Nvalues)))]
     postMode<-Nvalues[, .SD[, Mode(N0)], by = cellID][[2]]
 
-    #print("postmode")
-    print(postMode)
     output <- cbind(postMean, postMedian, postMode)
     colnames(output)<-c("postMean", "postMedian", "postMode")
     return(output)

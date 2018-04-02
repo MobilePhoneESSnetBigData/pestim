@@ -20,13 +20,16 @@
 #' @useDynLib pestim
 #' @importFrom Rcpp sourceCpp
 #' @export
-kummer <- function(x, a, b, relTol = 1e-6, nThreads = RcppParallel::defaultNumThreads()){
+kummer <- function(x, a, b, relTol = 1e-8, nThreads = RcppParallel::defaultNumThreads()){
+  n <- length(x)
+  err <- as.integer(rep(0, n))
   if(nThreads > 1) {
-     RcppParallel::setThreadOptions(numThreads = nThreads)
-     output <- pKummer(x, a, b, relTol)
+    RcppParallel::setThreadOptions(numThreads = nThreads)
+    output <- pKummer(x, a, b, relTol, err)
   }
   else
-    output <- Kummer(x, a, b, relTol)
+    output <- Kummer(x, a, b, relTol, err)
+
 
   output[is.infinite(output)] <- .Machine$double.xmax
   return(output)

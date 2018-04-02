@@ -4,7 +4,7 @@
 \alias{kummer}
 \title{Confluent hypergeometric or Kummer function}
 \usage{
-kummer(x, a, b, relTol = 1e-06,
+kummer(x, a, b, relTol = 1e-08,
   nThreads = RcppParallel::defaultNumThreads())
 }
 \arguments{
