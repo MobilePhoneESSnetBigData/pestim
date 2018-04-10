@@ -19,11 +19,11 @@ rtriang(n, xMin, xMax, xMode)
 \arguments{
 \item{x, }{q vector of quantiles}
 
-\item{xMin}{vector with the minimum values of the range of the random variable}
+\item{xMin}{the minimum values of the range of the random variable}
 
-\item{xMax}{vector with the maximum values of the range of the random variable}
+\item{xMax}{the maximum values of the range of the random variable}
 
-\item{xMode}{vector with the modes of the random variable}
+\item{xMode}{the mode of the random variable}
 
 \item{n}{number of observations}
 
@@ -32,9 +32,6 @@ rtriang(n, xMin, xMax, xMode)
 \value{
 \code{dtriang} gives the density, \code{ptriang} gives the distribution function,
 \code{qtriang} gives the quantile function, and \code{rtriang} generates random deviates.
-
-The lengths of the input vectors (except \code{n}) must be all equal except when their length is
-1. Otherwise \code{NA}s are produced.
 }
 \description{
 Density, distribution funtion, quantile function and random generation for the
