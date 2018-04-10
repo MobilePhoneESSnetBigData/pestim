@@ -76,42 +76,45 @@ modeLambda <- function(nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e4, n
   if (nCells == 1) {
     if (verbose) cat('Searching maximum...\n')
 
-    x0 <- (nMNO + nReg) / 2
-    h <- x0 / 2
-    f0lr <- dlambda(c(x0, max(x0 - h, 0), x0 + h), nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)$probLambda
-    diff0lr <- abs(f0lr[2:3] - f0lr[1])
+    ak <- max((nMNO + nReg)/4, 0)
+    bk <- (3*nMNO + 3*nReg)/4
+    lk <- ak + (1 - (sqrt(5) - 1)/2)*(bk - ak)
+    mk <- ak + ((sqrt(5) - 1)/2)*(bk - ak)
+
+    val <- c(ak, lk, mk, bk)
+    fval <- dlambda(c(ak,lk,mk,bk), nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)$probLambda
+
     stopCrit <- FALSE
 
     while (!stopCrit){
 
-      index.max <- which.max(f0lr)
+      index.max <- which.max(fval[2:3])
 
-      if (index.max == 1) {
+      if (index.max == 1){
+        val <- c(val[1], val[1] + (1 - (sqrt(5) - 1)/2)*(val[3] - val[1]),val[2], val[3])
+        fval <- c(fval[1],
+                  dlambda(val[1] + (1 - (sqrt(5) - 1)/2)*(val[3] - val[1]),
+                          nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)$probLambda,
+                  fval[2], fval[3])
 
-        h <- h / 2
-        f0lr <- c(f0lr[1], dlambda(c(max(x0 - h, 0), x0 + h), nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)$probLambda)
+        diff <- abs(fval[3:4] - fval[c(1,3)])
+        stopCrit <- any(diff <= fval[3] * relTol) | any(val[3:4]-val[c(1,3)] < 1e-8)
+        xMax <- val[3]
 
-      } else if (index.max == 2) {
+      } else if (index.max == 2){
+        val <- c(val[2], val[3],val[2] + ((sqrt(5) - 1)/2)*(val[4] - val[2]), val[4])
+        fval <- c(fval[2], fval[3],
+                  dlambda(val[2] + ((sqrt(5) - 1)/2)*(val[4] - val[2]),
+                          nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)$probLambda,
+                  fval[4])
 
-        x0 <- max(x0 - h, 0)
-        f0lr <- c(f0lr[2], dlambda(max(x0 - h, 0), nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)$probLambda, f0lr[1])
-
-      } else if (index.max == 3) {
-
-        x0 <- x0 + h
-        f0lr <- c(f0lr[3], f0lr[1], dlambda(x0 + h, nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)$probLambda)
+        diff <- abs(fval[c(2,4)] - fval[1:2])
+        stopCrit <- any(diff <= fval[2] * relTol) | any(val[c(2,4)]-val[1:2] < 1e-8)
+        xMax <- val[2]
 
       }
-      diff0lr <- abs(f0lr[2:3] - f0lr[1])
-
-      stopCrit <- any(diff0lr <= f0lr[1] * relTol) | h < .Machine$double.eps
-
     }
-
-    xMax <- c(x0, max(x0 - h, 0), x0 + h)[index.max]
-    if (verbose) cat(' ok.\n')
     return(xMax)
-
   } else {
 
     output <- sapply(seq(along = nMNO), function(i){

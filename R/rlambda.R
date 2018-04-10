@@ -24,8 +24,6 @@
 #'
 #' @param verbose logical (default \code{FALSE}) to report progress of the computation
 #'
-#' @param nThreads number (default the number of all cores, including logical cores) to use for computation
-#'
 #' @return \code{rlambda} generates \code{n} points according to the posterior distribution of
 #' the parameter lambda. The function returns a vector with these points.
 #'
@@ -74,38 +72,57 @@ rlambda <- function(n, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e4, n
     ###### Computing rejection rate  #####################
     if (verbose) cat('Computing rejection rate...')
     f <- function(x){dlambda(x, nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)$probLambda}
+
+    if (flambda[[1]] == 'gamma') {
+
+      varfLambda <- (flambda[['shape']] - 1) * flambda[['scale']]**2
+      alpha_candidate <- lambdaOpt**2 / varfLambda
+
+    }
+
+    shape_candidate <- alpha_candidate + 1
+    scale_candidate <- lambdaOpt / alpha_candidate
+
     location <- lambdaOpt
     scale <- sqrt(flambda$shape * flambda$scale^2)
     F0 <- pcauchy(0, location = location, scale = scale)
     g <- function(x){
-      #dgamma(x, shape = nMNO + 1, scale = lambdaOpt / nMNO)
-      dcauchy(x, location = location, scale = scale) / (1 - F0)
+      dgamma(x, shape = shape_candidate, scale = scale_candidate)
+      #dcauchy(x, location = location, scale = scale) / (1 - F0)
       #dg(x, nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata)
+
     }
 
     fun <- function(x){g(x) / f(x)}
+    optimC <- f(lambdaOpt) / g(lambdaOpt)
 
-    optimC <- 1.05 / optimise(fun, interval = c(max(location - scale, 0), location + scale))$objective
+    #optimC <- 1 / optimise(fun, interval = c(max(location - scale, 0), location + scale))$objective
     if (verbose) cat(' ok.\n')
+
+    nEffect <- ceiling(1.5 * n / (1 - optimC)) # Factor 1.5 to overproduce candidate points
 
     if (verbose) cat('Generating and accepting/rejecting values...\n')
-    u <- runif(2 * n)
-    x <- qcauchy(F0 + u * ( 1 - F0), location = location, scale = scale)
-    #x <- rgamma(10 * n, shape = nMNO + 1, scale = lambdaOpt / nMNO)
-    v <- runif(n)
-    if (verbose) cat('   of target distribution...')
+    #u <- runif(2 * n)
+    #x <- qcauchy(F0 + u * ( 1 - F0), location = location, scale = scale)
+    x <- rgamma(nEffect, shape = shape_candidate, scale = scale_candidate)
+    v <- runif(nEffect)
+    if (verbose) cat('   of target distribution...\n')
     fx <- f(x)
-    if (verbose) cat(' ok.\n')
-    if (verbose) cat('   of candidate distribution...')
-    gx <- dcauchy(x, location = location, scale = scale)
-    if (verbose) cat(' ok.\n')
+    if (verbose) cat('   ok.\n')
+    if (verbose) cat('   of candidate distribution...\n')
+    #gx <- dcauchy(x, location = location, scale = scale)
+    gx <- dgamma(x, shape = shape_candidate, scale = scale_candidate)
+    if (verbose) cat('   ok.\n')
     output <- x[v <= fx / (optimC * gx)]
     if (verbose) cat(paste0(length(output), ' points selected.\n'))
     while (length(output) < n) {
-      u <- runif(2 * n)
-      x <- qcauchy(F0 + u * ( 1 - F0), location = location, scale = scale)
-      #x <- rgamma(10 * n, shape = nMNO + 1, scale = lambdaOpt / nMNO)
-      v <- runif(n)
+
+      nEffect <- ceiling(1.5 * (n - length(output)) / (1 - optimC)) # Factor 1.5 to overproduce candidate points
+
+      #u <- runif(2 * n)
+      #x <- qcauchy(F0 + u * ( 1 - F0), location = location, scale = scale)
+      x <- rgamma(nEffect, shape = shape_candidate, scale = scale_candidate)
+      v <- runif(nEffect)
       fx <- f(x)
       gx <- g(x)
       aux <- x[v <= fx / (optimC * gx)]
@@ -113,6 +130,7 @@ rlambda <- function(n, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e4, n
       output <- c(output, aux)
     }
     output <- output[1:n]
+    if (verbose) cat(paste0(length(output), ' points selected.\n'))
     if (verbose) cat(' ok.\n')
     return(output)
 
