@@ -59,7 +59,7 @@
 #'
 #' @export
 postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-8, nSim = 1e3,
-                   nStrata = c(1, 1e2), verbose = FALSE, nThreads = RcppParallel::defaultNumThreads()){
+                   nStrata = c(1, 1e2), verbose = FALSE, nThreads = RcppParallel::defaultNumThreads(), alpha = 0.05){
 
   nCells <- length(nMNO)
   if (length(nReg) != nCells) stop('nReg and nMNO must have the same length.')
@@ -68,17 +68,30 @@ postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-
     setDT(Nvalues, key  = 'cellID')
     #postMean <- round(mean(Nvalues))
     postMean<-Nvalues[, .SD[, round(mean(N0))], by = cellID][[2]]
+    postSD<-Nvalues[, .SD[, round(sd(N0),2)], by = cellID][[2]]
+    postCV<-Nvalues[, .SD[, round(sd(N0) / mean(N0) * 100, 2)], by = cellID][[2]]
+
     #postMedian <- round(median(Nvalues))
     postMedian<-Nvalues[, .SD[, round(median(N0))], by = cellID][[2]]
+    postMedian_CILB<-Nvalues[, .SD[, equalTailedInt(N0, alpha)]['lower'], by = cellID][[2]]
+    postMedian_CIUB<-Nvalues[, .SD[, equalTailedInt(N0, alpha)]['upper'], by = cellID][[2]]
+    postMedianQuantileCV<-Nvalues[, .SD[, round( IQR(N0) / median(N0) * 100, 2)], by = cellID][[2]]
+
     #postMode <- Nvalues[which.max(names(table(Nvalues)))]
     postMode<-Nvalues[, .SD[, Mode(N0)], by = cellID][[2]]
 
-    output <- cbind(postMean, postMedian, postMode)
-    colnames(output)<-c("postMean", "postMedian", "postMode")
+    output <- cbind(postMean, postSD, postCV, postMedian, postMedian_CILB, postMedian_CIUB, postMedianQuantileCV, postMode)
+    colnames(output)<-c("postMean", "postSD", "postCV","postMedian", "postMedian_CI_Lower_Bound", "postMedian_CI_Upper_Bound","quantileCV", "postMode")
     return(output)
 }
 
 Mode = function(v){
   uniqv <- unique(v)
   uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
+equalTailedInt <- function(x, alpha){
+  output <- quantile(x, c((1 - alpha) / 2, (1 + alpha) / 2))
+  names(output) <- c('lower', 'upper')
+  return(output)
 }
