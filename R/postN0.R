@@ -56,6 +56,7 @@
 #'         flambda = list('gamma', shape = 11, scale = 12))
 #'
 #' @include rN0.R
+#' @import HDInterval
 #'
 #' @export
 postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-8, nSim = 1e3,
@@ -79,9 +80,13 @@ postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-
 
     #postMode <- Nvalues[which.max(names(table(Nvalues)))]
     postMode<-Nvalues[, .SD[, Mode(N0)], by = cellID][[2]]
+    postMode_CILB<-Nvalues[, .SD[, hdi(N0, 1-alpha)]['lower'], by = cellID][[2]]
+    postMode_CIUB<-Nvalues[, .SD[, hdi(N0, 1-alpha)]['upper'], by = cellID][[2]]
+    postModeQuantileCV<-Nvalues[, .SD[, round( IQR(N0) / Mode(N0) * 100, 2)], by = cellID][[2]]
 
-    output <- cbind(postMean, postSD, postCV, postMedian, postMedian_CILB, postMedian_CIUB, postMedianQuantileCV, postMode)
-    colnames(output)<-c("postMean", "postSD", "postCV","postMedian", "postMedian_CI_Lower_Bound", "postMedian_CI_Upper_Bound","quantileCV", "postMode")
+
+    output <- cbind(postMean, postSD, postCV, postMedian, postMedian_CILB, postMedian_CIUB, postMedianQuantileCV, postMode, postMode_CILB, postMode_CIUB, postModeQuantileCV)
+    colnames(output)<-c("postMean", "StDev", "CV","postMedian", "Median_CI_LB", "Median_CI_UB","MedianQuantileCV", "postMode", "Mode_CI_LB", "Mode_CI_UB", "ModeQuantileCV")
     return(output)
 }
 
