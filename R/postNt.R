@@ -141,7 +141,6 @@ postNt <- function(nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale =
   setnames(postMedianQuantileCV, 'V1', 'value')
   postMedianQuantileCV[, variable := 'postMedianQuantileCV']
 
-
   postMode <- Ntmat[, Mode(N), by = c('cellID')]
   setnames(postMode, 'V1', 'value')
   postMode[, variable := 'postMode']
@@ -162,6 +161,7 @@ postNt <- function(nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale =
   DT <- rbindlist(list(postMean, postSD, postCV, postMedian, postMedian_CILB, postMedian_CIUB, postMedianQuantileCV, postMode,postMode_CILB, postMode_CIUB, postModeQuantileCV))
   output <- dcast(DT, cellID ~ variable, value.var = 'value')
   output[, cellID := NULL]
+  setcolorder(output, c('postMean', 'postSD', 'postCV', 'postMedian', 'postMedian_CILB', 'postMedian_CIUB', 'postMedianQuantileCV', 'postMode', 'postMode_CILB', 'postMode_CIUB', 'postModeQuantileCV'))
   output <- as.matrix(output)[]
   return(output)
 
