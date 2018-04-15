@@ -42,16 +42,41 @@
 #' @export
 #'
 
-postNtcondN0 <- function(N0, nMNOmat,  distNames, variation, n = 1e3){
+postNtcondN0 <- function(N0, nMNOmat,  distNames, variation, n = 1e3, alpha = 0.05){
 
   Ntmat <- rNtcondN0(n, N0, nMNOmat, distNames, variation)
   postMean <- apply(Ntmat, 2, function(N){round(mean(N))})
+  postSD <- apply(Ntmat, 2, function(N){round(sd(N))})
+  postCV <- apply(Ntmat, 2, function(N){round(sd(N)/mean(N), 2)})
+
+
   postMedian <- apply(Ntmat, 2, function(N){round(median(N))})
+  postMedian_CILB <- apply(Ntmat, 2, function(N){equalTailedInt(N, alpha)['lower']})
+  postMedian_CIUB <- apply(Ntmat, 2, function(N){equalTailedInt(N, alpha)['upper']})
+  postMedianQuantileCV <- apply(Ntmat, 2, function(N){round( IQR(N)/median(N) *100 ,2)})
+
   postMode <- apply(Ntmat, 2, function(N){N[which.max(names(table(N)))]})
-  output <- list(postMean = postMean, postMedian = postMedian, postMode = postMode)
+
+  postMode_CILB <- apply(Ntmat, 2, function(N){hdi(N, 1-alpha)['lower']})
+  postMode_CIUB <- apply(Ntmat, 2, function(N){hdi(N, 1-alpha)['upper']})
+  postModeQuantileCV <- apply(Ntmat, 2, function(N){round(IQR(N)/Mode(N) *100,2)})
+
+  output <- list(postMean = postMean, postSD = postSD, postCV = postCV, postMedian = postMedian, postMedian_CILB = postMedian_CILB, postMedian_CIUB = postMedian_CIUB, postMedianQuantileCV = postMedianQuantileCV, postMode = postMode, postMode_CILB = postMode_CILB, postMode_CIUB = postMode_CIUB, postModeQuantileCV = postModeQuantileCV)
   output <- Reduce(cbind, output)
-  colnames(output) <- c('postMean', 'postMedian', 'postMode')
+  colnames(output) <- c('postMean', 'postSD', 'postCV', 'postMedian', 'postMedian_CILB', 'postMedian_CIUB', 'postMedianQuantileCV', 'postMode', 'postMode_CILB', 'postMode_CIUB', 'postModeQuantileCV')
   return(output)
 
   return(postMean)
 }
+
+equalTailedInt <- function(x, alpha){
+  output <- quantile(x, c((1 - alpha) / 2, (1 + alpha) / 2))
+  names(output) <- c('lower', 'upper')
+  return(output)
+}
+
+Mode = function(v){
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+
