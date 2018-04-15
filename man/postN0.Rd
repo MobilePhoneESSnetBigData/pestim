@@ -6,7 +6,7 @@
 \usage{
 postN0(nMNO, nReg, fu, fv, flambda, n = 1000, scale = 1, relTol = 1e-08,
   nSim = 1000, nStrata = c(1, 100), verbose = FALSE,
-  nThreads = RcppParallel::defaultNumThreads())
+  nThreads = RcppParallel::defaultNumThreads(), alpha = 0.05)
 }
 \arguments{
 \item{nMNO, }{nReg non-negative integer vectors with the number of individuals detected in each
@@ -34,6 +34,8 @@ value is \code{c(1, 1e2)}}
 \item{verbose}{logical (default \code{FALSE}) to report progress of the computation}
 
 \item{nThreads}{number (default the number of all cores, including logical cores) to use for computation}
+
+\item{alpha}{the significance level for accuracy measures. Default value is 0.05}
 }
 \value{
 \code{postN0} computes the posterior mean, median, and mode of the posterior distribution

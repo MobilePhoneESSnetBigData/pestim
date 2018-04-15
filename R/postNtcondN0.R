@@ -18,6 +18,8 @@
 #' @param n number of points to generate in the posterior distribution for the computation. Default
 #' value is 1e3
 #'
+#' @param alpha the significance level for accuracy measures. Default value is 0.05
+#'
 #' @return Return a matrix with three columns (mean, median, and mode estimates) and one row per
 #' cell
 #'
@@ -38,11 +40,12 @@
 #' postNtcondN0(N0, nMNOmat, distNames, variation)
 #'
 #' @include rNtcondN0.R
+#' @include utils.R
+#'
+#' @import HDInterval
 #'
 #' @export
-#'
-
-postNtcondN0 <- function(N0, nMNOmat,  distNames, variation, n = 1e3, alpha = 0.05){
+postNtcondN0 <- function(N0, nMNOmat,  distNames, variation, n = 1e3, alpha = 0.05) {
 
   Ntmat <- rNtcondN0(n, N0, nMNOmat, distNames, variation)
   postMean <- apply(Ntmat, 2, function(N){round(mean(N))})
@@ -55,7 +58,7 @@ postNtcondN0 <- function(N0, nMNOmat,  distNames, variation, n = 1e3, alpha = 0.
   postMedian_CIUB <- apply(Ntmat, 2, function(N){equalTailedInt(N, alpha)['upper']})
   postMedianQuantileCV <- apply(Ntmat, 2, function(N){round( IQR(N)/median(N) *100 ,2)})
 
-  postMode <- apply(Ntmat, 2, function(N){N[which.max(names(table(N)))]})
+  postMode <- apply(Ntmat, 2, function(N){Mode(N)})
 
   postMode_CILB <- apply(Ntmat, 2, function(N){hdi(N, 1-alpha)['lower']})
   postMode_CIUB <- apply(Ntmat, 2, function(N){hdi(N, 1-alpha)['upper']})
@@ -67,16 +70,5 @@ postNtcondN0 <- function(N0, nMNOmat,  distNames, variation, n = 1e3, alpha = 0.
   return(output)
 
   return(postMean)
-}
-
-equalTailedInt <- function(x, alpha){
-  output <- quantile(x, c((1 - alpha) / 2, (1 + alpha) / 2))
-  names(output) <- c('lower', 'upper')
-  return(output)
-}
-
-Mode = function(v){
-  uniqv <- unique(v)
-  uniqv[which.max(tabulate(match(v, uniqv)))]
 }
 

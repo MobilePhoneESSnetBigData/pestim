@@ -37,6 +37,8 @@
 #'
 #' @param nThreads number (default the number of all cores, including logical cores) to use for computation
 #'
+#' @param alpha the significance level for accuracy measures. Default value is 0.05
+#'
 #' @return \code{postNt} computes the posterior mean, median, and mode of the posterior distribution
 #' for each cell at an arbitrary time \eqn{t}. The function returns a matrix with the estimates in
 #' columns and the cells in rows.
@@ -100,6 +102,9 @@
 #' postNt(nMNOmat, nReg, fu, fv, flambda, distNames, variation)
 #'
 #' @include rNt.R
+#' @include utils.R
+#'
+#' @import HDInterval
 #'
 #' @export
 postNt <- function(nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale = 1, n = 1e3,
@@ -120,7 +125,6 @@ postNt <- function(nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale =
   setnames(postCV, 'V1', 'value')
   postCV[, variable := 'postCV']
 
-
   postMedian <- Ntmat[, round(median(N)), by = c('cellID')]
   setnames(postMedian, 'V1', 'value')
   postMedian[, variable := 'postMedian']
@@ -138,8 +142,7 @@ postNt <- function(nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale =
   postMedianQuantileCV[, variable := 'postMedianQuantileCV']
 
 
-  fmode <- function(N){N[which.max(names(table(N)))]}
-  postMode <- Ntmat[, fmode(N), by = c('cellID')]
+  postMode <- Ntmat[, Mode(N), by = c('cellID')]
   setnames(postMode, 'V1', 'value')
   postMode[, variable := 'postMode']
 
@@ -151,7 +154,7 @@ postNt <- function(nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale =
   setnames(postMode_CIUB, 'V1', 'value')
   postMode_CIUB[, variable := 'postMode_CIUB']
 
-  postModeQuantileCV<-Ntmat[, round( IQR(N) / fmode(N) * 100, 2), by = c('cellID')]
+  postModeQuantileCV<-Ntmat[, round( IQR(N) / Mode(N) * 100, 2), by = c('cellID')]
   setnames(postModeQuantileCV, 'V1', 'value')
   postModeQuantileCV[, variable := 'postModeQuantileCV']
 
@@ -162,11 +165,5 @@ postNt <- function(nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale =
   output <- as.matrix(output)[]
   return(output)
 
-}
-
-equalTailedInt <- function(x, alpha){
-  output <- quantile(x, c((1 - alpha) / 2, (1 + alpha) / 2))
-  names(output) <- c('lower', 'upper')
-  return(output)
 }
 

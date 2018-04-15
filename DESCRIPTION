@@ -48,6 +48,7 @@ Collate:
     'nReg.R'
     'pestim.R'
     'pkummer.R'
+    'utils.R'
     'rlambda.R'
     'rN0.R'
     'postN0.R'

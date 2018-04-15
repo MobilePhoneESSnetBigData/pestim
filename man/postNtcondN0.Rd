@@ -5,7 +5,7 @@
 \title{Posterior mean, median, and mode for the number of individuals at an arbitrary time
 conditioned upon the initial population.}
 \usage{
-postNtcondN0(N0, nMNOmat, distNames, variation, n = 1000)
+postNtcondN0(N0, nMNOmat, distNames, variation, n = 1000, alpha = 0.05)
 }
 \arguments{
 \item{N0}{initial population in each cell}
@@ -20,6 +20,8 @@ of each prior distribution}
 
 \item{n}{number of points to generate in the posterior distribution for the computation. Default
 value is 1e3}
+
+\item{alpha}{the significance level for accuracy measures. Default value is 0.05}
 }
 \value{
 Return a matrix with three columns (mean, median, and mode estimates) and one row per

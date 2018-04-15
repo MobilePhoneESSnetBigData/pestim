@@ -29,6 +29,8 @@
 #'
 #' @param nThreads number (default the number of all cores, including logical cores) to use for computation
 #'
+#' @param alpha the significance level for accuracy measures. Default value is 0.05
+#'
 #' @return \code{postN0} computes the posterior mean, median, and mode of the posterior distribution
 #' for each cell. The function returns a matrix with the estimates in columns and the cells in rows.
 #'
@@ -56,6 +58,7 @@
 #'         flambda = list('gamma', shape = 11, scale = 12))
 #'
 #' @include rN0.R
+#' @include utils.R
 #' @import HDInterval
 #'
 #' @export
@@ -90,13 +93,3 @@ postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-
     return(output)
 }
 
-Mode = function(v){
-  uniqv <- unique(v)
-  uniqv[which.max(tabulate(match(v, uniqv)))]
-}
-
-equalTailedInt <- function(x, alpha){
-  output <- quantile(x, c((1 - alpha) / 2, (1 + alpha) / 2))
-  names(output) <- c('lower', 'upper')
-  return(output)
-}
