@@ -103,24 +103,70 @@
 #'
 #' @export
 postNt <- function(nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale = 1, n = 1e3,
-                   relTol = 1e-6, nSim = 1e3, nStrata = c(1, 1e2), verbose = FALSE, nThreads = RcppParallel::defaultNumThreads()){
+                   relTol = 1e-6, nSim = 1e3, nStrata = c(1, 1e2), verbose = FALSE, nThreads = RcppParallel::defaultNumThreads(), alpha=0.05){
 
   Ntmat <- rNt(n, nMNOmat, nReg, fu, fv, flambda, distNames, variation,
                scale, relTol, nSim, nStrata, verbose, nThreads)
   postMean <- Ntmat[, round(mean(N)), by = c('cellID')]
   setnames(postMean, 'V1', 'value')
   postMean[, variable := 'postMean']
+
+
+  postSD<-Ntmat[,round(sd(N),2), by = c('cellID')]
+  setnames(postSD, 'V1', 'value')
+  postSD[, variable := 'postSD']
+
+  postCV<-Ntmat[, round(sd(N) / mean(N) * 100, 2), by = c('cellID')]
+  setnames(postCV, 'V1', 'value')
+  postCV[, variable := 'postCV']
+
+
   postMedian <- Ntmat[, round(median(N)), by = c('cellID')]
   setnames(postMedian, 'V1', 'value')
   postMedian[, variable := 'postMedian']
+
+  postMedian_CILB<-Ntmat[, equalTailedInt(N, alpha)['lower'], by = c('cellID')]
+  setnames(postMedian_CILB, 'V1', 'value')
+  postMedian_CILB[, variable := 'postMedian_CILB']
+
+  postMedian_CIUB<-Ntmat[, equalTailedInt(N, alpha)['upper'], by = c('cellID')]
+  setnames(postMedian_CIUB, 'V1', 'value')
+  postMedian_CIUB[, variable := 'postMedian_CIUB']
+
+  postMedianQuantileCV<-Ntmat[, round( IQR(N) / median(N) * 100, 2), by = c('cellID')]
+  setnames(postMedianQuantileCV, 'V1', 'value')
+  postMedianQuantileCV[, variable := 'postMedianQuantileCV']
+
+
   fmode <- function(N){N[which.max(names(table(N)))]}
   postMode <- Ntmat[, fmode(N), by = c('cellID')]
   setnames(postMode, 'V1', 'value')
   postMode[, variable := 'postMode']
-  DT <- rbindlist(list(postMean, postMedian, postMode))
+
+  postMode_CILB<-Ntmat[, hdi(N, 1-alpha)['lower'], by = c('cellID')]
+  setnames(postMode_CILB, 'V1', 'value')
+  postMode_CILB[, variable := 'postMode_CILB']
+
+  postMode_CIUB<-Ntmat[, hdi(N, 1-alpha)['upper'], by = c('cellID')]
+  setnames(postMode_CIUB, 'V1', 'value')
+  postMode_CIUB[, variable := 'postMode_CIUB']
+
+  postModeQuantileCV<-Ntmat[, round( IQR(N) / fmode(N) * 100, 2), by = c('cellID')]
+  setnames(postModeQuantileCV, 'V1', 'value')
+  postModeQuantileCV[, variable := 'postModeQuantileCV']
+
+
+  DT <- rbindlist(list(postMean, postSD, postCV, postMedian, postMedian_CILB, postMedian_CIUB, postMedianQuantileCV, postMode,postMode_CILB, postMode_CIUB, postModeQuantileCV))
   output <- dcast(DT, cellID ~ variable, value.var = 'value')
   output[, cellID := NULL]
   output <- as.matrix(output)[]
   return(output)
 
 }
+
+equalTailedInt <- function(x, alpha){
+  output <- quantile(x, c((1 - alpha) / 2, (1 + alpha) / 2))
+  names(output) <- c('lower', 'upper')
+  return(output)
+}
+
