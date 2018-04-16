@@ -18,7 +18,8 @@
 #' @author Bogdan Oancea
 #'
 #' @useDynLib pestim
-#' @importFrom Rcpp RcppParallel sourceCpp
+#' @importFrom Rcpp sourceCpp
+#' @importFrom RcppParallel defaultNumThreads setThreadOptions
 #' @export
 pkummer <- function(x, a, b, relTol = 1e-6, nThreads = RcppParallel::defaultNumThreads()){
   RcppParallel::setThreadOptions(numThreads = nThreads)

@@ -5,13 +5,17 @@
 #'
 #' @param lambda numeric vector with the lambda parameter values
 #'
-#' @param nMNO, nReg non-negative integer vectors with the number of individuals detected in each
-#' cell according to the network operator and the register
+#' @param nMNO non-negative integer vectors with the number of individuals detected in each cell 
+#' according to the network operator
 #'
-#' @param fu, fv named lists with the prior marginal distributions of the two-dimensional points
-#' for the Monte Carlo integration
+#' @param nReg non-negative integer vectors with the number of individuals detected in each cell 
+#' according to the population register
 #'
-#' @param flambda named list with the prior distribution of the lambda parameter
+#' @param fu named list with the prior marginal distribution for the parameter \eqn{u}
+#'
+#' @param fv named list with the prior marginal distribution for the parameter \eqn{v}
+#'
+#' @param flambda named list with the prior distribution of the parameter \eqn{\lambda}
 #'
 #' @param relTol relative tolerance in the computation of the \code{\link{kummer}} function. Default
 #' value is \code{1e-6}
@@ -42,7 +46,9 @@
 #'         fv = list('unif', xMin = 100, xMax = 120),
 #'         flambda = list('gamma', shape = 11, scale = 12)), xlim = c(0, 150),
 #'         main = '', ylab = 'density', xlab = 'lambda')
-#'
+#' 
+#' @include modeLambda.R
+#' 
 #' @export
 dg <- function(lambda, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e4, nStrata = c(1, 1e2),
                verbose = FALSE){

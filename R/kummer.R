@@ -21,15 +21,24 @@
 #' @importFrom Rcpp sourceCpp
 #' @export
 kummer <- function(x, a, b, relTol = 1e-8, nThreads = RcppParallel::defaultNumThreads()){
+  
   n <- length(x)
+  if (n > 1 & length(a) == 1) a <- rep(a, n)
+  if (n > 1 & length(b) == 1) b <- rep(b, n)
+  if (length(a) != n) stop('[pestim::kummer] a must have the same length as x.')
+  if (length(b) != n) stop('[pestim::kummer] b must have the same length as x.')
+  
   err <- as.integer(rep(0, n))
   if(nThreads > 1) {
+    
     RcppParallel::setThreadOptions(numThreads = nThreads)
     output <- pKummer(x, a, b, relTol, err)
-  }
-  else
+  
+  } else {
+    
     output <- Kummer(x, a, b, relTol, err)
-
+  
+  }
 
   output[is.infinite(output)] <- .Machine$double.xmax
   return(output)
