@@ -21,7 +21,8 @@ Imports:
     MCMCpack (>= 1.4-2),
     RcppParallel,
     doParallel,
-    foreach
+    foreach,
+    HDInterval
 SystemRequirements: GNU make
 LinkingTo: Rcpp, RcppParallel
 RoxygenNote: 6.0.1
