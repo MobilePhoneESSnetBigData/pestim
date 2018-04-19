@@ -6,10 +6,10 @@
 #'
 #' @param nMNO non-negative integer vectors with the number of individuals detected according to the
 #'  network operator
-#' 
+#'
 #' @param nReg non-negative integer vectors with the number of individuals detected according to the
 #'  population register
-#' 
+#'
 #' @param fu named list with the prior marginal distribution of the parameter \code{u}
 #'
 #' @param fv named list with the prior marginal distributions of the parameter \code{v}
@@ -34,25 +34,25 @@
 #'
 #'  \itemize{
 #'
-#'    \item nMNO: 
+#'    \item nMNO:
 #'
 #'    \item nReg:
 #'
 #'    \item B:
 #'
 #'    \item relB:
-#'    
+#'
 #'    \item V:
-#'    
+#'
 #'    \item relV:
-#'    
+#'
 #'    \item MSE:
-#'    
+#'
 #'    \item relMSE:
 #'
 #'  }
 #'
-#' @details The underlying integrals are computed using with Monte Carlo techniques using 
+#' @details The underlying integrals are computed using with Monte Carlo techniques using
 #' \code{nSimPar} points for each of the generated random deviate values.
 #'
 #' The prior distributions are specified as named lists where the first component of each list must
@@ -75,42 +75,42 @@
 #'
 #' @examples
 #' # Easily, a function to draw conditioned on the parameters:
-#' modelCheckInd(nSimPar = 10, nMNO = 29, nReg = 123, 
+#' modelCheckInd(nSimPar = 10, nMNO = 29, nReg = 123,
 #'          fu = list('unif', xMin = 0.2, xMax = 0.25),
 #'          fv = list('unif', xMin = 115, xMax = 130),
 #'          flambda = list('gamma', shape = 21, scale = 123 / 20))
 #'
-#' modelCheckInd(nSimPar = 10, nMNO = c(29, 31), nReg = c(123, 119), 
+#' modelCheckInd(nSimPar = 10, nMNO = c(29, 31), nReg = c(123, 119),
 #'          fu = list(list('unif', xMin = 0.2, xMax = 0.25),
 #'                    list('unif', xMin = 0.21, xMax = 0.26)),
 #'          fv = list(list('unif', xMin = 115, xMax = 130),
 #'                    list('unif', xMin = 114, xMax = 131)),
 #'          flambda = list(list('gamma', shape = 21, scale = 123 / 20),
 #'                         list('gamma', shape = 11, scale = 124 / 10)))
-#'                         
+#'
 #'
 #' @include rNMNO.R ruvlambda.R
 #'
 #' @import data.table
 #'
 #' @export
-modelCheckInd <- function(nSimPar, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e6, 
-                     nStrata = c(1, 1e2, 1e2), verbose = FALSE, 
+modelCheckInd <- function(nSimPar, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e6,
+                     nStrata = c(1, 1e2, 1e2), verbose = FALSE,
                      nThreads = RcppParallel::defaultNumThreads()){
-  
+
   if (length(nMNO) == 1){
-  
+
     uvlambda <- ruvlambda(nSimPar, nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)
-    
+
     nMNOrep <- lapply(1:nSimPar, function(i){
-      
-      output <- rNMNO(nSimPar, 
-                      lambda = uvlambda[i][['lambda']], 
+
+      output <- rNMNO(nSimPar,
+                      lambda = uvlambda[i][['lambda']],
                       u = uvlambda[i][['u']],
                       v = uvlambda[i][['v']])
       return(output)
     })
-  
+
     DT <- rbindlist(nMNOrep)
     setnames(DT, 'nMNO', 'nMNOrep')
     DT[, nMNOrep2 := nMNOrep ** 2]
@@ -118,7 +118,7 @@ modelCheckInd <- function(nSimPar, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, n
     DT[, relDifnMNOrep1 := (nMNOrep - nMNO) / nMNO]
     DT[, difnMNOrep2 := (nMNOrep - nMNO) ** 2]
     DT[, relDifnMNOrep2 := ((nMNOrep - nMNO) / nMNO) ** 2]
-    indicators <- DT[, list(B = sum(difnMNOrep1) / nSimPar**2, 
+    indicators <- DT[, list(B = sum(difnMNOrep1) / nSimPar**2,
                             relB = sum(relDifnMNOrep1) / nSimPar**2,
                             m2 = sum(nMNOrep2) / nSimPar**2,
                             e2 = ( sum(nMNOrep) / nSimPar**2 ) ** 2,
@@ -132,15 +132,15 @@ modelCheckInd <- function(nSimPar, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, n
     indicators[, nReg := nReg]
     indicators <- indicators[, c('nMNO', 'nReg', 'B', 'relB', 'V', 'relV', 'MSE', 'relMSE'), with = FALSE]
     return(indicators[])
-  
+
   } else {
-    
+
     output <- lapply(seq(along = nMNO), function(i){
-      
-      modelCheckInd(nSimPar, nMNO[i], nReg[i], fu[[i]], fv[[i]], flambda[[i]], 
+
+      modelCheckInd(nSimPar, nMNO[i], nReg[i], fu[[i]], fv[[i]], flambda[[i]],
                     relTol, nSim, nStrata, verbose, nThreads)
     })
-    
+
     output <- rbindlist(output)
     return(output[])
   }
