@@ -74,6 +74,7 @@
 #'         breaks = seq(1, 200, by = 1), main ='', xlab = 'number of individuals')
 #'
 #' @include rlambda.R
+#' @import parallel
 #' @import doParallel
 #' @import foreach
 #' @export
