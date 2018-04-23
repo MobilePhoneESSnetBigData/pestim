@@ -6,7 +6,8 @@
 \usage{
 postNt(nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale = 1,
   n = 1000, relTol = 1e-06, nSim = 1000, nStrata = c(1, 100),
-  verbose = FALSE, nThreads = RcppParallel::defaultNumThreads())
+  verbose = FALSE, nThreads = RcppParallel::defaultNumThreads(),
+  alpha = 0.05)
 }
 \arguments{
 \item{nMNOmat}{transition matrix with the number of individuals displaced from cell to cell
@@ -42,6 +43,8 @@ value is \code{c(1, 1e2)}}
 \item{verbose}{logical (default \code{FALSE}) to report progress of the computation}
 
 \item{nThreads}{number (default the number of all cores, including logical cores) to use for computation}
+
+\item{alpha}{the significance level for accuracy measures. Default value is 0.05}
 }
 \value{
 \code{postNt} computes the posterior mean, median, and mode of the posterior distribution

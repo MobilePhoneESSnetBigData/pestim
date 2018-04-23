@@ -35,16 +35,10 @@
 #'
 #' @rdname triang
 #' @export
-#'
-#'
-#' @rdname triang
-#' @export
 dtriang <- function(x, xMin, xMax, xMode){
 
   if (xMin > xMax) stop('xMax must be greater than xMin.')
   if (!((xMode >= xMin) & (xMode <= xMax))) stop('xMode must be between xMin and xMax.')
-
-
   output <- x
   output[x <= xMin | x >= xMax] <- 0
   range1 <- (x > xMin & x <= xMode)

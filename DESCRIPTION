@@ -22,7 +22,8 @@ Imports:
     RcppParallel,
     parallel,
     doParallel,
-    foreach
+    foreach,
+    HDInterval
 SystemRequirements: GNU make
 LinkingTo: Rcpp, RcppParallel
 RoxygenNote: 6.0.1
@@ -36,20 +37,26 @@ Collate:
     'RcppExports.R'
     'alphaPrior.R'
     'data.R'
-    'dg.R'
     'triang.R'
     'dlambda.R'
+    'modeLambda.R'
+    'dg.R'
+    'duvlambda.R'
     'flambda.R'
     'fu.R'
     'fv.R'
     'genAlpha.R'
     'genUV.R'
-    'modeLambda.R'
+    'genUVLambda.R'
+    'rlambda.R'
+    'ruvlambda.R'
+    'rNMNO.R'
+    'modelCheckInd.R'
     'nMNO_ini.R'
     'nReg.R'
     'pestim.R'
     'pkummer.R'
-    'rlambda.R'
+    'utils.R'
     'rN0.R'
     'postN0.R'
     'rmatProb.R'
@@ -57,5 +64,6 @@ Collate:
     'rNt.R'
     'postNt.R'
     'postNtcondN0.R'
+    'rNMNOrep.R'
     'rg.R'
     'rp.R'

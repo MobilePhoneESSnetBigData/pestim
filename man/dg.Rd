@@ -10,13 +10,17 @@ dg(lambda, nMNO, nReg, fu, fv, flambda, relTol = 1e-06, nSim = 10000,
 \arguments{
 \item{lambda}{numeric vector with the lambda parameter values}
 
-\item{nMNO, }{nReg non-negative integer vectors with the number of individuals detected in each
-cell according to the network operator and the register}
+\item{nMNO}{non-negative integer vectors with the number of individuals detected in each cell 
+according to the network operator}
 
-\item{fu, }{fv named lists with the prior marginal distributions of the two-dimensional points
-for the Monte Carlo integration}
+\item{nReg}{non-negative integer vectors with the number of individuals detected in each cell 
+according to the population register}
 
-\item{flambda}{named list with the prior distribution of the lambda parameter}
+\item{fu}{named list with the prior marginal distribution for the parameter \eqn{u}}
+
+\item{fv}{named list with the prior marginal distribution for the parameter \eqn{v}}
+
+\item{flambda}{named list with the prior distribution of the parameter \eqn{\lambda}}
 
 \item{relTol}{relative tolerance in the computation of the \code{\link{kummer}} function. Default
 value is \code{1e-6}}

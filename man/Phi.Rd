@@ -8,7 +8,9 @@ Phi(alpha, beta, lambda, n, relTol = 1e-06,
   nThreads = RcppParallel::defaultNumThreads())
 }
 \arguments{
-\item{alpha, }{beta non-negative numeric vectors}
+\item{alpha}{non-negative numeric vectors}
+
+\item{beta}{non-negative numeric vectors}
 
 \item{lambda}{numeric vector}
 
@@ -34,8 +36,10 @@ Compute the product of \code{\link{ratioBeta}} and
 \examples{
 Phi(1, 1, 0.5, 10)
 Phi(1:10, 10:1, seq(0, 1, length.out = 10), 3)
+# Error:
+\dontrun{
 Phi(1:4, 4:1, c(2, 3), c(4, 3, 1))
-
+}
 }
 \seealso{
 \code{\link{ratioBeta}}, \code{\link{kummer}} for related functions.

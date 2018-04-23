@@ -85,7 +85,6 @@ rlambda <- function(n, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e4, n
 
     location <- lambdaOpt
     scale <- sqrt(flambda$shape * flambda$scale^2)
-    F0 <- pcauchy(0, location = location, scale = scale)
     g <- function(x){
       dgamma(x, shape = shape_candidate, scale = scale_candidate)
       #dcauchy(x, location = location, scale = scale) / (1 - F0)

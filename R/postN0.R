@@ -29,6 +29,8 @@
 #'
 #' @param nThreads number (default the number of all cores, including logical cores) to use for computation
 #'
+#' @param alpha the significance level for accuracy measures. Default value is 0.05
+#'
 #' @return \code{postN0} computes the posterior mean, median, and mode of the posterior distribution
 #' for each cell. The function returns a matrix with the estimates in columns and the cells in rows.
 #'
@@ -56,10 +58,12 @@
 #'         flambda = list('gamma', shape = 11, scale = 12))
 #'
 #' @include rN0.R
+#' @include utils.R
+#' @import HDInterval
 #'
 #' @export
 postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-8, nSim = 1e3,
-                   nStrata = c(1, 1e2), verbose = FALSE, nThreads = RcppParallel::defaultNumThreads()){
+                   nStrata = c(1, 1e2), verbose = FALSE, nThreads = RcppParallel::defaultNumThreads(), alpha = 0.05){
 
   nCells <- length(nMNO)
   if (length(nReg) != nCells) stop('nReg and nMNO must have the same length.')
@@ -68,17 +72,24 @@ postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-
     setDT(Nvalues, key  = 'cellID')
     #postMean <- round(mean(Nvalues))
     postMean<-Nvalues[, .SD[, round(mean(N0))], by = cellID][[2]]
+    postSD<-Nvalues[, .SD[, round(sd(N0),2)], by = cellID][[2]]
+    postCV<-Nvalues[, .SD[, round(sd(N0) / mean(N0) * 100, 2)], by = cellID][[2]]
+
     #postMedian <- round(median(Nvalues))
     postMedian<-Nvalues[, .SD[, round(median(N0))], by = cellID][[2]]
+    postMedian_CILB<-Nvalues[, .SD[, equalTailedInt(N0, alpha)]['lower'], by = cellID][[2]]
+    postMedian_CIUB<-Nvalues[, .SD[, equalTailedInt(N0, alpha)]['upper'], by = cellID][[2]]
+    postMedianQuantileCV<-Nvalues[, .SD[, round( IQR(N0) / median(N0) * 100, 2)], by = cellID][[2]]
+
     #postMode <- Nvalues[which.max(names(table(Nvalues)))]
     postMode<-Nvalues[, .SD[, Mode(N0)], by = cellID][[2]]
+    postMode_CILB<-Nvalues[, .SD[, hdi(N0, 1-alpha)]['lower'], by = cellID][[2]]
+    postMode_CIUB<-Nvalues[, .SD[, hdi(N0, 1-alpha)]['upper'], by = cellID][[2]]
+    postModeQuantileCV<-Nvalues[, .SD[, round( IQR(N0) / Mode(N0) * 100, 2)], by = cellID][[2]]
 
-    output <- cbind(postMean, postMedian, postMode)
-    colnames(output)<-c("postMean", "postMedian", "postMode")
+
+    output <- cbind(postMean, postSD, postCV, postMedian, postMedian_CILB, postMedian_CIUB, postMedianQuantileCV, postMode, postMode_CILB, postMode_CIUB, postModeQuantileCV)
+    colnames(output)<-c("postMean", "StDev", "CV","postMedian", "Median_CI_LB", "Median_CI_UB","MedianQuantileCV", "postMode", "Mode_CI_LB", "Mode_CI_UB", "ModeQuantileCV")
     return(output)
 }
 
-Mode = function(v){
-  uniqv <- unique(v)
-  uniqv[which.max(tabulate(match(v, uniqv)))]
-}

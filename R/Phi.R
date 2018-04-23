@@ -3,7 +3,9 @@
 #' @description Compute the product of \code{\link{ratioBeta}} and
 #' \code{\link{kummer}} functions with a specific set of arguments
 #'
-#' @param alpha, beta non-negative numeric vectors
+#' @param alpha non-negative numeric vectors
+#'
+#' @param beta non-negative numeric vectors
 #'
 #' @param lambda numeric vector
 #'
@@ -26,13 +28,18 @@
 #' @examples
 #' Phi(1, 1, 0.5, 10)
 #' Phi(1:10, 10:1, seq(0, 1, length.out = 10), 3)
+#' # Error:
+#' \dontrun{
 #' Phi(1:4, 4:1, c(2, 3), c(4, 3, 1))
-#'
+#'}
 #' @include kummer.R ratioBeta.R
 #'
 #' @export
-Phi <- function(alpha, beta, lambda, n, relTol = 1e-6, nThreads = RcppParallel::defaultNumThreads()){
+Phi <- function(alpha, beta, lambda, n, relTol = 1e-6, 
+                nThreads = RcppParallel::defaultNumThreads()){
+  
   output <- ratioBeta(alpha, beta, n, 0) * kummer(lambda, beta, alpha + beta + n, relTol, nThreads)
+  
   return(output)
 
 }
