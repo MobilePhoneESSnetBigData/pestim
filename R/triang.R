@@ -109,6 +109,7 @@ rtriang <- function(n, xMin, xMax, xMode){
   mc[[1L]] <- qtriang
   mc[['n']] <- NULL
   mc[['q']] <- u
-  output <- eval(mc)
+  
+  output <- eval(mc, sys.frame(sys.parent()))
   return(output)
 }

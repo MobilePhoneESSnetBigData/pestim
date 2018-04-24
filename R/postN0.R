@@ -77,8 +77,8 @@ postN0 <- function(nMNO, nReg, fu, fv, flambda, n = 1e3, scale = 1, relTol = 1e-
 
     #postMedian <- round(median(Nvalues))
     postMedian<-Nvalues[, .SD[, round(median(N0))], by = cellID][[2]]
-    postMedian_CILB<-Nvalues[, .SD[, equalTailedInt(N0, alpha)]['lower'], by = cellID][[2]]
-    postMedian_CIUB<-Nvalues[, .SD[, equalTailedInt(N0, alpha)]['upper'], by = cellID][[2]]
+    postMedian_CILB<-Nvalues[, .SD[, round(equalTailedInt(N0, alpha))]['lower'], by = cellID][[2]]
+    postMedian_CIUB<-Nvalues[, .SD[, round(equalTailedInt(N0, alpha))]['upper'], by = cellID][[2]]
     postMedianQuantileCV<-Nvalues[, .SD[, round( IQR(N0) / median(N0) * 100, 2)], by = cellID][[2]]
 
     #postMode <- Nvalues[which.max(names(table(Nvalues)))]
