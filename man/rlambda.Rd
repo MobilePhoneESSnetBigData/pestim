@@ -29,8 +29,6 @@ is \code{1e4}}
 value is \code{c(1, 1e2)}}
 
 \item{verbose}{logical (default \code{FALSE}) to report progress of the computation}
-
-\item{nThreads}{number (default the number of all cores, including logical cores) to use for computation}
 }
 \value{
 \code{rlambda} generates \code{n} points according to the posterior distribution of

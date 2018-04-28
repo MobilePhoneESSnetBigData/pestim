@@ -24,8 +24,6 @@
 #'
 #' @param verbose logical (default \code{FALSE}) to report progress of the computation
 #'
-#' @param nThreads number (default the number of all cores, including logical cores) to use for computation
-#'
 #' @return \code{rlambda} generates \code{n} points according to the posterior distribution of
 #' the parameter lambda. The function returns a vector with these points.
 #'

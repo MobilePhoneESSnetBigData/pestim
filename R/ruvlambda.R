@@ -101,7 +101,7 @@ ruvlambda <- function(n, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e6,
       uMode <- (uMin + uMax) / 2
       gu <- function(u){ dunif(u, min = uMin, max = uMax) }
       
-      
+    
     }
     
     if (fu[[1]] == 'triang') {
@@ -123,7 +123,7 @@ ruvlambda <- function(n, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e6,
     }
     
     if (fv[[1]] == 'triang') {
-      
+   
       vMin <- fv[['xMin']]
       vMax <- fv[['xMax']]
       vMode <- fv[['xMode']]
@@ -162,7 +162,7 @@ ruvlambda <- function(n, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e6,
     if (verbose) cat(' ok.\n')
 
     if (verbose) cat('Generating and accepting/rejecting values...\n')
-    
+
     if (fu[[1]] == 'unif') {
       
       ru <- runif(length(lambda0s), min = uMin, max = uMax)
@@ -182,7 +182,7 @@ ruvlambda <- function(n, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e6,
     }
     
     if (fv[[1]] == 'triang') {
-      
+
       rv <- rtriang(length(lambda0s), xMin = vMin, xMax = vMax, xMode = vMode)
       
     }
