@@ -26,3 +26,31 @@ test_that("qtriang", {
   expect_error(qtriang(q, xMin = xmin, xMax = xmin, xMode = xmin), 'NAs are not allowed in subscripted assignments')
   expect_equal(actual_result, expected_result, tolerance = 1e-14, scale = 1)
 })
+
+
+test_that("ptriang", {
+  set.seed(1)
+  q<-seq(from=0, to=10, by=0.5)
+  mode = rnorm(1,7.5)
+  xmin = rnorm(1,1)
+  xmax = rnorm(1,9)
+  expected_result = c(0.00000000000000000, 0.00000000000000000, 0.00000000000000000, 0.00251969766858563,
+                      0.01677854605943596, 0.04362561756186622, 0.08306091217587640, 0.13508442990146655,
+                      0.19969617073863660, 0.27689613468738655, 0.36668432174771648, 0.46906073191962633,
+                      0.58402536520311610, 0.71157822159818573, 0.84954213504240184, 0.95101606321399190,
+                      0.99700163646283591, 1.00000000000000000, 1.00000000000000000, 1.00000000000000000,
+                      1.00000000000000000)
+  actual_result<-ptriang(q, xMin = xmin, xMax = xmax, xMode = mode)
+
+
+  expect_is(actual_result, "numeric")
+  expect_type(actual_result, "double")
+  expect_length(actual_result, length(q))
+
+
+  expect_error(ptriang(q, xMin = xmax, xMax = xmin, xMode = mode), 'xMax must be greater than xMin.')
+  expect_error(ptriang(q, xMin = xmin, xMax = xmax, xMode = 2*xmax), 'xMode must be between xMin and xMax.')
+  expect_error(ptriang(q, xMin = xmin, xMax = xmin, xMode = mode), 'xMode must be between xMin and xMax.')
+  expect_error(ptriang(q, xMin = xmin, xMax = xmin, xMode = xmin), 'NAs are not allowed in subscripted assignments')
+  expect_equal(actual_result, expected_result, tolerance = 1e-14, scale = 1)
+})

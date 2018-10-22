@@ -82,6 +82,7 @@ rN0 <- function(n, nMNO, nReg, fu, fv, flambda, scale = 1, relTol = 1e-6, nSim =
                 nStrata = c(1, 1e2), verbose = FALSE, nThreads = RcppParallel::defaultNumThreads()){
 
   nCell <- length(nMNO)
+
   if (nCell != length(nReg)) stop('nMNO and nReg must have the same length.')
 
   #  lambda <- rlambda(n, nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose)
@@ -94,7 +95,6 @@ rN0 <- function(n, nMNO, nReg, fu, fv, flambda, scale = 1, relTol = 1e-6, nSim =
 
 
   if (nCell == 1){
-
     lambda <- rlambda(n, nMNO, nReg, fu, fv, flambda, relTol, nSim, nStrata, verbose, nThreads)
     DT <- data.table(lambda = lambda)
     DT[ , lambdaID := 1:.N]

@@ -35,11 +35,10 @@
 #' @include kummer.R ratioBeta.R
 #'
 #' @export
-Phi <- function(alpha, beta, lambda, n, relTol = 1e-6, 
+Phi <- function(alpha, beta, lambda, n, relTol = 1e-6,
                 nThreads = RcppParallel::defaultNumThreads()){
-  
+
   output <- ratioBeta(alpha, beta, n, 0) * kummer(lambda, beta, alpha + beta + n, relTol, nThreads)
-  
   return(output)
 
 }
