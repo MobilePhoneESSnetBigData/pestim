@@ -1,6 +1,36 @@
 context("Triangular distribution")
 
 
+
+
+test_that("rtriang", {
+  set.seed(1)
+  n = 20
+  mode = rnorm(1,15)
+  xmin = rnorm(1,10)
+  xmax = rnorm(1,25)
+  expected_result = c(21.412461556710408, 17.350343955318841, 17.039209486540326, 12.086091618821877, 13.657194319988280, 13.399591470849513,
+                      17.619051738545149, 14.982560707994953, 18.551460757083319, 15.872425497686605, 17.947202618552147, 23.111795059946044,
+                      14.952283643824122, 18.644956958572262, 21.174766896938600, 13.708818755430825, 17.259308555267555, 12.895608095856392,
+                      14.140058826247547, 14.997558334042367)
+
+  actual_result<-rtriang(n, xMin = xmin, xMax = xmax, xMode = mode)
+
+
+  expect_is(actual_result, "numeric")
+  expect_type(actual_result, "double")
+  expect_length(actual_result, n)
+
+
+  expect_error(qtriang(q, xMin = xmax, xMax = xmin, xMode = mode), 'xMax must be greater than xMin.')
+  expect_error(qtriang(q, xMin = xmin, xMax = xmax, xMode = 2*xmax), 'xMode must be between xMin and xMax.')
+  expect_error(qtriang(q, xMin = xmin, xMax = xmin, xMode = mode), 'xMode must be between xMin and xMax.')
+  expect_error(qtriang(q, xMin = xmin, xMax = xmin, xMode = xmin), 'NAs are not allowed in subscripted assignments')
+  expect_equal(actual_result, expected_result, tolerance = 1e-15, scale = 1)
+})
+
+
+
 test_that("qtriang", {
   set.seed(1)
   q<-seq(from=0, to=1, by=0.05)
@@ -51,7 +81,6 @@ test_that("ptriang", {
   expect_error(ptriang(q, xMin = xmax, xMax = xmin, xMode = mode), 'xMax must be greater than xMin.')
   expect_error(ptriang(q, xMin = xmin, xMax = xmax, xMode = 2*xmax), 'xMode must be between xMin and xMax.')
   expect_error(ptriang(q, xMin = xmin, xMax = xmin, xMode = mode), 'xMode must be between xMin and xMax.')
-  expect_error(ptriang(q, xMin = xmin, xMax = xmin, xMode = xmin), 'NAs are not allowed in subscripted assignments')
   expect_equal(actual_result, expected_result, tolerance = 1e-15, scale = 1)
 })
 
