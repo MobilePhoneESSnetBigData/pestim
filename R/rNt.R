@@ -133,7 +133,7 @@ rNt <- function(n, nMNOmat, nReg, fu, fv, flambda, distNames, variation, scale =
   if (length(fu) != 1 && length(fu) != nCells) stop('The length of fu must 1 or coincide with the numbers of cells.')
   if (length(fv) != 1 && length(fv) != nCells) stop('The length of fv must 1 or coincide with the numbers of cells.')
   if (length(flambda) != 1 && length(flambda) != nCells) stop('The length of flambda must 1 or coincide with the numbers of cells.')
-
+  nMNO<-unname(nMNO)
   DT <- rN0(n, nMNO, nReg, fu, fv, flambda, scale,  relTol, nSim, nStrata, verbose, nThreads)
   DT[, lambda := NULL]
   DT[, n := rep(1:n, nCells)]

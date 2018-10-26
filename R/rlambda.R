@@ -93,6 +93,7 @@ rlambda <- function(n, nMNO, nReg, fu, fv, flambda, relTol = 1e-6, nSim = 1e4, n
     }
 
     fun <- function(x){g(x) / f(x)}
+
     optimC <- f(lambdaOpt) / g(lambdaOpt)
 
     #optimC <- 1 / optimise(fun, interval = c(max(location - scale, 0), location + scale))$objective
