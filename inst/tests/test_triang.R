@@ -84,8 +84,8 @@ test_that("dtriang", {
   mode = rnorm(1,7.5)
   xmin = rnorm(1,1)
   xmax = rnorm(1,9)
- 
-  
+
+
   expected_result <-c (0.0000000000000000000, 0.0000000000000000000, 0.0000000000000000000, 0.0000000000000000000, 0.0000000000000000000,
                        0.0000000000000000000, 0.0000000000000000000, 0.0000000000000000000, 0.0000000000000000000, 0.0000000000000000000,
                        0.0000000000000000000, 0.0000000000000000000, 0.0000000000000000000, 0.0000000000000000000, 0.0000000000000000000,
@@ -93,16 +93,16 @@ test_that("dtriang", {
                        0.1235814916989894791, 0.1468382170512922691, 0.1700949424035950452, 0.1933516677558978214, 0.2166083931082006253,
                        0.2398651184605034015, 0.2562703840745152450, 0.1921119490530666107, 0.1279535140316179764, 0.0637950790101693421,
                        0.0000000000000000000, 0.0000000000000000000, 0.0000000000000000000, 0.0000000000000000000, 0.0000000000000000000)
-  
+
   actual_result<-dtriang(x, xMin = xmin, xMax = xmax, xMode = mode)
   expect_is(actual_result, "numeric")
   expect_type(actual_result, "double")
   expect_length(actual_result, length(x))
-  
+
   expect_error(dtriang(q, xMin = xmax, xMax = xmin, xMode = mode), 'xMax must be greater than xMin.')
   expect_error(dtriang(q, xMin = xmin, xMax = xmax, xMode = 2*xmax), 'xMode must be between xMin and xMax.')
   expect_error(ptriang(q, xMin = xmin, xMax = xmin, xMode = mode), 'xMode must be between xMin and xMax.')
   expect_equal(actual_result, expected_result, tolerance = 1e-15, scale = 1)
 })
 
-  
+
